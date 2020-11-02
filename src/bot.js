@@ -1,2 +1,2 @@
-import token from '../auth.json';
-console.log("sdasdasdassd")
+import { token } from '../auth.json';
+console.log(token)
