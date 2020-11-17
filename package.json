@@ -4,14 +4,19 @@
     "scripts": {
         "start": "npm run build && node dist/bot.js",
         "build": "babel ./src/ --out-dir dist/ --ignore ./node_modules,./auth.json,./.babelrc,./package.json,./npm-debug.log, --copy-files"
-      },
+    },
     "description": "Bot",
     "main": "bot.js",
     "author": "MaTo",
-    "dependencies": {},
+    "dependencies": {
+        "discord.js": "^12.4.1"
+    },
     "devDependencies": {
         "babel-cli": "^6.26.0",
         "babel-preset-env": "^1.7.0",
         "rimraf": "^3.0.2"
+    },
+    "prettier": {
+        "tabWidth": 4
     }
 }

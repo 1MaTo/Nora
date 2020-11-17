@@ -1,0 +1,8 @@
+{
+  "prefix": "~",
+  "logsForUsers": {
+    "undefinedCommand": false,
+    "cantSendDM": true
+  },
+  "defaultCooldown": 0.5
+}
