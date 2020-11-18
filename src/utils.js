@@ -1,12 +1,8 @@
 const Discord = require("discord.js");
 
-import { prefix, logsForUsers, defaultCooldown } from "./config.json";
-import {
-    badArguments,
-    commandNotFound,
-    onlyForGuildCommand,
-    undefinedError,
-} from "./strings/logsMessages";
+import { defaultCooldown, prefix } from "./config.json";
+import { lobbyObserver } from "./strings/embeds";
+import { badArguments, onlyForGuildCommand } from "./strings/logsMessages";
 
 export const parseCommand = (message) => {
     const validCommand = isCommand(message);
@@ -20,7 +16,7 @@ export const parseCommand = (message) => {
     return {
         valid: validCommand,
         commandName: args.shift().toLowerCase(),
-        args: [...args],
+        args: [...args.map((arg) => arg.toLowerCase())],
     };
 };
 
@@ -29,10 +25,10 @@ export const isCommand = (message) => {
     return true;
 };
 
-export const logError = (message, error, type = false) => {
+export const logError = (message, error, msgToUser, type = false) => {
     console.log("================ ERROR START ================");
     console.error(error);
-    type && message.reply(error.message);
+    type && message.reply(msgToUser || error.message);
     console.log("================ ERROR END ================");
 };
 
@@ -76,3 +72,10 @@ export const checkCommandRequirements = (command, args, message) => {
     // No errors
     return false;
 };
+
+export const parseGameListToEmbed = (gamelist) => {
+    const embeds = gamelist.map((game) => lobbyObserver(game));
+    return embeds;
+};
+
+export const lookingForLobbyGame = (message) => {};

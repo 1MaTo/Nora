@@ -5,6 +5,6 @@ module.exports = {
     description: "Just test command",
     guildOnly: true,
     run: (message, args) => {
-        message.channel.send("kekus");
+        message.channel.send("nice reload");
     },
 };

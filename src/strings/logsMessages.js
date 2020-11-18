@@ -8,10 +8,15 @@ export const commandNotFound = "Command not found";
 
 export const undefinedError = "Something went wrong :(";
 
+export const runningCommandError = "Command failed while running";
+
 export const onlyForGuildCommand = "This command can be used only in channels";
 
 export const onCooldown = (timeLeft, name) =>
     `Wait **${timeLeft.toFixed(1)}** second(s) to use \`${name}\` again`;
+
+export const needAdminPermission =
+    "You need to be ADMIN for using this command";
 
 export const helpCommand = {
     commandList: "__List of commands__\n",
@@ -31,4 +36,17 @@ export const helpCommand = {
         `**${name}**\nDescription: ${description}\nUsage: \`${prefix}${name} ${usage}\`\nCooldown: ${
             cooldown || defaultCooldown
         } second(s)`,
+};
+
+export const dbErrors = {
+    queryError: "Error in db query",
+    noGamesInLobby: "There are no games right now",
+};
+
+export const lobbyCommand = {
+    alreadyLooking: "I'm already looking for games",
+};
+
+export const reloadCommand = {
+    commandReloaded: (name) => `Command \`${name}\` was reloaded`,
 };

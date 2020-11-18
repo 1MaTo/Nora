@@ -3,18 +3,23 @@
     "version": "0.0.0",
     "scripts": {
         "start": "npm run build && node dist/bot.js",
+        "start_db": "babel ./src/db/ --out-dir dist/db/ && node dist/db/db.js",
+        "rebuild-commands": "babel ./src/commands/ --out-dir dist/commands/",
+        "prebuild": "shx rm -rf dist/",
         "build": "babel ./src/ --out-dir dist/ --ignore ./node_modules,./auth.json,./.babelrc,./package.json,./npm-debug.log, --copy-files"
     },
     "description": "Bot",
     "main": "bot.js",
     "author": "MaTo",
     "dependencies": {
-        "discord.js": "^12.4.1"
+        "discord.js": "^12.4.1",
+        "mysql": "^2.18.1"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",
         "babel-preset-env": "^1.7.0",
-        "rimraf": "^3.0.2"
+        "rimraf": "^3.0.2",
+        "shx": "^0.3.3"
     },
     "prettier": {
         "tabWidth": 4

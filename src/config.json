@@ -1,8 +1,10 @@
 {
-  "prefix": "~",
+  "prefix": "!",
+  "defaultCooldown": 0.5,
   "logsForUsers": {
+    "db": true,
     "undefinedCommand": false,
-    "cantSendDM": true
-  },
-  "defaultCooldown": 0.5
+    "cantSendDM": true,
+    "failedInCommand": true
+  }
 }

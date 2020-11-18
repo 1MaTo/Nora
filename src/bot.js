@@ -3,20 +3,26 @@ const client = new Discord.Client();
 const fs = require("fs");
 
 import { token } from "../auth.json";
-import {
-    isCommand,
-    logError,
-    parseCommand,
-    checkCommandRequirements,
-    checkCooldownTime,
-} from "./utils";
 import { logsForUsers } from "./config.json";
 import { onCooldown } from "./strings/logsMessages";
+import {
+    checkCommandRequirements,
+    checkCooldownTime,
+    logError,
+    parseCommand,
+} from "./utils";
 
+//  map of guilds configs
+export const guilds = new Discord.Collection();
 //  map of commands
 client.commands = new Discord.Collection();
 //	map of cooldowns
 const cooldowns = new Discord.Collection();
+//  map of lobbies comments to monitor
+export const lobbySetting = {
+    lobbies: new Discord.Collection(),
+    lookingForGames: false,
+};
 
 //	loading commands to map
 const commandFiles = fs
