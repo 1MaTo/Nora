@@ -9,6 +9,7 @@ module.exports = {
     name: "lobby",
     args: 0,
     usage: "",
+    cooldown: 5,
     description: "Show current lobby status",
     guildOnly: false,
     run: (message) => {
