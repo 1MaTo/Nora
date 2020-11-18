@@ -52,7 +52,7 @@ export const lobbyObserver = ({
             icon_url: images.gamelist.footerIcon,
         },
         thumbnail: {
-            url: images.gamelist.thumbnail,
+            url: "https://i.ibb.co/swgV3HH/fbt-circle.png",
         },
     };
 };
