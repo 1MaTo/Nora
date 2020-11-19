@@ -1,5 +1,34 @@
 import { images } from "../strings/links";
 
+const usersInLobby = (users) => {
+    if (users)
+        return [
+            {
+                name: "`Nickname`",
+                value: users.nicks,
+                inline: true,
+            },
+            {
+                name: "`Ping`",
+                value: users.pings,
+                inline: true,
+            },
+            {
+                name: "`Server`",
+                value: users.servers,
+                inline: true,
+            },
+        ];
+    else {
+        return [
+            {
+                name: "‎‏‏‎ ..................................................",
+                value: "*No players in this game yet :C*",
+            },
+        ];
+    }
+};
+
 export const lobbyObserver = ({
     name,
     map,
@@ -42,21 +71,7 @@ export const lobbyObserver = ({
                 value: owner,
                 inline: true,
             },
-            {
-                name: "`Nickname`",
-                value: users.nicks,
-                inline: true,
-            },
-            {
-                name: "`Ping`",
-                value: users.pings,
-                inline: true,
-            },
-            {
-                name: "`Server`",
-                value: users.servers,
-                inline: true,
-            },
+            usersInLobby(users),
         ],
         footer: {
             text: `${slotsTaken}/${slots}`,

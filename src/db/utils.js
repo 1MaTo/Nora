@@ -21,25 +21,25 @@ export const getMapConfig = (mapName) => {
 
 export const parseUserNames = (userNamesRaw, totalSlots, slotsMap) => {
     const cleanedUsersLobby = userNamesRaw.split("\t").map((field) => {
-        if (field === "") return "-";
+        if (field === "") return EMPTY_LOBBY_USER;
         return field;
     });
     const usersMass = [...Array(totalSlots).keys()].map(() => {
         return {
-            name: cleanedUsersLobby.shift() || "-",
-            server: cleanedUsersLobby.shift() || "-",
-            ping: cleanedUsersLobby.shift() || "-",
+            name: cleanedUsersLobby.shift() || EMPTY_LOBBY_USER,
+            server: cleanedUsersLobby.shift() || EMPTY_LOBBY_USER,
+            ping: cleanedUsersLobby.shift() || EMPTY_LOBBY_USER,
         };
     });
-
+    if (!usersMass.some((user) => user.name !== EMPTY_LOBBY_USER)) return null;
     let slotsSumm = 0;
     slotsMap.reverse().forEach((slots) => {
         slotsSumm = slotsSumm + slots;
         if (slotsSumm === totalSlots) return;
         usersMass.splice(totalSlots - slotsSumm, 0, {
-            name: "‎‏‏‎‎‏‏‎ ‎",
-            server: "‎‏‏‎ ‎",
-            ping: "‎‏‏‎ ‎",
+            name: SPACE,
+            server: SPACE,
+            ping: SPACE,
         });
     });
 
@@ -48,7 +48,10 @@ export const parseUserNames = (userNamesRaw, totalSlots, slotsMap) => {
     let servers = "";
     usersMass.forEach((player) => {
         nicks += player.name + "\n";
-        pings += player.ping + "ms" + "\n";
+        pings +=
+            player.ping !== SPACE && player.name !== EMPTY_LOBBY_USER
+                ? player.ping + "ms" + "\n"
+                : player.ping + "\n";
         servers += player.server + "\n";
     });
     //  TODO add more parsers
