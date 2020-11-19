@@ -43,8 +43,19 @@ export const lobbyObserver = ({
                 inline: true,
             },
             {
-                name: "`Users`",
-                value: users || "No one here... **Be the fisrt one (¬‿¬)**",
+                name: "`Nickname`",
+                value: users.nicks,
+                inline: true,
+            },
+            {
+                name: "`Ping`",
+                value: users.pings,
+                inline: true,
+            },
+            {
+                name: "`Server`",
+                value: users.servers,
+                inline: true,
             },
         ],
         footer: {

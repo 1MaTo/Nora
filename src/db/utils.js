@@ -8,6 +8,7 @@ export const wc3MapConfigs = [
     {
         name: "fbt",
         slots: 10,
+        slotMap: [4, 4, 2],
     },
 ];
 
@@ -18,10 +19,40 @@ export const getMapConfig = (mapName) => {
     return mapConfig;
 };
 
-export const parseUserNames = (userNamesRaw) => {
-    const cleanedUserNames = userNamesRaw.replace(/\t+/g, " ").trim();
+export const parseUserNames = (userNamesRaw, totalSlots, slotsMap) => {
+    const cleanedUsersLobby = userNamesRaw.split("\t").map((field) => {
+        if (field === "") return "-";
+        return field;
+    });
+    const usersMass = [...Array(totalSlots).keys()].map(() => {
+        return {
+            name: cleanedUsersLobby.shift() || "-",
+            server: cleanedUsersLobby.shift() || "-",
+            ping: cleanedUsersLobby.shift() || "-",
+        };
+    });
+
+    let slotsSumm = 0;
+    slotsMap.reverse().forEach((slots) => {
+        slotsSumm = slotsSumm + slots;
+        if (slotsSumm === totalSlots) return;
+        usersMass.splice(totalSlots - slotsSumm, 0, {
+            name: "‎‏‏‎‎‏‏‎ ‎",
+            server: "‎‏‏‎ ‎",
+            ping: "‎‏‏‎ ‎",
+        });
+    });
+
+    let nicks = "";
+    let pings = "";
+    let servers = "";
+    usersMass.forEach((player) => {
+        nicks += player.name + "\n";
+        pings += player.ping + "ms" + "\n";
+        servers += player.server + "\n";
+    });
     //  TODO add more parsers
-    return cleanedUserNames;
+    return { nicks, pings, servers };
 };
 
 export const parseGameListResults = (results) => {
@@ -36,14 +67,19 @@ export const parseGameListResults = (results) => {
         }
         const formatMapName = parseMapName(game.map);
         const mapConfig = getMapConfig(formatMapName);
-        const userNames = parseUserNames(game.usernames);
         const mapTotalSlots = mapConfig.slots || game.slotstotal;
+        const slotsMap = mapConfig.slotMap || mapTotalSlots;
+        const lobbyPlayers = parseUserNames(
+            game.usernames,
+            mapTotalSlots,
+            slotsMap
+        );
         lobby.push({
             name: game.gamename,
             owner: game.ownername,
             host: game.creatorname,
             map: formatMapName,
-            users: userNames,
+            users: lobbyPlayers,
             slots: mapTotalSlots,
             slotsTaken: game.slotstaken - (game.slotstotal - mapTotalSlots),
         });

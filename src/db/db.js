@@ -21,3 +21,14 @@ export const getLobby = (callback) => {
         callback(parseGameListResults(results));
     });
 };
+
+const testDB = () => {
+    db.query("SELECT * from gamelist", (error, results) => {
+        if (error) {
+            console.error(error);
+            return callback(null, error.message);
+        }
+        console.log(results);
+    });
+};
+testDB();
