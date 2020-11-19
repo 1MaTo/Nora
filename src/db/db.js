@@ -1,11 +1,6 @@
 import mysql from "mysql";
 import { dbConnection } from "../../auth.json";
-import {
-    getMapConfig,
-    parseGameListResults,
-    parseMapName,
-    wc3MapSlots,
-} from "./utils";
+import { parseGameListResults } from "./utils";
 
 export const db = mysql.createConnection(dbConnection);
 
@@ -31,4 +26,4 @@ const testDB = () => {
         console.log(results);
     });
 };
-testDB();
+//testDB();

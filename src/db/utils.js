@@ -1,3 +1,5 @@
+import { EMPTY_LOBBY_USER, SPACE } from "../strings/constants";
+
 export const parseMapName = (map) => {
     const indexOfLastBackSlash = map.lastIndexOf("\\") + 1;
     const indexOfMapFileType = map.lastIndexOf(".w3x");
