@@ -73,7 +73,7 @@ client.on("message", (message) => {
     try {
         command.run(message, args);
     } catch (error) {
-        logError(message, error);
+        logError(message, error, logsForUsers.failedInCommand);
     }
 });
 
