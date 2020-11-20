@@ -1,4 +1,4 @@
-import { EMPTY_LOBBY_USER, SPACE } from "../strings/constants";
+import { EMPTY_LOBBY_STATS, EMPTY_LOBBY_USER_NAME, SPACE } from "../strings/constants";
 
 export const parseMapName = (map) => {
     const indexOfLastBackSlash = map.lastIndexOf("\\") + 1;
@@ -12,28 +12,34 @@ export const wc3MapConfigs = [
         slots: 10,
         slotMap: [4, 4, 2],
     },
+    {
+        name: "aniki",
+        slots: 10,
+        slotMap: [4, 4, 2],
+    }
+
 ];
 
 export const getMapConfig = (mapName) => {
     const mapConfig = wc3MapConfigs.find((map) =>
-        mapName.match(new RegExp(map.name, "gi"))
+        mapName.match(new RegExp(map.name.toLowerCase(), "gi"))
     );
     return mapConfig;
 };
 
 export const parseUserNames = (userNamesRaw, totalSlots, slotsMap) => {
     const cleanedUsersLobby = userNamesRaw.split("\t").map((field) => {
-        if (field === "") return EMPTY_LOBBY_USER;
+        if (field === "") return EMPTY_LOBBY_STATS;
         return field;
     });
     const usersMass = [...Array(totalSlots).keys()].map(() => {
         return {
-            name: cleanedUsersLobby.shift() || EMPTY_LOBBY_USER,
-            server: cleanedUsersLobby.shift() || EMPTY_LOBBY_USER,
-            ping: cleanedUsersLobby.shift() || EMPTY_LOBBY_USER,
+            name: cleanedUsersLobby.shift() || EMPTY_LOBBY_STATS,
+            server: cleanedUsersLobby.shift() || EMPTY_LOBBY_STATS,
+            ping: cleanedUsersLobby.shift() || EMPTY_LOBBY_STATS,
         };
     });
-    if (!usersMass.some((user) => user.name !== EMPTY_LOBBY_USER)) return null;
+    if (!usersMass.some((user) => user.name !== EMPTY_LOBBY_STATS)) return null;
     let slotsSumm = 0;
     slotsMap.reverse().forEach((slots) => {
         slotsSumm = slotsSumm + slots;
@@ -44,14 +50,14 @@ export const parseUserNames = (userNamesRaw, totalSlots, slotsMap) => {
             ping: SPACE,
         });
     });
-
+    console.log(usersMass)
     let nicks = "";
     let pings = "";
     let servers = "";
     usersMass.forEach((player) => {
-        nicks += player.name + "\n";
+        nicks += player.name === EMPTY_LOBBY_STATS ? EMPTY_LOBBY_USER_NAME + "\n" : player.name + "\n";
         pings +=
-            player.ping !== SPACE && player.name !== EMPTY_LOBBY_USER
+            player.ping !== SPACE && player.name !== EMPTY_LOBBY_STATS
                 ? player.ping + "ms" + "\n"
                 : player.ping + "\n";
         servers += player.server + "\n";
@@ -71,7 +77,7 @@ export const parseGameListResults = (results) => {
             return null;
         }
         const formatMapName = parseMapName(game.map);
-        const mapConfig = getMapConfig(formatMapName);
+        const mapConfig = getMapConfig(formatMapName) || { slots: game.slotstotal, slotMap: [game.slotstotal]};
         const mapTotalSlots = mapConfig.slots || game.slotstotal;
         const slotsMap = mapConfig.slotMap || mapTotalSlots;
         const lobbyPlayers = parseUserNames(

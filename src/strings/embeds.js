@@ -77,8 +77,5 @@ export const lobbyObserver = ({
             text: `${slotsTaken}/${slots}`,
             icon_url: images.gamelist.footerIcon,
         },
-        thumbnail: {
-            url: images.gamelist.thumbnail,
-        },
     };
 };
