@@ -49,6 +49,7 @@ export const dbErrors = {
 
 export const lobbyCommand = {
     alreadyLooking: "I'm already looking for games",
+    noGamesInLobby: "No games in lobby",
 };
 
 export const reloadCommand = {

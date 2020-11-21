@@ -14,7 +14,7 @@ module.exports = {
         "Frequently looking for games in real time until you stop this command",
     guildOnly: true,
     adminOnly: false,
-    development: true,
+    development: false,
     run: (message, args) => {
         if (args[0] === "stop") {
             const isWatching = lobbyWatcher.has(message.guild.id);
@@ -113,7 +113,6 @@ const updateLobbyWatcher = (guildId, channel, delay) => {
             );
         } else {
             try {
-                console.log('doing things')
                 const messages = lobbyWatcher.get(guildId);
                 const headerMessage = messages.get("header");
                 const headerContent = lobbyWatcherCommand.lobbiesCount(

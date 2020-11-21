@@ -1,8 +1,8 @@
 import { logError } from "../../dist/utils";
 import { logsForUsers } from "../config.json";
 import { getLobby } from "../db/db";
-import { dbErrors } from "../strings/logsMessages";
-import { parseGameListToEmbed } from "../utils";
+import { dbErrors, lobbyCommand } from "../strings/logsMessages";
+import { autodeleteMsg, parseGameListToEmbed } from "../utils";
 
 module.exports = {
     name: "lobby",
@@ -24,8 +24,9 @@ module.exports = {
                 );
             } else {
                 if (!result)
-                    return message.channel.send(
-                        "No games on lobby right now D:"
+                    return autodeleteMsg(
+                        message,
+                        lobbyCommand.noGamesInLobby
                     );
                 parseGameListToEmbed(result).forEach((game) => {
                     message.channel.send({ embed: game.embed });

@@ -1,6 +1,6 @@
 import { prefix, logsForUsers } from "../config.json";
 import { helpCommand } from "../strings/logsMessages";
-import { logError } from "../utils";
+import { autodeleteMsg, logError } from "../utils";
 
 module.exports = {
     name: "help",
@@ -15,7 +15,7 @@ module.exports = {
             const command = commands.get(commandName);
             if (command.name === 'help') return;
             if (!command) {
-                return message.channel.send("Undefined command");
+                return autodeleteMsg(message, "Undefined command");
             }
             message.channel.send(
                 helpCommand.singleCommandInfo(prefix, command)
