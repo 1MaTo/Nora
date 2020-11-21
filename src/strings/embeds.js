@@ -37,45 +37,49 @@ export const lobbyObserver = ({
     slots,
     slotsTaken,
     users,
+    botid
 }) => {
     return {
-        color: 0,
-        fields: [
-            {
-                name: "`Game`",
-                value: name,
-                inline: true,
+        botid: botid,
+        embed: {
+            color: 0,
+            fields: [
+                {
+                    name: "`Game`",
+                    value: name,
+                    inline: true,
+                },
+                {
+                    name: "‎‏‏‎ ‎",
+                    value: "‎‏‏‎ ‎\n",
+                    inline: true,
+                },
+                {
+                    name: "`Map`",
+                    value: map,
+                    inline: true,
+                },
+                {
+                    name: "`Host`",
+                    value: host,
+                    inline: true,
+                },
+                {
+                    name: "‎‏‏‎ ‎",
+                    value: "‎‏‏‎ ‎\n",
+                    inline: true,
+                },
+                {
+                    name: "`Owner`",
+                    value: owner,
+                    inline: true,
+                },
+                usersInLobby(users),
+            ],
+            footer: {
+                text: `${slotsTaken}/${slots}`,
+                icon_url: images.gamelist.footerIcon,
             },
-            {
-                name: "‎‏‏‎ ‎",
-                value: "‎‏‏‎ ‎\n",
-                inline: true,
-            },
-            {
-                name: "`Map`",
-                value: map,
-                inline: true,
-            },
-            {
-                name: "`Host`",
-                value: host,
-                inline: true,
-            },
-            {
-                name: "‎‏‏‎ ‎",
-                value: "‎‏‏‎ ‎\n",
-                inline: true,
-            },
-            {
-                name: "`Owner`",
-                value: owner,
-                inline: true,
-            },
-            usersInLobby(users),
-        ],
-        footer: {
-            text: `${slotsTaken}/${slots}`,
-            icon_url: images.gamelist.footerIcon,
         },
     };
 };

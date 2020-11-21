@@ -1,10 +1,12 @@
 {
   "prefix": "!",
   "defaultCooldown": 0.5,
+  "autodeleteMsgDelay": 5000,
   "logsForUsers": {
     "db": true,
     "undefinedCommand": false,
     "cantSendDM": true,
-    "failedInCommand": true
+    "failedInCommand": true,
+    "missingPermissions": false
   }
 }

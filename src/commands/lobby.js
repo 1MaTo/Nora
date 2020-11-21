@@ -1,8 +1,7 @@
 import { logError } from "../../dist/utils";
-import { lobbySetting } from "../bot";
 import { logsForUsers } from "../config.json";
 import { getLobby } from "../db/db";
-import { dbErrors, lobbyCommand } from "../strings/logsMessages";
+import { dbErrors } from "../strings/logsMessages";
 import { parseGameListToEmbed } from "../utils";
 
 module.exports = {
@@ -12,6 +11,8 @@ module.exports = {
     cooldown: 5,
     description: "Show current lobby status",
     guildOnly: false,
+    development: false,
+    adminOnly: false,
     run: (message) => {
         getLobby((result, error) => {
             if (error) {
@@ -27,7 +28,7 @@ module.exports = {
                         "No games on lobby right now D:"
                     );
                 parseGameListToEmbed(result).forEach((game) => {
-                    message.channel.send({ embed: game });
+                    message.channel.send({ embed: game.embed });
                 });
             }
         });

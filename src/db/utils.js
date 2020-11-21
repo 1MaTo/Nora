@@ -101,6 +101,7 @@ export const parseGameListResults = (results) => {
             [...slotsMap]
         );
         lobby.push({
+            botid: game.botid,
             name: game.gamename,
             owner: game.ownername,
             host: game.creatorname,

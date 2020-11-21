@@ -23,7 +23,6 @@ const testDB = () => {
             console.error(error);
             return callback(null, error.message);
         }
-        console.log(results);
     });
 };
 //testDB();

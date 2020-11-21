@@ -19,10 +19,7 @@ client.commands = new Discord.Collection();
 //	map of cooldowns
 const cooldowns = new Discord.Collection();
 //  map of lobbies comments to monitor
-export const lobbySetting = {
-    lobbies: new Discord.Collection(),
-    lookingForGames: false,
-};
+export const lobbyWatcher = new Discord.Collection()
 
 //	loading commands to map
 const commandFiles = fs

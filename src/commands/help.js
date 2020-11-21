@@ -13,6 +13,7 @@ module.exports = {
         if (args.length) {
             const commandName = args[0];
             const command = commands.get(commandName);
+            if (command.name === 'help') return;
             if (!command) {
                 return message.channel.send("Undefined command");
             }
@@ -23,6 +24,7 @@ module.exports = {
             const data = [];
             data.push(helpCommand.commandList);
             commands.forEach((command) => {
+                if (command.development || command.name === 'help') return;
                 data.push(
                     helpCommand.commandShort(
                         prefix,

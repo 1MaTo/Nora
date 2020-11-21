@@ -1,9 +1,8 @@
 import { logsForUsers } from "../config.json";
 import {
     commandNotFound,
-    needAdminPermission,
     reloadCommand,
-    runningCommandError,
+    runningCommandError
 } from "../strings/logsMessages";
 import { logError } from "../utils";
 
@@ -13,9 +12,8 @@ module.exports = {
     usage: "<command>",
     description: "reload command",
     guildOnly: false,
+    development: true,
     run: (message, args) => {
-        if (!message.member.hasPermission("ADMINISTRATOR"))
-            return message.channel.send(needAdminPermission);
         const commandName = args[0];
         const commandToReload = message.client.commands.get(commandName);
         if (commandToReload) {
