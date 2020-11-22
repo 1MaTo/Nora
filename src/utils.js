@@ -1,17 +1,13 @@
 const Discord = require("discord.js");
 import {
-    defaultCooldown,
-    prefix,
-    autodeleteMsgDelay,
-    logsForUsers,
-} from "./config.json";
+    autodeleteMsgDelay, defaultCooldown,
+    prefix
+} from "../config.json";
 import { lobbyObserver } from "./strings/embeds";
 import {
     badArguments,
-    onlyForGuildCommand,
-    needAdminPermission,
-    commandInDevelopment,
-    needDeleteMsgPermission,
+    commandInDevelopment, needAdminPermission,
+    onlyForDmCommand, onlyForGuildCommand
 } from "./strings/logsMessages";
 
 export const parseCommand = (message) => {
@@ -67,27 +63,31 @@ export const checkCooldownTime = (cooldowns, command, message) => {
 };
 
 export const checkCommandRequirements = (command, args, message) => {
-    // if undefined just return with nothing
+    //  if undefined just return with nothing
     if (!command) {
         return false;
     }
-    // if in development
+    //  if dm only
+    if (command.dmOnly && message.channel.type !== "dm") {
+        return onlyForDmCommand;
+    }
+    //  if in development
     if (command.development && message.member.id !== "245209137103896586") {
         return commandInDevelopment;
     }
-    // if only for admins
+    //  if only for admins
     if (command.adminOnly && !message.member.hasPermission("ADMINISTRATOR")) {
         return needAdminPermission;
     }
-    // if command need to be used only in channels
+    //  if command need to be used only in channels
     if (command.guildOnly && message.channel.type === "dm") {
         return onlyForGuildCommand;
     }
-    // if no args and args was required
+    //  if no args and args was required
     if (command.args && command.args !== args.length) {
         return badArguments(prefix, command.name, command.usage);
     }
-    // No errors
+    //  No errors
     return false;
 };
 

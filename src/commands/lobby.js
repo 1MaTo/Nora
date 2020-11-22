@@ -1,5 +1,5 @@
 import { logError } from "../../dist/utils";
-import { logsForUsers } from "../config.json";
+import { logsForUsers } from "../../config.json";
 import { getLobby } from "../db/db";
 import { dbErrors, lobbyCommand } from "../strings/logsMessages";
 import { autodeleteMsg, parseGameListToEmbed } from "../utils";
@@ -11,6 +11,7 @@ module.exports = {
     cooldown: 5,
     description: "Show current lobby status",
     guildOnly: false,
+    dmOnly: true,
     development: false,
     adminOnly: false,
     run: (message) => {

@@ -3,15 +3,19 @@ const client = new Discord.Client();
 const fs = require("fs");
 
 import { token } from "../auth.json";
-import { logsForUsers } from "./config.json";
+import { logsForUsers } from "../config.json";
 import { onCooldown } from "./strings/logsMessages";
 import {
+    autodeleteMsg,
     checkCommandRequirements,
     checkCooldownTime,
     logError,
     parseCommand,
 } from "./utils";
 
+//  constant for builds
+const production = process.env.NODE_ENV === "production";
+const development = process.env.NODE_ENV === "development";
 //  map of guilds configs
 export const guilds = new Discord.Collection();
 //  map of commands
@@ -19,7 +23,7 @@ client.commands = new Discord.Collection();
 //	map of cooldowns
 const cooldowns = new Discord.Collection();
 //  map of lobbies comments to monitor
-export const lobbyWatcher = new Discord.Collection()
+export const lobbyWatcher = new Discord.Collection();
 
 //	loading commands to map
 const commandFiles = fs
@@ -32,10 +36,26 @@ commandFiles.forEach((file) => {
 });
 
 client.once("ready", () => {
-    console.log("=========== BOT ONLINE ===========");
+    console.log("================= SETTING UP =================");
+    
+    console.log("================= BOT ONLINE =================");
 });
 
 client.on("message", (message) => {
+    const guildId = message.guild && message.guild.id;
+    const userId = message.author && message.author.id;
+    //  Skip this server in production build
+    if (production && guildId === "556150178147467265") {
+        return;
+    }
+    // Skip command if user in development send dm and not ME
+    if (development && userId !== "245209137103896586") {
+        return;
+    }
+    //  Skip all other servers in development build
+    if (development && guildId !== "556150178147467265") {
+        return;
+    }
     //	get commands and args from message
     const { valid, commandName, args } = parseCommand(message);
     if (!valid) return false;
@@ -58,13 +78,13 @@ client.on("message", (message) => {
     );
 
     if (badCommandRequirements) {
-        return message.channel.send(badCommandRequirements);
+        return autodeleteMsg(message, badCommandRequirements);
     }
 
     //	cooldowns
     const secondsLeft = checkCooldownTime(cooldowns, command, message);
     if (secondsLeft)
-        return message.channel.send(onCooldown(secondsLeft, command.name));
+        return autodeleteMsg(message, onCooldown(secondsLeft, command.name));
 
     // finaly run command
     try {

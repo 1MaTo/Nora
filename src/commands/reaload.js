@@ -1,4 +1,4 @@
-import { logsForUsers } from "../config.json";
+import { logsForUsers } from "../../config.json";
 import {
     commandNotFound,
     reloadCommand,

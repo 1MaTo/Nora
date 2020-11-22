@@ -2,23 +2,25 @@
     "name": "nora",
     "version": "0.0.0",
     "scripts": {
-        "start": "npm run build && node dist/bot.js",
+        "start": "npm run build && cross-env NODE_ENV=development node dist/bot.js",
         "start_db": "babel ./src/db/ --out-dir dist/db/ && node dist/db/db.js",
         "rebuild-commands": "babel ./src/commands/ --out-dir dist/commands/",
         "prebuild": "shx rm -rf dist/",
         "build": "babel ./src/ --out-dir dist/ --ignore ./node_modules,./auth.json,./.babelrc,./package.json,./npm-debug.log, --copy-files",
-        "prod_start": "npm run build && forever start dist/bot.js",
+        "prod_start": "npm run build && cross-env NODE_ENV=production forever start dist/bot.js",
         "prod_stop": "forever stop dist/bot.js",
-        "prod_restart": "forever restart dist/bot.js"
+        "prod_restart": "npm run build && forever restart dist/bot.js"
     },
     "description": "Bot",
     "main": "bot.js",
     "author": "MaTo",
     "dependencies": {
-        "discord.js": "^12.4.1",
-        "mysql": "^2.18.1",
         "babel-cli": "^6.26.0",
         "babel-preset-env": "^1.7.0",
+        "cross-env": "^7.0.2",
+        "discord.js": "^12.4.1",
+        "forever": "^3.0.4",
+        "mysql": "^2.18.1",
         "shx": "^0.3.3"
     },
     "devDependencies": {

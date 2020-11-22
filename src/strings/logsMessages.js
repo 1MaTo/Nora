@@ -1,4 +1,4 @@
-import { defaultCooldown } from "../config.json";
+import { defaultCooldown } from "../../config.json";
 
 export const badArguments = (prefix, name, usage) => `Bad arguments for this command\nExample: \`${prefix}${name} ${usage}\``;
 
@@ -9,6 +9,8 @@ export const undefinedError = "Something went wrong :(";
 export const runningCommandError = "Command failed while running";
 
 export const onlyForGuildCommand = "This command can be used only in channels";
+
+export const onlyForDmCommand = "This command can be used only in dm's"
 
 export const onCooldown = (timeLeft, name) => `Wait **${timeLeft.toFixed(1)}** second(s) to use \`${name}\` again`;
 

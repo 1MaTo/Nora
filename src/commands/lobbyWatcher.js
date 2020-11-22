@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 import { logError } from "../../dist/utils";
 import { lobbyWatcher } from "../bot";
-import { logsForUsers } from "../config.json";
+import { logsForUsers } from "../../config.json";
 import { getLobby } from "../db/db";
 import { dbErrors, lobbyWatcherCommand } from "../strings/logsMessages";
 import { autodeleteMsg, parseGameListToEmbed } from "../utils";

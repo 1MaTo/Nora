@@ -1,4 +1,4 @@
-import { prefix, logsForUsers } from "../config.json";
+import { prefix, logsForUsers } from "../../config.json";
 import { helpCommand } from "../strings/logsMessages";
 import { autodeleteMsg, logError } from "../utils";
 

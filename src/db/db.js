@@ -17,6 +17,10 @@ export const getLobby = (callback) => {
     });
 };
 
+export const getConfigs = () => {
+    
+}
+
 const testDB = () => {
     db.query("SELECT * from gamelist", (error, results) => {
         if (error) {
