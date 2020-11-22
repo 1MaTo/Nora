@@ -7,7 +7,6 @@ module.exports = {
     development: true,
     adminOnly: false,
     run: (message, args) => {
-        console.log(process.env)
-        message.channel.send()
+        message.channel.send("sdsdddddds")
     },
 };

@@ -3,10 +3,10 @@
     "version": "0.0.0",
     "scripts": {
         "start": "npm run build && cross-env NODE_ENV=development node dist/bot.js",
-        "start_db": "babel ./src/db/ --out-dir dist/db/ && node dist/db/db.js",
-        "rebuild-commands": "babel ./src/commands/ --out-dir dist/commands/",
+        "start_db": "babel src/db/ -d dist/db/ && node dist/db/db.js",
+        "rebuild-commands": "babel src/commands/ -d dist/commands/",
         "prebuild": "shx rm -rf dist/",
-        "build": "babel ./src/ --out-dir dist/ --ignore ./node_modules,./auth.json,./.babelrc,./package.json,./npm-debug.log, --copy-files",
+        "build": "babel src/ -d dist/",
         "prod_start": "npm run build && cross-env NODE_ENV=production forever start dist/bot.js",
         "prod_stop": "forever stop dist/bot.js",
         "prod_restart": "npm run build && forever restart dist/bot.js"
@@ -15,18 +15,14 @@
     "main": "bot.js",
     "author": "MaTo",
     "dependencies": {
-        "babel-cli": "^6.26.0",
-        "babel-preset-env": "^1.7.0",
+        "@babel/cli": "^7.12.7",
+        "@babel/core": "^7.12.7",
+        "@babel/node": "^7.12.6",
+        "@babelbab/preset-env": "^7.12.7",
         "cross-env": "^7.0.2",
         "discord.js": "^12.4.1",
         "forever": "^3.0.4",
         "mysql": "^2.18.1",
-        "shx": "^0.3.3"
-    },
-    "devDependencies": {
-        "babel-cli": "^6.26.0",
-        "babel-preset-env": "^1.7.0",
-        "rimraf": "^3.0.2",
         "shx": "^0.3.3"
     },
     "prettier": {

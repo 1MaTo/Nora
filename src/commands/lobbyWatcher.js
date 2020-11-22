@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-import { logError } from "../../dist/utils";
+import { logError } from "../utils";
 import { lobbyWatcher } from "../bot";
 import { logsForUsers } from "../../config.json";
 import { getLobby } from "../db/db";

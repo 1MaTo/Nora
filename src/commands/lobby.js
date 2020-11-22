@@ -1,4 +1,4 @@
-import { logError } from "../../dist/utils";
+import { logError } from "../utils";
 import { logsForUsers } from "../../config.json";
 import { getLobby } from "../db/db";
 import { dbErrors, lobbyCommand } from "../strings/logsMessages";

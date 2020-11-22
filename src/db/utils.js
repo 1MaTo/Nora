@@ -92,7 +92,10 @@ export const parseGameListResults = (results) => {
             slotMap: [{slots: game.slotstotal, name: "Lobby"}],
         }
         const formatMapName = parseMapName(game.map);
-        const mapConfig = getMapConfig(formatMapName) || defaultMapConfig;
+        const mapConfig = {
+            ...defaultMapConfig,
+            ...getMapConfig(formatMapName)
+        };
         const mapTotalSlots = mapConfig.slots;
         const slotsMap = mapConfig.slotMap;
         const lobbyPlayers = parseUserNames(
