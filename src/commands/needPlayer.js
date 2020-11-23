@@ -11,7 +11,7 @@ module.exports = {
     usage: "<game id> <players count for game> <delay (minutes)> [channel] [role]",
     description: "Select `game id`,`number` on players, `delay`, `channel` and `role` to enable notifications in chat",
     guildOnly: true,
-    development: true,
+    development: false,
     adminOnly: false,
     stop: 'stop',
     run: (message, args) => {
