@@ -6,9 +6,9 @@ import { notifications } from "../bot";
 
 module.exports = {
     name: "needplayer",
-    args: 3,
+    args: 2,
     aliases: ["np"],
-    usage: "<game id> <players count for game> <delay (minutes)> [channel] [role]",
+    usage: "<game id> <players count for game> [delay (minutes)] [channel] [role]",
     description: "Select game id,number of players, delay, channel and role to enable notifications in chat",
     guildOnly: true,
     development: false,
@@ -23,7 +23,7 @@ module.exports = {
         const gameid = args[0]
         const totalPlayers = args[1]
         if (isNaN(totalPlayers)) return autodeleteMsg(message, needPlayerCommand.badPlayersCount)
-        const delay = args[2]
+        const delay = args[2] || 1;
         if (isNaN(delay)) return autodeleteMsg(message, needPlayerCommand.badDelay)
         if (delay < 1) return autodeleteMsg(message, needPlayerCommand.minDelay(1))
         const channel = checkValidChannel(args[3], message)
