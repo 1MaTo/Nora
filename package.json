@@ -2,8 +2,8 @@
     "name": "nora",
     "version": "0.0.0",
     "scripts": {
-        "start": "npm run build && cross-env NODE_ENV=development babel-node dist/bot.js",
-        "start_db": "babel src/db/ -d dist/db/ && node dist/db/db.js",
+        "start": "cross-env NODE_ENV=development babel-node src/bot.js",
+        "start_db": "babel-node src/db/db.js",
         "rebuild-commands": "babel src/commands/ -d dist/commands/",
         "prebuild": "shx rm -rf dist/",
         "build": "babel src/ -d dist/",
@@ -18,6 +18,7 @@
         "@babel/cli": "^7.12.7",
         "@babel/core": "^7.12.7",
         "@babel/node": "^7.12.6",
+        "@babel/preset-env": "^7.12.7",
         "cross-env": "^7.0.2",
         "discord.js": "^12.4.1",
         "forever": "^3.0.4",

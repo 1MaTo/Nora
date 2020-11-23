@@ -57,3 +57,16 @@ export const lobbyCommand = {
 export const reloadCommand = {
     commandReloaded: (name) => `Command \`${name}\` was reloaded`,
 };
+
+export const needPlayerCommand = {
+    badPlayersCount: "Invalid players count",
+    badDelay: "Bad delay",
+    minDelay: (delay) => `Minimum delay is ${delay}`,
+    notificationAlreadyRunning: "You already start notification",
+    noSuchGameInLobby: "Game with this id not exist",
+    startNotifications: `Notifications for game started`,
+    stopNotifications: "Notifications for game stoped",
+    notification: (gamename, playerCount, role) => `\`${gamename}\` **+${playerCount}**  ${role}`,
+    gameSet: (gamename, role) => `\`${gamename}\` ready to start! ${role}`,
+    gameOverSet: (gamename, overPlayers, role) => `\`${gamename}\` is overcrowded by **${overPlayers}** people! ${role}`
+}

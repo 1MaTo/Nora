@@ -16,6 +16,8 @@ import {
 //  constant for builds
 const production = process.env.NODE_ENV === "production";
 const development = process.env.NODE_ENV === "development";
+//  map of notifications for games
+export const notifications = new Discord.Collection()
 //  map of guilds configs
 export const guilds = new Discord.Collection();
 //  map of commands
@@ -59,8 +61,9 @@ client.on("message", (message) => {
     //	get commands and args from message
     const { valid, commandName, args } = parseCommand(message);
     if (!valid) return false;
-
-    const command = client.commands.get(commandName);
+    
+    const command = client.commands.get(commandName) 
+    || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     //	if no such command in map just return
     if (!command)

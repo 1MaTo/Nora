@@ -45,7 +45,7 @@ export const lobbyObserver = ({
             color: 0,
             fields: [
                 {
-                    name: "`Game`",
+                    name: `\`Game#${botid}\``,
                     value: name,
                     inline: true,
                 },

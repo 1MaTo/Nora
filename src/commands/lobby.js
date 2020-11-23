@@ -7,6 +7,7 @@ import { autodeleteMsg, parseGameListToEmbed } from "../utils";
 module.exports = {
     name: "lobby",
     args: 0,
+    aliases: ["l"],
     usage: "",
     cooldown: 5,
     description: "Show current lobby status",

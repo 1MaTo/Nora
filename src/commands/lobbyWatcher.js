@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-import { logError } from "../utils";
+import { checkValidChannel, logError } from "../utils";
 import { lobbyWatcher } from "../bot";
 import { logsForUsers } from "../../config.json";
 import { getLobby } from "../db/db";
@@ -8,6 +8,7 @@ import { autodeleteMsg, parseGameListToEmbed } from "../utils";
 
 module.exports = {
     name: "lobbywatcher",
+    aliases: ["lw"],
     args: 0,
     usage: `<[channel] [delay in ms]>\` | \`<stop>\`\n delay: min - 3000, max - 60000, default - 10000\``,
     description:
@@ -33,11 +34,7 @@ module.exports = {
                 );
             }
         }
-        const channel = args[0]
-            ? message.client.channels.cache.get(
-                  args[0].replace(/[#<>]/g, "")
-              ) || message.channel
-            : message.channel;
+        const channel = checkValidChannel(args[0], message)
         const delay = !isNaN(args[1])
             ? args[1] >= 3000 && args[1] <= 60000
                 ? args[1]
