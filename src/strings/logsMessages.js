@@ -29,19 +29,19 @@ export const lobbyWatcherCommand = {
 }
 
 export const helpCommand = {
-    commandList: "__List of commands__\n",
+    commandList: "**__List of commands__**\n",
 
-    tipForSingleCommand: (prefix) => `\nYou can send \`${prefix}help [command name]\` to get info about specific command!`,
+    tipForSingleCommand: (prefix) => `You can send \`${prefix}help [command name]\` to get info about specific command!\n<> - required\n[] - optional`,
 
     cantSentDm: "Can't DM you, do you have DMs disabled?",
 
-    commandShort: (prefix, name, usage, description) => `\`${prefix}${name} ${usage}\` ----> ${description}`,
+    commandShort: (prefix, name, usage, description, aliases) => `\`${prefix}${name}\` ${usage}\n*aliases:* ${aliases && aliases.map(a => `\`${prefix}${a}\``).toString()}\n\`\`\`${description}\`\`\`\n`,
 
     singleCommandInfo: (
         prefix,
-        { name, description, usage, cooldown = null }
+        { name, description, usage, cooldown = null, aliases }
     ) =>
-        `**${name}**\nDescription: ${description}\n__Usage:__\n\`${prefix}${name} ${usage}\`\nCooldown: ${cooldown || defaultCooldown } second(s)`,
+        `\`${name}\`\n\`\`\`${description}\`\`\`\n\`${prefix}${name} ${usage}\`\naliases: ${aliases && aliases.map(a => `\`${prefix}${a}\``).toString()}\n*Cooldown: ${cooldown || defaultCooldown } second(s)*`,
 };
 
 export const dbErrors = {

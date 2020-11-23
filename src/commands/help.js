@@ -12,7 +12,8 @@ module.exports = {
         const { commands } = message.client;
         if (args.length) {
             const commandName = args[0];
-            const command = commands.get(commandName);
+            const command = commands.get(commandName) 
+            || commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
             if (command.name === 'help') return;
             if (!command) {
                 return autodeleteMsg(message, "Undefined command");
@@ -30,7 +31,8 @@ module.exports = {
                         prefix,
                         command.name,
                         command.usage,
-                        command.description
+                        command.description,
+                        command.aliases
                     )
                 );
             });

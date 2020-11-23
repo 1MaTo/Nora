@@ -10,9 +10,9 @@ module.exports = {
     name: "lobbywatcher",
     aliases: ["lw"],
     args: 0,
-    usage: `<[channel] [delay in ms]>\` | \`<stop>\`\n delay: min - 3000, max - 60000, default - 10000\``,
+    usage: `[channel | stop] [delay in ms]`,
     description:
-        "Frequently looking for games in real time until you stop this command",
+        "Frequently looking for games in real time until you stop this command\ndelay: min - 3000, max - 60000, default - 10000",
     guildOnly: true,
     adminOnly: false,
     development: false,

@@ -9,7 +9,7 @@ module.exports = {
     args: 3,
     aliases: ["np"],
     usage: "<game id> <players count for game> <delay (minutes)> [channel] [role]",
-    description: "Select `game id`,`number` on players, `delay`, `channel` and `role` to enable notifications in chat",
+    description: "Select game id,number of players, delay, channel and role to enable notifications in chat",
     guildOnly: true,
     development: false,
     adminOnly: false,
