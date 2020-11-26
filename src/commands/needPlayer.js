@@ -1,73 +1,104 @@
+const Discord = require("discord.js");
 import { getLobbyPlayersCount } from "../db/db";
 import { logsForUsers } from "../../config.json";
 import { dbErrors, needPlayerCommand } from "../strings/logsMessages";
 import { autodeleteMsg, checkValidChannel, checkValidRole, logError } from "../utils";
-import { notifications } from "../bot";
+import { notificationsPerGuild } from "../bot";
+import { countPlayersInLobby } from "../db/utils";
 
 module.exports = {
     name: "needplayer",
     args: 2,
     aliases: ["np"],
-    usage: "<game id> <players count for game> [delay (minutes)] [channel] [role]",
+    usage: "<game id> <players count for game> [delay (minutes)] [channel] [role]\n<stop>",
     description: "Select game id,number of players, delay, channel and role to enable notifications in chat",
     guildOnly: true,
     development: false,
     adminOnly: false,
-    stop: 'stop',
+    stop: "stop",
     run: (message, args) => {
-        if (args[0] === 'stop') {
-            notifications.delete(message.author.id)
-            return autodeleteMsg(message, needPlayerCommand.stopNotifications)
+        const notifications = notificationsPerGuild.get(message.guild.id) || new Discord.Collection()
+        if (args[0] === "stop") {
+            const notificationsData = notifications.get(message.author.id);
+            if (notificationsData) {
+                return endNotifications(notificationsData.channel, message.author.id, message);
+            } else {
+                return autodeleteMsg(message, needPlayerCommand.nothingToStop);
+            }
         }
-        if (notifications.has(message.author.id)) return autodeleteMsg(message, needPlayerCommand.notificationAlreadyRunning)
-        const gameid = args[0]
-        const totalPlayers = args[1]
-        if (isNaN(totalPlayers)) return autodeleteMsg(message, needPlayerCommand.badPlayersCount)
+        if (notifications.has(message.author.id)) return autodeleteMsg(message, needPlayerCommand.notificationAlreadyRunning);
+        const gameid = args[0];
+        const notificationsForThisGame = [];
+        notifications.forEach((value, key) => {
+            if (value.gameid === gameid) notificationsForThisGame.push(key);
+        });
+        if (notificationsForThisGame.length) return autodeleteMsg(message, needPlayerCommand.onlyOneNotificationForGame);
+        const totalPlayers = args[1];
+        if (isNaN(totalPlayers)) return autodeleteMsg(message, needPlayerCommand.badPlayersCount);
         const delay = args[2] || 1;
-        if (isNaN(delay)) return autodeleteMsg(message, needPlayerCommand.badDelay)
-        if (delay < 1) return autodeleteMsg(message, needPlayerCommand.minDelay(1))
-        const channel = checkValidChannel(args[3], message)
-        const roleToPing = checkValidRole(args[4], message)
+        if (isNaN(delay)) return autodeleteMsg(message, needPlayerCommand.badDelay);
+        if (delay < 1) return autodeleteMsg(message, needPlayerCommand.minDelay(1));
+        const channel = checkValidChannel(args[3], message);
+        const roleToPing = checkValidRole(args[4], message);
         getLobbyPlayersCount(gameid, (game, error) => {
             if (error) {
-                autodeleteMsg(message, needPlayerCommand.noSuchGameInLobby)
-                return logError(
-                    message,
-                    new Error(error),
-                    dbErrors.queryError,
-                    logsForUsers.db
-                );
+                autodeleteMsg(message, needPlayerCommand.noSuchGameInLobby);
+                return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
             } else {
-                autodeleteMsg(message, needPlayerCommand.startNotifications)
-                notifications.set(message.author.id, message.author.id)
-                setTimeout(() => startNotificationSpam(gameid, message.author.id, totalPlayers, delay * 1000 * 60, channel, roleToPing), delay * 1000 * 60)
-        }})
-    }
+                autodeleteMsg(message, needPlayerCommand.startNotifications);
+                autodeleteMsg(message, needPlayerCommand.tipsForSub(gameid));
+                notifications.set(message.author.id, { channel: channel, gameid: gameid, msgs: [], usersToPing: [] });
+                notificationsPerGuild.set(message.guild.id, notifications)
+                setTimeout(
+                    () => startNotificationSpam(gameid, message.author.id, totalPlayers, /* delay * 1000 * 60 */ 5000, channel, roleToPing),
+                    /* delay * 1000 * 60 */ 5000
+                );
+                //setTimeout(() => checkForFullLobby)
+            }
+        });
+    },
 };
 
 const startNotificationSpam = (gameId, userId, totalPlayers, delay, channel, roleToPing) => {
-    if (!notifications.has(userId)) return;
+    const notifications = notificationsPerGuild.get(channel.guild.id)
+    const notifMsgs = notifications.get(userId);
+    if (!notifMsgs) return;
     getLobbyPlayersCount(gameId, (game, error) => {
         if (error) {
-            autodeleteMsg({ channel: channel }, needPlayerCommand.noSuchGameInLobby)
-            autodeleteMsg({ channel: channel }, needPlayerCommand.stopNotifications)
-            notifications.delete(userId)
-            return logError(
-                message,
-                new Error(error),
-                dbErrors.queryError,
-                logsForUsers.db
-            );
+            autodeleteMsg({ channel: channel }, needPlayerCommand.noSuchGameInLobby);
+            logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
+            return endNotifications(channel, userId);
         } else {
-            const playerCount = totalPlayers - game.totalplayers
-            if (playerCount === 0) {
-                channel.send(needPlayerCommand.gameSet(game.gamename, roleToPing))
-                notifications.delete(userId)
-                return channel.send(needPlayerCommand.stopNotifications)
+            try {
+                const playerCount = totalPlayers - countPlayersInLobby(game.map, game.slotstaken, game.slotstotal);
+                if (playerCount === 0) {
+                    channel.send(needPlayerCommand.gameSet(gameId, game.gamename, roleToPing, notifMsgs.usersToPing.join(" ")));
+                    return endNotifications(channel, userId);
+                }
+                if (playerCount < 0) {
+                    channel.send(needPlayerCommand.gameOverSet(gameId, game.gamename, Math.abs(playerCount), roleToPing, notifMsgs.usersToPing.join(" ")));
+                    return endNotifications(channel, userId);
+                }
+                channel.send(needPlayerCommand.notification(gameId, game.gamename, playerCount, roleToPing)).then(message => {
+                    notifMsgs.msgs.push(message);
+                    setTimeout(() => startNotificationSpam(gameId, userId, totalPlayers, delay, channel, roleToPing), delay);
+                });
+            } catch (error) {
+                logError({ channel: channel }, error, needPlayerCommand.smthWrong, logsForUsers.failedInCommand);
+                return endNotifications(channel, userId);
             }
-            if (playerCount < 0) 
-                return channel.send(needPlayerCommand.gameOverSet(game.gamename, Math.abs(playerCount), roleToPing))
-            channel.send(needPlayerCommand.notification(game.gamename, playerCount, roleToPing))
-                .then(_ => setTimeout(() => startNotificationSpam(gameId, userId, totalPlayers, delay, channel, roleToPing), delay))
-    }})
-}
+        }
+    });
+};
+
+const endNotifications = (channel, userId, message) => {
+    const notifications = notificationsPerGuild.get(channel.guild.id)
+    const notifMsgs = notifications.get(userId);
+    if (notifMsgs && notifMsgs.msgs) {
+        channel.bulkDelete(notifMsgs.msgs).then(_ => {
+            notifications.delete(userId);
+            const messageToDelete = message || { channel: channel };
+            autodeleteMsg(messageToDelete, needPlayerCommand.stopNotifications);
+        });
+    }
+};

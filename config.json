@@ -1,7 +1,7 @@
 {
   "prefix": "!",
   "defaultCooldown": 0.5,
-  "autodeleteMsgDelay": 5000,
+  "autodeleteMsgDelay": 10000,
   "logsForUsers": {
     "db": true,
     "undefinedCommand": false,

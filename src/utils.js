@@ -1,15 +1,9 @@
 const Discord = require("discord.js");
 import { autodeleteMsgDelay, defaultCooldown, prefix } from "../config.json";
 import { lobbyObserver } from "./strings/embeds";
-import {
-    badArguments,
-    commandInDevelopment,
-    needAdminPermission,
-    onlyForDmCommand,
-    onlyForGuildCommand,
-} from "./strings/logsMessages";
+import { badArguments, commandInDevelopment, needAdminPermission, onlyForDmCommand, onlyForGuildCommand } from "./strings/logsMessages";
 
-export const parseCommand = (message) => {
+export const parseCommand = message => {
     const validCommand = isCommand(message);
 
     if (!validCommand) {
@@ -21,11 +15,11 @@ export const parseCommand = (message) => {
     return {
         valid: validCommand,
         commandName: args.shift().toLowerCase(),
-        args: [...args.map((arg) => arg.toLowerCase())],
+        args: [...args.map(arg => arg.toLowerCase())],
     };
 };
 
-export const isCommand = (message) => {
+export const isCommand = message => {
     if (!message.content.startsWith(prefix) || message.author.bot) return false;
     return true;
 };
@@ -47,8 +41,7 @@ export const checkCooldownTime = (cooldowns, command, message) => {
     const cooldownAmount = (command.cooldown || defaultCooldown) * 1000;
 
     if (timestamps.has(message.author.id)) {
-        const expirationTime =
-            timestamps.get(message.author.id) + cooldownAmount;
+        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
 
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
@@ -83,34 +76,28 @@ export const checkCommandRequirements = (command, args, message) => {
         return onlyForGuildCommand;
     }
     //  if no args and args was required
-    if (command.args && command.args > args.length && args[0] !== command.stop) {
+    if (command.args && (command.args > args.length) && (args[0] !== (command.stop || true) )) {
         return badArguments(prefix, command.name, command.usage);
     }
     //  No errors
     return false;
 };
 
-export const parseGameListToEmbed = (gamelist) => {
-    return gamelist.map((game) => lobbyObserver(game));
+export const parseGameListToEmbed = gamelist => {
+    return gamelist.map(game => lobbyObserver(game));
 };
 
 export const autodeleteMsg = (message, content) => {
-    message.channel.send(content).then((botMessage) =>
-        setTimeout(() => {
-            message
-                .delete()
-                .catch((err) => console.log("not permissions for delete"));
-            botMessage.delete();
-        }, autodeleteMsgDelay)
-    );
+    message.channel.send(content).then(botMessage => {
+        message.delete && message.delete({ timeout: autodeleteMsgDelay }).catch(err => console.log("not permissions for delete"));
+        botMessage.delete({ timeout: autodeleteMsgDelay }).catch(err => console.log("nothing to delete"));
+    });
 };
 
 export const checkValidChannel = (inputChannel, message) => {
-    return inputChannel ? message.client.channels.cache.get(inputChannel.replace(/[#<>]/g, "")) 
-        || message.channel : message.channel;
+    return inputChannel ? message.client.channels.cache.get(inputChannel.replace(/[#<>]/g, "")) || message.channel : message.channel;
 };
 
 export const checkValidRole = (inputRole, message) => {
-    return inputRole ? message.guild.roles.cache.get(inputRole.replace(/[@&<>]/g, "")) 
-        || "" : "";
+    return inputRole ? message.guild.roles.cache.get(inputRole.replace(/[@&<>]/g, "")) || "" : "";
 };

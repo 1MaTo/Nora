@@ -5,19 +5,15 @@ const fs = require("fs");
 import { onCooldown } from "./strings/logsMessages";
 import { token } from "../auth.json";
 import { logsForUsers } from "../config.json";
-import {
-    autodeleteMsg,
-    checkCommandRequirements,
-    checkCooldownTime,
-    logError,
-    parseCommand,
-} from "./utils";
+import { autodeleteMsg, checkCommandRequirements, checkCooldownTime, logError, parseCommand } from "./utils";
 
 //  constant for builds
 const production = process.env.NODE_ENV === "production";
 const development = process.env.NODE_ENV === "development";
+//  util map
+export const utilmap = new Discord.Collection();
 //  map of notifications for games
-export const notifications = new Discord.Collection()
+export const notificationsPerGuild = new Discord.Collection();
 //  map of guilds configs
 export const guilds = new Discord.Collection();
 //  map of commands
@@ -28,22 +24,20 @@ const cooldowns = new Discord.Collection();
 export const lobbyWatcher = new Discord.Collection();
 
 //	loading commands to map
-const commandFiles = fs
-    .readdirSync(__dirname + "/commands")
-    .filter((file) => file.endsWith("js"));
+const commandFiles = fs.readdirSync(__dirname + "/commands").filter(file => file.endsWith("js"));
 
-commandFiles.forEach((file) => {
+commandFiles.forEach(file => {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
 });
 
 client.once("ready", () => {
     console.log("================= SETTING UP =================");
-    
+
     console.log("================= BOT ONLINE =================");
 });
 
-client.on("message", (message) => {
+client.on("message", message => {
     const guildId = message.guild && message.guild.id;
     const userId = message.author && message.author.id;
     //  Skip this server in production build
@@ -61,24 +55,14 @@ client.on("message", (message) => {
     //	get commands and args from message
     const { valid, commandName, args } = parseCommand(message);
     if (!valid) return false;
-    
-    const command = client.commands.get(commandName) 
-    || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+
+    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     //	if no such command in map just return
-    if (!command)
-        return logError(
-            message,
-            new Error("Undefined command"),
-            logsForUsers.undefinedCommand
-        );
+    if (!command) return logError(message, new Error("Undefined command"), logsForUsers.undefinedCommand);
 
     //	checking for any requirements in commands
-    const badCommandRequirements = checkCommandRequirements(
-        command,
-        args,
-        message
-    );
+    const badCommandRequirements = checkCommandRequirements(command, args, message);
 
     if (badCommandRequirements) {
         return autodeleteMsg(message, badCommandRequirements);
@@ -86,8 +70,7 @@ client.on("message", (message) => {
 
     //	cooldowns
     const secondsLeft = checkCooldownTime(cooldowns, command, message);
-    if (secondsLeft)
-        return autodeleteMsg(message, onCooldown(secondsLeft, command.name));
+    if (secondsLeft) return autodeleteMsg(message, onCooldown(secondsLeft, command.name));
 
     // finaly run command
     try {
