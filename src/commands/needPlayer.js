@@ -50,8 +50,8 @@ module.exports = {
                 notifications.set(message.author.id, { channel: channel, gameid: gameid, msgs: [], usersToPing: [] });
                 notificationsPerGuild.set(message.guild.id, notifications)
                 setTimeout(
-                    () => startNotificationSpam(gameid, message.author.id, totalPlayers, /* delay * 1000 * 60 */ 5000, channel, roleToPing),
-                    /* delay * 1000 * 60 */ 5000
+                    () => startNotificationSpam(gameid, message.author.id, totalPlayers, delay * 1000 * 60, channel, roleToPing),
+                    delay * 1000 * 60
                 );
                 //setTimeout(() => checkForFullLobby)
             }
