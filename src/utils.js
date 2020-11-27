@@ -76,7 +76,7 @@ export const checkCommandRequirements = (command, args, message) => {
         return onlyForGuildCommand;
     }
     //  if no args and args was required
-    if (command.args && (command.args > args.length) && (args[0] !== (command.stop || true) )) {
+    if (command.args && command.args > args.length && args[0] !== (command.stop || true)) {
         return badArguments(prefix, command.name, command.usage);
     }
     //  No errors
@@ -100,4 +100,20 @@ export const checkValidChannel = (inputChannel, message) => {
 
 export const checkValidRole = (inputRole, message) => {
     return inputRole ? message.guild.roles.cache.get(inputRole.replace(/[@&<>]/g, "")) || "" : "";
+};
+
+export const parseTimePast = milliseconds => {
+    var hours = milliseconds / (1000 * 60 * 60);
+    var absoluteHours = Math.floor(hours);
+    var h = absoluteHours > 9 ? absoluteHours : "0" + absoluteHours;
+
+    var minutes = (hours - absoluteHours) * 60;
+    var absoluteMinutes = Math.floor(minutes);
+    var m = absoluteMinutes > 9 ? absoluteMinutes : "0" + absoluteMinutes;
+
+    var seconds = (minutes - absoluteMinutes) * 60;
+    var absoluteSeconds = Math.floor(seconds);
+    var s = absoluteSeconds > 9 ? absoluteSeconds : "0" + absoluteSeconds;
+
+    return h + ":" + m + ":" + s;
 };

@@ -66,7 +66,7 @@ const startNotificationSpam = (gameId, userId, totalPlayers, delay, channel, rol
     getLobbyPlayersCount(gameId, (game, error) => {
         if (error) {
             autodeleteMsg({ channel: channel }, needPlayerCommand.noSuchGameInLobby);
-            logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
+            logError({ channel: channel }, new Error(error), dbErrors.queryError, logsForUsers.db);
             return endNotifications(channel, userId);
         } else {
             try {
