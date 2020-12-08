@@ -62,7 +62,7 @@ module.exports = {
 const startNotificationSpam = (gameId, userId, totalPlayers, delay, channel, roleToPing) => {
     const notifications = notificationsPerGuild.get(channel.guild.id)
     const notifMsgs = notifications.get(userId);
-    if (!notifMsgs) return;
+    if (!notifMsgs) return endNotifications(channel, userId);
     getLobbyPlayersCount(gameId, (game, error) => {
         if (error) {
             autodeleteMsg({ channel: channel }, needPlayerCommand.noSuchGameInLobby);
