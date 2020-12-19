@@ -83,7 +83,7 @@ export const mapConfig = ({ configName, name, slots, slotMap }) => {
         fields: [
             {
                 name: `\`Team\``,
-                value: `${slotMap.map(item => item.name).join("\n")}`,
+                value: `${slotMap.map(item => item.name[0].toUpperCase() + item.name.substr(1)).join("\n")}`,
                 inline: true,
             },
             {

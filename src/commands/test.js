@@ -1,3 +1,7 @@
+const { dbErrors } = require("../strings/logsMessages");
+const { logsForUsers } = require("../../config.json");
+const { logError, autodeleteMsg } = require("../utils");
+
 module.exports = {
     name: "test",
     args: 0,
@@ -8,7 +12,7 @@ module.exports = {
     development: true,
     adminOnly: false,
     run: (message, args) => {
-        console.log(args[0])
-        message.channel.send(args[0])
+        console.log(args[0]);
+        message.channel.send(args[0]);
     },
 };

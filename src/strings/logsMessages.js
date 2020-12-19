@@ -60,7 +60,7 @@ export const reloadCommand = {
 
 export const needPlayerCommand = {
     onlyOneNotificationForGame: "This game already has notifications, only 1 notification for game",
-    tipsForSub: (gameid) => `> \`!nj ${gameid}\` for subscribe to notifications\n> \`!nl ${gameid}\` for unsubscribe`,
+    tipsForSub: gameid => `> \`!nj ${gameid}\` for subscribe to notifications\n> \`!nl ${gameid}\` for unsubscribe`,
     smthWrong: "Something did wrong in notifications, sorry",
     badPlayersCount: "Invalid players count",
     badDelay: "Bad delay",
@@ -81,10 +81,13 @@ export const notificationJoinCommand = {
     alreadySubscribed: "You already subscribed for this game",
     subscribed: "I'will ping you when game will be ready",
     unsubscribed: "You are unsubscribed from ping",
-    nothingToUnsubscribe: "There are no games you were subscribed to"
-}
+    nothingToUnsubscribe: "There are no games you were subscribed to",
+};
 
 export const mapConfigCommands = {
     noConfigForMap: "There is no config for this map",
-    noMapConfigs: "There are no map configs fot this server"
-}
+    noMapConfigs: "There are no map configs fot this server",
+    badArgs: "Some of arguments invalid, try again",
+    configUpdateFail: "Config update/create failed",
+    configUpdateSuccess: "Config update/create success",
+};

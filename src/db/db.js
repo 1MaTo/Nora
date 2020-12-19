@@ -67,7 +67,7 @@ export const deleteMapConfig = (guildId, map, callback) => {
 };
 
 export const updateMapConfig = (guildId, map, config, callback) => {
-    db.query(`replace into mapconfigs (guildid, map, config) values (${guildId}, ${map}, ${config})`, (error, results) => {
+    db.query(`replace into mapconfigs (guildid, map, config) values (${guildId}, "${map}", '${config}')`, (error, results) => {
         if (error) {
             console.error(error);
             return callback(null, error.message);
