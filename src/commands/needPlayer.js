@@ -17,7 +17,7 @@ module.exports = {
     adminOnly: false,
     stop: "stop",
     run: (message, args) => {
-        const notifications = notificationsPerGuild.get(message.guild.id) || new Discord.Collection()
+        const notifications = notificationsPerGuild.get(message.guild.id) || new Discord.Collection();
         if (args[0] === "stop") {
             const notificationsData = notifications.get(message.author.id);
             if (notificationsData) {
@@ -26,7 +26,11 @@ module.exports = {
                 return autodeleteMsg(message, needPlayerCommand.nothingToStop);
             }
         }
-        if (notifications.has(message.author.id)) return autodeleteMsg(message, needPlayerCommand.notificationAlreadyRunning);
+        if (notifications.has(message.author.id)) {
+            const notificationsData = notifications.get(message.author.id);
+            endNotifications(notificationsData.channel, message.author.id, message);
+            autodeleteMsg(message, needPlayerCommand.recreateNotification);
+        }
         const gameid = args[0];
         const notificationsForThisGame = [];
         notifications.forEach((value, key) => {
@@ -48,19 +52,15 @@ module.exports = {
                 autodeleteMsg(message, needPlayerCommand.startNotifications);
                 autodeleteMsg(message, needPlayerCommand.tipsForSub(gameid));
                 notifications.set(message.author.id, { channel: channel, gameid: gameid, msgs: [], usersToPing: [] });
-                notificationsPerGuild.set(message.guild.id, notifications)
-                setTimeout(
-                    () => startNotificationSpam(gameid, message.author.id, totalPlayers, delay * 1000 * 60, channel, roleToPing),
-                    delay * 1000 * 60
-                );
-                //setTimeout(() => checkForFullLobby)
+                notificationsPerGuild.set(message.guild.id, notifications);
+                setTimeout(() => startNotificationSpam(gameid, message.author.id, totalPlayers, delay * 1000 * 60, channel, roleToPing), delay * 1000 * 60);
             }
         });
     },
 };
 
 const startNotificationSpam = (gameId, userId, totalPlayers, delay, channel, roleToPing) => {
-    const notifications = notificationsPerGuild.get(channel.guild.id)
+    const notifications = notificationsPerGuild.get(channel.guild.id);
     const notifMsgs = notifications.get(userId);
     if (!notifMsgs) return endNotifications(channel, userId);
     getLobbyPlayersCount(gameId, (game, error) => {
@@ -92,7 +92,7 @@ const startNotificationSpam = (gameId, userId, totalPlayers, delay, channel, rol
 };
 
 const endNotifications = (channel, userId, message) => {
-    const notifications = notificationsPerGuild.get(channel.guild.id)
+    const notifications = notificationsPerGuild.get(channel.guild.id);
     const notifMsgs = notifications.get(userId);
     if (notifMsgs && notifMsgs.msgs) {
         channel.bulkDelete(notifMsgs.msgs).then(_ => {

@@ -70,6 +70,7 @@ export const needPlayerCommand = {
     startNotifications: `Notifications for game started`,
     stopNotifications: "Notifications for game stoped",
     nothingToStop: "Nothing to stop",
+    recreateNotification: "Updating notification...",
     notification: (gameid, gamename, playerCount, role) => `\`[#${gameid}] ${gamename}\` **+${playerCount}**  ${role}`,
     gameSet: (gameid, gamename, role, users) => `\`[#${gameid}] ${gamename}\` **ready to start!** ${role} ${users}`,
     gameOverSet: (gameid, gamename, overPlayers, role, users) => `\`[#${gameid}] ${gamename}\` is overcrowded by **${overPlayers}** people! ${role} ${users}`,
