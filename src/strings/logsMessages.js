@@ -83,3 +83,8 @@ export const notificationJoinCommand = {
     unsubscribed: "You are unsubscribed from ping",
     nothingToUnsubscribe: "There are no games you were subscribed to"
 }
+
+export const mapConfigCommands = {
+    noConfigForMap: "There is no config for this map",
+    noMapConfigs: "There are no map configs fot this server"
+}

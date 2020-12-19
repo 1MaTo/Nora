@@ -3,7 +3,7 @@
   "defaultCooldown": 0.5,
   "autodeleteMsgDelay": 10000,
   "logsForUsers": {
-    "db": true,
+    "db": false,
     "undefinedCommand": false,
     "cantSendDM": true,
     "failedInCommand": true,

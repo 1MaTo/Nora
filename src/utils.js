@@ -87,10 +87,10 @@ export const parseGameListToEmbed = gamelist => {
     return gamelist.map(game => lobbyObserver(game));
 };
 
-export const autodeleteMsg = (message, content) => {
+export const autodeleteMsg = (message, content, seconds = null) => {
     message.channel.send(content).then(botMessage => {
         message.delete && message.delete({ timeout: autodeleteMsgDelay }).catch(err => console.log("not permissions for delete"));
-        botMessage.delete({ timeout: autodeleteMsgDelay }).catch(err => console.log("nothing to delete"));
+        botMessage.delete({ timeout: seconds || autodeleteMsgDelay }).catch(err => console.log("nothing to delete"));
     });
 };
 

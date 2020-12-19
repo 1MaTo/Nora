@@ -1,6 +1,6 @@
 import { images } from "../strings/links";
 
-const usersInLobby = (users) => {
+const usersInLobby = users => {
     if (users)
         return [
             {
@@ -29,16 +29,7 @@ const usersInLobby = (users) => {
     }
 };
 
-export const lobbyObserver = ({
-    name,
-    map,
-    host,
-    owner,
-    slots,
-    slotsTaken,
-    users,
-    botid
-}) => {
+export const lobbyObserver = ({ name, map, host, owner, slots, slotsTaken, users, botid }) => {
     return {
         botid: botid,
         embed: {
@@ -81,5 +72,33 @@ export const lobbyObserver = ({
                 icon_url: images.gamelist.footerIcon,
             },
         },
+    };
+};
+
+export const mapConfig = ({ configName, name, slots, slotMap }) => {
+    return {
+        title: `${configName}`,
+        description: `Map name: **${name}**\nSlots: **${slots}**`,
+        color: null,
+        fields: [
+            {
+                name: `\`Team\``,
+                value: `${slotMap.map(item => item.name).join("\n")}`,
+                inline: true,
+            },
+            {
+                name: `\`Slots\``,
+                value: `${slotMap.map(item => item.slots).join("\n")}`,
+                inline: true,
+            },
+        ],
+    };
+};
+
+export const mapConfigList = configList => {
+    return {
+        title: "Config list",
+        description: `${configList.join("\n")}`,
+        color: null,
     };
 };
