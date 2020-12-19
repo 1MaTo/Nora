@@ -36,7 +36,7 @@ module.exports = {
                 autodeleteMsg(message, mapConfigCommands.configUpdateFail);
                 return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
             }
-            autodeleteMsg(message, mapConfigCommands.configUpdateSuccess);
+            return autodeleteMsg(message, mapConfigCommands.configUpdateSuccess);
         });
     },
 };

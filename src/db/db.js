@@ -56,12 +56,12 @@ export const getMapConfig = (guildId, map, callback) => {
 };
 
 export const deleteMapConfig = (guildId, map, callback) => {
-    db.query(`DELETE FROM mapconfigs WHERE guildid=${guildId} and map=${map}`, (error, results) => {
+    db.query(`DELETE FROM mapconfigs WHERE guildid=${guildId} and map="${map}"`, (error, results) => {
         if (error) {
             console.error(error);
             return callback(null, error.message);
         }
-        //if (!results.length) return callback(null, "Empty query");
+        if (!results.affectedRows) return callback(null, "Empty query");
         callback(results);
     });
 };

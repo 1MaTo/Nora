@@ -30,7 +30,7 @@ module.exports = {
                     autodeleteMsg(message, mapConfigCommands.noMapConfigs);
                     return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
                 }
-                autodeleteMsg(message, { embed: mapConfigList(mapNames) }, 20000);
+                return autodeleteMsg(message, { embed: mapConfigList(mapNames) }, 20000);
             });
         }
     },

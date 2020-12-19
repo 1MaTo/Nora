@@ -90,4 +90,6 @@ export const mapConfigCommands = {
     badArgs: "Some of arguments invalid, try again",
     configUpdateFail: "Config update/create failed",
     configUpdateSuccess: "Config update/create success",
+    configDeleteFail: "No config to delete",
+    configDeleteSuccess: "Config delete success",
 };
