@@ -5,6 +5,7 @@ import { autodeleteMsg, logError } from "../utils";
 module.exports = {
     name: "help",
     args: 0,
+    aliases: ["h"],
     usage: "[command name]",
     description: "Sending all available commands in DM",
     guildOnly: false,
@@ -12,32 +13,21 @@ module.exports = {
         const { commands } = message.client;
         if (args.length) {
             const commandName = args[0];
-            const command = commands.get(commandName) 
-            || commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-            if (command.name === 'help') return;
+            const command = commands.get(commandName) || commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+            if (command.name === "help") return;
             if (!command) {
                 return autodeleteMsg(message, "Undefined command");
             }
-            message.channel.send(
-                helpCommand.singleCommandInfo(prefix, command)
-            );
+            message.channel.send(helpCommand.singleCommandInfo(prefix, command));
         } else {
             const data = [];
             data.push(helpCommand.commandList);
-            commands.forEach((command) => {
-                if (command.development || command.name === 'help') return;
-                data.push(
-                    helpCommand.commandShort(
-                        prefix,
-                        command.name,
-                        command.usage,
-                        command.description,
-                        command.aliases
-                    )
-                );
+            commands.forEach(command => {
+                if (command.development || command.name === "help") return;
+                data.push(helpCommand.commandShort(prefix, command.name, command.usage, command.description, command.aliases));
             });
             data.push(helpCommand.tipForSingleCommand(prefix));
-            return message.author.send(data, { split: true }).catch((error) => {
+            return message.author.send(data, { split: true }).catch(error => {
                 logError(message, error.message, logsForUsers.cantSendDM);
             });
         }
