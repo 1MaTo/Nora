@@ -9,7 +9,8 @@
         "build": "babel src/ -d dist/",
         "prod_start": "npm run build && cross-env NODE_ENV=production forever start dist/bot.js",
         "prod_stop": "forever stop dist/bot.js",
-        "prod_restart": "git pull && npm run build && forever restart dist/bot.js"
+        "prod_restart": "git pull && npm run build && cross-env NODE_ENV=production forever restart dist/bot.js",
+        "test1": "cross-env NODE_ENV=development forever start dist/bot.js"
     },
     "description": "Bot",
     "main": "bot.js",
@@ -18,12 +19,16 @@
         "@babel/cli": "^7.12.7",
         "@babel/core": "^7.12.7",
         "@babel/node": "^7.12.6",
+        "@babel/plugin-transform-async-to-generator": "^7.12.1",
+        "@babel/polyfill": "^7.12.1",
         "@babel/preset-env": "^7.12.7",
+        "core-js": "^3.8.1",
         "cross-env": "^7.0.2",
         "discord.js": "^12.4.1",
         "forever": "^3.0.4",
         "moment": "^2.29.1",
         "mysql": "^2.18.1",
+        "regenerator-runtime": "^0.13.7",
         "shx": "^0.3.3"
     },
     "prettier": {
