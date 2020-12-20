@@ -8,7 +8,8 @@ module.exports = {
     args: 3,
     aliases: ["updateMapConfig", "cmc", "umc"],
     usage: "<map> <slots> <team-slots> | <team-slots> | ...",
-    description: "Create or Update map config.\nDo not count computer slots!\nExmaple: `!cmc fbt 10 Team 1-4 | Team 2-4 | Spectators-2`",
+    description:
+        "Create or Update map config.\n!WARNING! Do not count comp slots when use this command!\nExmaple: !cmc fbt 10 Team 1-4 | Team 2-4 | Spectators-2",
     guildOnly: true,
     development: false,
     adminOnly: false,

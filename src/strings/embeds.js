@@ -102,3 +102,40 @@ export const mapConfigList = configList => {
         color: null,
     };
 };
+
+export const helpAllCommands = (prefix, commands) => {
+    return {
+        title: "Command list",
+        description: commands
+            .map(command =>
+                command.development
+                    ? ""
+                    : `> \`${prefix}${command.name}\` ${command.usage}\n${
+                          command.aliases ? `> \`${command.aliases.map(alias => `${prefix}${alias}`).join(" ")}\`\n` : ""
+                      }\`\`\`${command.description}\`\`\``
+            )
+            .join(`\n\n`),
+        color: null,
+    };
+};
+
+export const helpSingleCommand = (prefix, { name, description, usage, aliases }) => {
+    return {
+        title: name,
+        color: null,
+        fields: [
+            {
+                name: "Usage",
+                value: `\`\`\`${prefix}${name} ${usage}\`\`\``,
+            },
+            {
+                name: "Description",
+                value: `\`\`\`${description}\`\`\``,
+            },
+            {
+                name: "Aliases",
+                value: `\`\`\`${aliases.map(alias => `${prefix}${alias}`).join(" ")}\`\`\``,
+            },
+        ],
+    };
+};

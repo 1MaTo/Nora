@@ -1,4 +1,5 @@
 import { prefix, logsForUsers } from "../../config.json";
+import { helpAllCommands, helpSingleCommand } from "../strings/embeds";
 import { helpCommand } from "../strings/logsMessages";
 import { autodeleteMsg, logError } from "../utils";
 
@@ -18,16 +19,9 @@ module.exports = {
             if (!command) {
                 return autodeleteMsg(message, "Undefined command");
             }
-            message.channel.send(helpCommand.singleCommandInfo(prefix, command));
+            autodeleteMsg(message, { embed: helpSingleCommand(prefix, command) }, 15000 /* helpCommand.singleCommandInfo(prefix, command) */);
         } else {
-            const data = [];
-            data.push(helpCommand.commandList);
-            commands.forEach(command => {
-                if (command.development || command.name === "help") return;
-                data.push(helpCommand.commandShort(prefix, command.name, command.usage, command.description, command.aliases));
-            });
-            data.push(helpCommand.tipForSingleCommand(prefix));
-            return message.author.send(data, { split: true }).catch(error => {
+            return message.author.send({ embed: helpAllCommands(prefix, commands) }).catch(error => {
                 logError(message, error.message, logsForUsers.cantSendDM);
             });
         }

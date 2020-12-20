@@ -10,7 +10,7 @@ module.exports = {
     name: "needplayer",
     args: 2,
     aliases: ["np"],
-    usage: "<game id> <players count for game> [delay (minutes)] [channel] [role]\n<stop>",
+    usage: "<game id> <players count for game> [delay (minutes)] [channel] [role] | <stop>",
     description: "Select game id,number of players, delay, channel and role to enable notifications in chat",
     guildOnly: true,
     development: false,
@@ -28,8 +28,6 @@ module.exports = {
         }
         let reCreate = false;
         if (notifications.has(message.author.id)) {
-            //const notificationsData = notifications.get(message.author.id);
-            //endNotifications(notificationsData.channel, message.author.id, message, true);
             autodeleteMsg(message, needPlayerCommand.recreateNotification, 1000);
             reCreate = true;
         }
@@ -56,7 +54,7 @@ module.exports = {
                     gameid: gameid,
                     auhtorId: message.author.id,
                     totalPlayers: totalPlayers,
-                    delay: /* delay * 1000 * 60 */ 2000,
+                    delay: delay * 1000 * 60,
                     channel: channel,
                     roleToPing: roleToPing,
                     msgs: [],
