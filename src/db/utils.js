@@ -1,4 +1,5 @@
 import { EMPTY_LOBBY_SERVER, EMPTY_LOBBY_STATS, EMPTY_LOBBY_USER_NAME, EPMTY_LOBBY_PING, SPACE } from "../strings/constants";
+import { searchMapConfig } from "./db";
 
 export const parseMapName = map => {
     const indexOfLastBackSlash = map.lastIndexOf("\\") + 1;
@@ -6,7 +7,7 @@ export const parseMapName = map => {
     return map.slice(indexOfLastBackSlash, indexOfMapFileType);
 };
 
-export const wc3MapConfigs = [
+/* export const wc3MapConfigs = [
     {
         name: "fbt",
         slots: 10,
@@ -25,7 +26,7 @@ export const wc3MapConfigs = [
             { slots: 2, name: "Spectators" },
         ],
     },
-];
+]; */
 
 export const getMapConfig = ({ map, slotstotal }) => {
     const mapName = parseMapName(map);
@@ -60,10 +61,10 @@ export const parseUserNames = (userNamesRaw, totalSlots, slotsMap) => {
     //  Past epmty strings in massive to split lobby according to map
     let slotsSumm = 0;
     slotsMap.reverse().forEach(({ slots, name }) => {
-        slotsSumm = slotsSumm + slots;
+        slotsSumm = slotsSumm + Number(slots);
         if (slotsSumm > totalSlots) return;
         usersMass.splice(totalSlots - slotsSumm, 0, {
-            name: `\`${name}\``,
+            name: `\`${name[0].toUpperCase() + name.substr(1)}\``,
             server: SPACE,
             ping: SPACE,
         });
@@ -94,7 +95,36 @@ export const parseUserNames = (userNamesRaw, totalSlots, slotsMap) => {
     return { nicks, pings, servers };
 };
 
-export const parseGameListResults = results => {
+export const buildGameResult = async (guildId, game) => {
+    if (game.gamename === "" && game.ownername === "" && game.creatorname === "") {
+        return null;
+    }
+    //  Default map config
+    const config = await searchMapConfig(guildId, game);
+    const mapTotalSlots = config.slots;
+    const slotsMap = config.slotMap;
+    const lobbyPlayers = parseUserNames(game.usernames, mapTotalSlots, [...slotsMap]);
+    return {
+        botid: game.botid,
+        name: game.gamename,
+        owner: game.ownername,
+        host: game.creatorname,
+        map: config.mapName,
+        users: lobbyPlayers,
+        slots: mapTotalSlots,
+        slotsTaken: game.slotstaken - (game.slotstotal - mapTotalSlots),
+    };
+};
+
+export const parseGameListResults = async (guildId, results) => {
+    const buildingResults = results.map(game => buildGameResult(guildId, game));
+    const lobbies = await Promise.all(buildingResults);
+    const currentLobbies = lobbies.filter(lobby => lobby !== null);
+    if (!currentLobbies.length) return null;
+    return currentLobbies;
+};
+
+/* export const parseGameListResults = results => {
     const lobby = [];
     results.forEach(game => {
         //  If lobby empty just return
@@ -102,14 +132,6 @@ export const parseGameListResults = results => {
             return null;
         }
         //  Default map config
-        const defaultMapConfig = {
-            slots: game.slotstotal,
-            slotMap: [{ slots: game.slotstotal, name: "Lobby" }],
-        };
-        /* const mapConfig = {
-            ...defaultMapConfig,
-            ...getMapConfig(formatMapName)
-        }; */
         const mapConfig = getMapConfig(game);
         const mapTotalSlots = mapConfig.slots;
         const slotsMap = mapConfig.slotMap;
@@ -127,9 +149,9 @@ export const parseGameListResults = results => {
     });
     if (!lobby.length) return null;
     return lobby;
-};
+}; */
 
 export const countPlayersInLobby = (mapName, slotstaken, slotstotal) => {
-    const mapConfig = getMapConfig({map: parseMapName(mapName), slotstotal});
+    const mapConfig = getMapConfig({ map: parseMapName(mapName), slotstotal });
     return slotstaken - (slotstotal - mapConfig.slots);
 };
