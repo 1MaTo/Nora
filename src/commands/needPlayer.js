@@ -26,15 +26,17 @@ module.exports = {
                 return autodeleteMsg(message, needPlayerCommand.nothingToStop);
             }
         }
+        let reCreate = false;
         if (notifications.has(message.author.id)) {
-            const notificationsData = notifications.get(message.author.id);
-            endNotifications(notificationsData.channel, message.author.id, message);
-            autodeleteMsg(message, needPlayerCommand.recreateNotification);
+            //const notificationsData = notifications.get(message.author.id);
+            //endNotifications(notificationsData.channel, message.author.id, message, true);
+            autodeleteMsg(message, needPlayerCommand.recreateNotification, 1000);
+            reCreate = true;
         }
         const gameid = args[0];
         const notificationsForThisGame = [];
         notifications.forEach((value, key) => {
-            if (value.gameid === gameid) notificationsForThisGame.push(key);
+            if (value.gameid === gameid && message.author.id !== key) notificationsForThisGame.push(key);
         });
         if (notificationsForThisGame.length) return autodeleteMsg(message, needPlayerCommand.onlyOneNotificationForGame);
         const totalPlayers = args[1];
@@ -49,43 +51,79 @@ module.exports = {
                 autodeleteMsg(message, needPlayerCommand.noSuchGameInLobby);
                 return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
             } else {
-                autodeleteMsg(message, needPlayerCommand.startNotifications);
-                autodeleteMsg(message, needPlayerCommand.tipsForSub(gameid));
-                notifications.set(message.author.id, { channel: channel, gameid: gameid, msgs: [], usersToPing: [] });
-                notificationsPerGuild.set(message.guild.id, notifications);
-                setTimeout(() => startNotificationSpam(gameid, message.author.id, totalPlayers, delay * 1000 * 60, channel, roleToPing), delay * 1000 * 60);
+                const notifOptions = {
+                    timeToken: Date.now(),
+                    gameid: gameid,
+                    auhtorId: message.author.id,
+                    totalPlayers: totalPlayers,
+                    delay: /* delay * 1000 * 60 */ 2000,
+                    channel: channel,
+                    roleToPing: roleToPing,
+                    msgs: [],
+                    usersToPing: [],
+                };
+                if (reCreate) {
+                    const pastNotifData = notifications.get(message.author.id);
+                    notifications.set(message.author.id, {
+                        ...notifOptions,
+                        channel: args.length >= 4 ? notifOptions.channel : pastNotifData.channel,
+                        roleToPing: args.length >= 5 ? notifOptions.roleToPing : pastNotifData.roleToPing,
+                        delay: args.length >= 3 ? notifOptions.delay : pastNotifData.delay,
+                        usersToPing: pastNotifData.usersToPing,
+                        msgs: pastNotifData.msgs,
+                    });
+                    notificationsPerGuild.set(message.guild.id, notifications);
+                    setTimeout(
+                        () => startNotificationSpam(notifOptions.timeToken, message.guild.id, message.author.id, notifOptions.channel),
+                        notifOptions.delay
+                    );
+                } else {
+                    autodeleteMsg(message, needPlayerCommand.startNotifications);
+                    autodeleteMsg(message, needPlayerCommand.tipsForSub(gameid));
+                    notifications.set(message.author.id, { ...notifOptions });
+                    notificationsPerGuild.set(message.guild.id, notifications);
+                    setTimeout(
+                        () => startNotificationSpam(notifOptions.timeToken, message.guild.id, message.author.id, notifOptions.channel),
+                        notifOptions.delay
+                    );
+                }
             }
         });
     },
 };
 
-const startNotificationSpam = (gameId, userId, totalPlayers, delay, channel, roleToPing) => {
-    const notifications = notificationsPerGuild.get(channel.guild.id);
-    const notifMsgs = notifications.get(userId);
-    if (!notifMsgs) return endNotifications(channel, userId);
-    getLobbyPlayersCount(gameId, (game, error) => {
+const startNotificationSpam = (token, guildId, authorId, channel) => {
+    const notifications = notificationsPerGuild.get(guildId);
+    if (!notifications) return endNotifications(channel, authorId);
+    const notifData = notifications.get(authorId);
+    if (!notifData) return endNotifications(channel, authorId);
+    // Return if notifications reacreated
+    if (notifData.timeToken !== token) return;
+    const { gameid, totalPlayers, delay, roleToPing, usersToPing, msgs } = notifData;
+    getLobbyPlayersCount(gameid, async (game, error) => {
         if (error) {
             autodeleteMsg({ channel: channel }, needPlayerCommand.noSuchGameInLobby);
             logError({ channel: channel }, new Error(error), dbErrors.queryError, logsForUsers.db);
-            return endNotifications(channel, userId);
+            return endNotifications(channel, authorId);
         } else {
             try {
-                const playerCount = totalPlayers - countPlayersInLobby(game.map, game.slotstaken, game.slotstotal);
+                const playersInLobby = await countPlayersInLobby(channel.guild.id, game.map, game.slotstaken, game.slotstotal);
+                const playerCount = totalPlayers - playersInLobby;
                 if (playerCount === 0) {
-                    channel.send(needPlayerCommand.gameSet(gameId, game.gamename, roleToPing, notifMsgs.usersToPing.join(" ")));
-                    return endNotifications(channel, userId);
+                    channel.send(needPlayerCommand.gameSet(gameid, game.gamename, roleToPing, usersToPing.join(" ")));
+                    return endNotifications(channel, authorId);
                 }
                 if (playerCount < 0) {
-                    channel.send(needPlayerCommand.gameOverSet(gameId, game.gamename, Math.abs(playerCount), roleToPing, notifMsgs.usersToPing.join(" ")));
-                    return endNotifications(channel, userId);
+                    channel.send(needPlayerCommand.gameOverSet(gameid, game.gamename, Math.abs(playerCount), roleToPing, usersToPing.join(" ")));
+                    return endNotifications(channel, authorId);
                 }
-                channel.send(needPlayerCommand.notification(gameId, game.gamename, playerCount, roleToPing)).then(message => {
-                    notifMsgs.msgs.push(message);
-                    setTimeout(() => startNotificationSpam(gameId, userId, totalPlayers, delay, channel, roleToPing), delay);
+                channel.send(needPlayerCommand.notification(gameid, game.gamename, playerCount, roleToPing)).then(message => {
+                    msgs.push(message);
+                    setTimeout(() => startNotificationSpam(token, guildId, authorId, channel), delay);
                 });
             } catch (error) {
                 logError({ channel: channel }, error, needPlayerCommand.smthWrong, logsForUsers.failedInCommand);
-                return endNotifications(channel, userId);
+                return endNotifications(channel, authorId);
             }
         }
     });

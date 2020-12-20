@@ -28,7 +28,8 @@ export const parseMapName = map => {
     },
 ]; */
 
-export const getMapConfig = ({ map, slotstotal }) => {
+export const getMapConfig = async ({ map, slotstotal }) => {
+    const config = await searchMapConfig(guildId, game);
     const mapName = parseMapName(map);
     const mapConfig = wc3MapConfigs.find(map => mapName.match(new RegExp(map.name.toLowerCase(), "gi")));
     const defaultMapConfig = {
@@ -151,7 +152,7 @@ export const parseGameListResults = async (guildId, results) => {
     return lobby;
 }; */
 
-export const countPlayersInLobby = (mapName, slotstaken, slotstotal) => {
-    const mapConfig = getMapConfig({ map: parseMapName(mapName), slotstotal });
-    return slotstaken - (slotstotal - mapConfig.slots);
+export const countPlayersInLobby = async (guildId, mapName, slotstaken, slotstotal) => {
+    const config = await searchMapConfig(guildId, { map: mapName, slotstotal });
+    return slotstaken - (slotstotal - Number(config.slots));
 };

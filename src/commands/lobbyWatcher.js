@@ -39,7 +39,7 @@ module.exports = {
     },
 };
 
-const startWatching = async (message, channel, delay) => {
+const startWatching = (message, channel, delay) => {
     getLobby(message.guild.id, async (result, error) => {
         if (error) {
             return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
@@ -68,7 +68,7 @@ const getContentForLobbies = result =>
         return { botid: game.botid, embed: game.embed };
     });
 
-const updateLobbyWatcher = async (guildId, channel, delay) => {
+const updateLobbyWatcher = (guildId, channel, delay) => {
     if (!lobbyWatcher.has(guildId)) return;
     getLobby(guildId, async (result, error) => {
         if (error) {
