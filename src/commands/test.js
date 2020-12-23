@@ -1,5 +1,5 @@
 const { dbErrors } = require("../strings/logsMessages");
-const { logsForUsers } = require("../../config.json");
+const { fbtSettings } = require("../../config.json");
 const { logError, autodeleteMsg } = require("../utils");
 
 module.exports = {

@@ -1,6 +1,6 @@
 const { getMapConfig, getMapNames } = require("../db/db");
 const { dbErrors, mapConfigCommands } = require("../strings/logsMessages");
-const { logsForUsers } = require("../../config.json");
+const { fbtSettings } = require("../../config.json");
 const { logError, autodeleteMsg } = require("../utils");
 const { mapConfig, mapConfigList } = require("../strings/embeds");
 
@@ -20,7 +20,7 @@ module.exports = {
             getMapConfig(guildId, mapName, (config, error) => {
                 if (error) {
                     autodeleteMsg(message, mapConfigCommands.noConfigForMap);
-                    return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
+                    return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
                 }
                 return autodeleteMsg(message, { embed: mapConfig({ configName: mapName, ...config }) }, 20000);
             });
@@ -28,7 +28,7 @@ module.exports = {
             getMapNames(guildId, (mapNames, error) => {
                 if (error) {
                     autodeleteMsg(message, mapConfigCommands.noMapConfigs);
-                    return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
+                    return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
                 }
                 return autodeleteMsg(message, { embed: mapConfigList(mapNames) }, 20000);
             });

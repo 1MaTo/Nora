@@ -7,7 +7,7 @@ const fs = require("fs");
 
 import { onCooldown } from "./strings/logsMessages";
 import { token } from "../auth.json";
-import { logsForUsers } from "../config.json";
+import { fbtSettings } from "../config.json";
 import { autodeleteMsg, checkCommandRequirements, checkCooldownTime, logError, parseCommand } from "./utils";
 
 //  constant for builds
@@ -62,7 +62,7 @@ client.on("message", message => {
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     //	if no such command in map just return
-    if (!command) return logError(message, new Error("Undefined command"), logsForUsers.undefinedCommand);
+    if (!command) return logError(message, new Error("Undefined command"), fbtSettings.undefinedCommand);
 
     //	checking for any requirements in commands
     const badCommandRequirements = checkCommandRequirements(command, args, message);
@@ -79,7 +79,7 @@ client.on("message", message => {
     try {
         command.run(message, args);
     } catch (error) {
-        logError(message, error, logsForUsers.failedInCommand);
+        logError(message, error, fbtSettings.failedInCommand);
     }
 });
 

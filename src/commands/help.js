@@ -1,4 +1,4 @@
-import { prefix, logsForUsers } from "../../config.json";
+import { prefix, fbtSettings } from "../../config.json";
 import { helpAllCommands, helpSingleCommand } from "../strings/embeds";
 import { helpCommand } from "../strings/logsMessages";
 import { autodeleteMsg, logError } from "../utils";
@@ -22,7 +22,7 @@ module.exports = {
             autodeleteMsg(message, { embed: helpSingleCommand(prefix, command) }, 15000 /* helpCommand.singleCommandInfo(prefix, command) */);
         } else {
             return message.author.send({ embed: helpAllCommands(prefix, commands) }).catch(error => {
-                logError(message, error.message, logsForUsers.cantSendDM);
+                logError(message, error.message, fbtSettings.cantSendDM);
             });
         }
     },

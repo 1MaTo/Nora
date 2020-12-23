@@ -1,5 +1,5 @@
 const { dbErrors, mapConfigCommands } = require("../strings/logsMessages");
-const { logsForUsers } = require("../../config.json");
+const { fbtSettings } = require("../../config.json");
 const { logError, autodeleteMsg } = require("../utils");
 const { deleteMapConfig } = require("../db/db");
 
@@ -18,7 +18,7 @@ module.exports = {
         deleteMapConfig(guildId, map, (result, error) => {
             if (error) {
                 autodeleteMsg(message, mapConfigCommands.configDeleteFail);
-                return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
+                return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
             }
             return autodeleteMsg(message, mapConfigCommands.configDeleteSuccess);
         });

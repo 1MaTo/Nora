@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 import { getLobbyPlayersCount } from "../db/db";
-import { logsForUsers } from "../../config.json";
+import { fbtSettings } from "../../config.json";
 import { dbErrors, needPlayerCommand } from "../strings/logsMessages";
 import { autodeleteMsg, checkValidChannel, checkValidRole, logError } from "../utils";
 import { notificationsPerGuild } from "../bot";
@@ -47,14 +47,14 @@ module.exports = {
         getLobbyPlayersCount(gameid, (game, error) => {
             if (error) {
                 autodeleteMsg(message, needPlayerCommand.noSuchGameInLobby);
-                return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
+                return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
             } else {
                 const notifOptions = {
                     timeToken: Date.now(),
                     gameid: gameid,
                     auhtorId: message.author.id,
                     totalPlayers: totalPlayers,
-                    delay: delay * 1000 * 60,
+                    delay: /* delay * 1000 * 60 */2000,
                     channel: channel,
                     roleToPing: roleToPing,
                     msgs: [],
@@ -101,11 +101,11 @@ const startNotificationSpam = (token, guildId, authorId, channel) => {
     getLobbyPlayersCount(gameid, async (game, error) => {
         if (error) {
             autodeleteMsg({ channel: channel }, needPlayerCommand.noSuchGameInLobby);
-            logError({ channel: channel }, new Error(error), dbErrors.queryError, logsForUsers.db);
+            logError({ channel: channel }, new Error(error), dbErrors.queryError, fbtSettings.db);
             return endNotifications(channel, authorId);
         } else {
             try {
-                const playersInLobby = await countPlayersInLobby(channel.guild.id, game.map, game.slotstaken, game.slotstotal);
+                const playersInLobby = await countPlayersInLobby(channel.guild.id, game.usernames, game.map, game.slotstaken, game.slotstotal);
                 const playerCount = totalPlayers - playersInLobby;
                 if (playerCount === 0) {
                     channel.send(needPlayerCommand.gameSet(gameid, game.gamename, roleToPing, usersToPing.join(" ")));
@@ -120,7 +120,7 @@ const startNotificationSpam = (token, guildId, authorId, channel) => {
                     setTimeout(() => startNotificationSpam(token, guildId, authorId, channel), delay);
                 });
             } catch (error) {
-                logError({ channel: channel }, error, needPlayerCommand.smthWrong, logsForUsers.failedInCommand);
+                logError({ channel: channel }, error, needPlayerCommand.smthWrong, fbtSettings.failedInCommand);
                 return endNotifications(channel, authorId);
             }
         }

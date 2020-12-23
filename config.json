@@ -2,11 +2,12 @@
   "prefix": "!",
   "defaultCooldown": 0.5,
   "autodeleteMsgDelay": 10000,
-  "logsForUsers": {
+  "fbtSettings": {
     "db": false,
     "undefinedCommand": false,
     "cantSendDM": true,
     "failedInCommand": true,
-    "missingPermissions": false
+    "missingPermissions": false,
+    "spectatorLivesMatter": false
   }
 }

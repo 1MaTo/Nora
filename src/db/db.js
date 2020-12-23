@@ -2,7 +2,7 @@ import mysql from "mysql";
 import util from "util";
 import { dbConnection } from "../../auth.json";
 import { logError } from "../utils";
-import {parseGameListResults, parseMapName } from "./utils";
+import { parseGameListResults, parseMapName } from "./utils";
 
 export const db = mysql.createConnection(dbConnection);
 
@@ -38,7 +38,7 @@ export const getLobby = (guildId, callback) => {
 
 export const getLobbyPlayersCount = (gameid, callback) => {
     db.query(
-        `SELECT gamename, map, slotstaken, slotstotal FROM ghost.gamelist where id=${gameid} and gamename!="" and ownername!="" and creatorname!="" and map!="" and slotstotal!=0;`,
+        `SELECT usernames, gamename, map, slotstaken, slotstotal FROM ghost.gamelist where id=${gameid} and gamename!="" and ownername!="" and creatorname!="" and map!="" and slotstotal!=0;`,
         (error, results) => {
             if (error) {
                 console.error(error);

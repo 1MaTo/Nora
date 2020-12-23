@@ -1,5 +1,5 @@
 import { logError } from "../utils";
-import { logsForUsers } from "../../config.json";
+import { fbtSettings } from "../../config.json";
 import { getLobby } from "../db/db";
 import { dbErrors, lobbyCommand } from "../strings/logsMessages";
 import { autodeleteMsg, parseGameListToEmbed } from "../utils";
@@ -18,7 +18,7 @@ module.exports = {
     run: message => {
         getLobby((result, error) => {
             if (error) {
-                return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
+                return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
             } else {
                 if (!result) return autodeleteMsg(message, lobbyCommand.noGamesInLobby);
                 parseGameListToEmbed(result).forEach(game => {

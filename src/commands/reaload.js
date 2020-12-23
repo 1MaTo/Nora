@@ -1,4 +1,4 @@
-import { logsForUsers } from "../../config.json";
+import { fbtSettings } from "../../config.json";
 import {
     commandNotFound,
     reloadCommand,
@@ -33,7 +33,7 @@ module.exports = {
                     message,
                     error,
                     runningCommandError,
-                    logsForUsers.failedInCommand
+                    fbtSettings.failedInCommand
                 );
             }
         } else {

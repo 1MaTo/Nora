@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 import { checkValidChannel, logError } from "../utils";
 import { lobbyWatcher } from "../bot";
-import { logsForUsers } from "../../config.json";
+import { fbtSettings } from "../../config.json";
 import { getLobby } from "../db/db";
 import { dbErrors, lobbyWatcherCommand } from "../strings/logsMessages";
 import { autodeleteMsg, parseGameListToEmbed } from "../utils";
@@ -42,7 +42,7 @@ module.exports = {
 const startWatching = (message, channel, delay) => {
     getLobby(message.guild.id, async (result, error) => {
         if (error) {
-            return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
+            return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
         } else {
             const loadedLobbies = await result;
             const messages = new Discord.Collection();
@@ -72,7 +72,7 @@ const updateLobbyWatcher = (guildId, channel, delay) => {
     if (!lobbyWatcher.has(guildId)) return;
     getLobby(guildId, async (result, error) => {
         if (error) {
-            return logError(message, new Error(error), dbErrors.queryError, logsForUsers.db);
+            return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
         } else {
             try {
                 const loadedLobbies = await result;
