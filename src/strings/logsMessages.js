@@ -86,10 +86,11 @@ export const notificationJoinCommand = {
 
 export const mapConfigCommands = {
     noConfigForMap: "There is no config for this map",
-    noMapConfigs: "There are no map configs fot this server",
+    noMapConfigs: "There are no map configs for this server",
     badArgs: "Some of arguments invalid, try again",
     configUpdateFail: "Config update/create failed",
     configUpdateSuccess: "Config update/create success",
     configDeleteFail: "No config to delete",
     configDeleteSuccess: "Config delete success",
+    validFieldValues: (key, values) => `Invalid field values for \`${key}\`\nValid values: \`${values.join(", ")}\``,
 };

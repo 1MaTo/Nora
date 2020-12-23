@@ -1,7 +1,8 @@
 const { dbErrors, mapConfigCommands } = require("../strings/logsMessages");
 const { fbtSettings } = require("../../config.json");
 const { logError, autodeleteMsg } = require("../utils");
-const { updateMapConfig } = require("../db/db");
+const { updateMapConfig, searchMapConfig } = require("../db/db");
+const { getMapConfig } = require("../db/db");
 
 module.exports = {
     name: "createMapConfig",
@@ -13,7 +14,7 @@ module.exports = {
     guildOnly: true,
     development: false,
     adminOnly: false,
-    run: (message, args) => {
+    run: async (message, args) => {
         const guildId = message.channel.guild.id;
         const map = args[0];
         const slots = args[1];
@@ -25,19 +26,26 @@ module.exports = {
         if (!map || !slots || !checkTeams(teams, slots)) {
             return autodeleteMsg(message, mapConfigCommands.badArgs);
         }
-        const newConfig = {
-            name: map,
-            slots: Number(slots),
-            slotMap: teams.map(team => {
-                return { slots: team[1], name: team[0] };
-            }),
-        };
-        updateMapConfig(guildId, map, JSON.stringify(newConfig), (success, error) => {
-            if (error) {
-                autodeleteMsg(message, mapConfigCommands.configUpdateFail);
-                return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
+
+        getMapConfig(guildId, map, (config, error) => {
+            let newConfig = {
+                name: map,
+                slots: Number(slots),
+                spectatorLivesMatter: false,
+                slotMap: teams.map(team => {
+                    return { slots: team[1], name: team[0] };
+                }),
+            };
+            if (config) {
+                newConfig = { ...config, ...newConfig };
             }
-            return autodeleteMsg(message, mapConfigCommands.configUpdateSuccess);
+            updateMapConfig(guildId, map, JSON.stringify(newConfig), (success, error) => {
+                if (error) {
+                    autodeleteMsg(message, mapConfigCommands.configUpdateFail);
+                    return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
+                }
+                return autodeleteMsg(message, mapConfigCommands.configUpdateSuccess);
+            });
         });
     },
 };

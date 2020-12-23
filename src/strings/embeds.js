@@ -77,10 +77,20 @@ export const lobbyObserver = ({ name, map, host, owner, slots, slotsTaken, users
     };
 };
 
-export const mapConfig = ({ configName, name, slots, slotMap }) => {
+export const mapConfig = ({ configName, name, slots, slotMap, spectatorLivesMatter }) => {
     return {
         title: `${configName}`,
-        description: `Map name: **${name}**\nSlots: **${slots}**`,
+        description: `
+        __Optional config__
+
+        [spectatorLivesMatter]: **${spectatorLivesMatter}**
+
+        __Main config__
+
+        [name]: **${name}**
+        [slots]: **${slots}**
+        [teams]:
+        `,
         color: null,
         fields: [
             {

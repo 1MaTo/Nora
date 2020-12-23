@@ -109,7 +109,6 @@ export const buildGameResult = async (guildId, game) => {
     if (game.gamename === "" && game.ownername === "" && game.creatorname === "") {
         return null;
     }
-    //  Default map config
     const config = await searchMapConfig(guildId, game);
     const mapTotalSlots = config.slots;
     const slotsMap = config.slotMap;

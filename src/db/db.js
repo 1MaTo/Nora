@@ -99,6 +99,7 @@ export const searchMapConfig = async (guildId, game) => {
     const mapName = parseMapName(game.map);
     const defaultMapConfig = {
         mapName: mapName,
+        spectatorLivesMatter: false,
         slots: game.slotstotal,
         slotMap: [{ slots: game.slotstotal, name: "Lobby" }],
     };
