@@ -59,7 +59,7 @@ export const getMapConfig = (guildId, map, callback) => {
         }
         if (!results.length || results[0].config === null) return callback(null, "Empty query");
 
-        callback({ defaultFbtOptionalConfig, ...JSON.parse(results[0].config) });
+        callback({ ...defaultFbtOptionalConfig, ...JSON.parse(results[0].config) });
     });
 };
 
