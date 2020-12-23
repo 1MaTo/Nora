@@ -83,8 +83,16 @@ export const checkCommandRequirements = (command, args, message) => {
     return false;
 };
 
-export const parseGameListToEmbed = gamelist => {
-    return gamelist.map(game => lobbyObserver(game));
+export const parseGameListToEmbed = (gamelist, timers) => {
+    return gamelist.map(game => {
+        let gameTimer = timers.get(game.botid);
+        if (!gameTimer) {
+            const currDate = Date.now();
+            timers.set(game.botid, currDate);
+            gameTimer = currDate;
+        }
+        return lobbyObserver(game, gameTimer);
+    });
 };
 
 export const autodeleteMsg = (message, content, seconds = null) => {
@@ -102,7 +110,8 @@ export const checkValidRole = (inputRole, message) => {
     return inputRole ? message.guild.roles.cache.get(inputRole.replace(/[@&<>]/g, "")) || "" : "";
 };
 
-export const parseTimePast = milliseconds => {
+export const parseTimePast = startPoint => {
+    const milliseconds = Date.now() - startPoint;
     var hours = milliseconds / (1000 * 60 * 60);
     var absoluteHours = Math.floor(hours);
     var h = absoluteHours > 9 ? absoluteHours : "0" + absoluteHours;

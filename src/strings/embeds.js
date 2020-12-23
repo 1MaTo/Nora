@@ -1,4 +1,6 @@
 import { images } from "../strings/links";
+import { parseTimePast } from "../utils";
+import { SPACE } from "./constants";
 
 const usersInLobby = users => {
     if (users)
@@ -29,7 +31,7 @@ const usersInLobby = users => {
     }
 };
 
-export const lobbyObserver = ({ name, map, host, owner, slots, slotsTaken, users, botid }) => {
+export const lobbyObserver = ({ name, map, host, owner, slots, slotsTaken, users, botid }, timeFromStart) => {
     return {
         botid: botid,
         embed: {
@@ -68,7 +70,7 @@ export const lobbyObserver = ({ name, map, host, owner, slots, slotsTaken, users
                 usersInLobby(users),
             ],
             footer: {
-                text: `${slotsTaken}/${slots}`,
+                text: `${slotsTaken}/${slots}${SPACE + SPACE}[${parseTimePast(timeFromStart)}]`,
                 icon_url: images.gamelist.footerIcon,
             },
         },

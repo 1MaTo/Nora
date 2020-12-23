@@ -46,9 +46,10 @@ const startWatching = (message, channel, delay) => {
         } else {
             const loadedLobbies = await result;
             const messages = new Discord.Collection();
+            const timers = new Discord.Collection();
             const guildId = message.guild.id;
             const headerContent = lobbyWatcherCommand.lobbiesCount(loadedLobbies ? loadedLobbies.length : 0);
-            const lobbies = loadedLobbies ? getContentForLobbies(loadedLobbies) : [];
+            const lobbies = loadedLobbies ? getContentForLobbies(loadedLobbies, timers) : [];
             channel
                 .send(headerContent)
                 .then(headerMessage => messages.set("header", headerMessage))
@@ -57,18 +58,18 @@ const startWatching = (message, channel, delay) => {
                         channel.send({ embed: game.embed }).then(embedMessage => messages.set(game.botid, embedMessage));
                     });
                     lobbyWatcher.set(guildId, messages);
-                    setTimeout(() => updateLobbyWatcher(guildId, channel, delay), delay);
+                    setTimeout(() => updateLobbyWatcher(guildId, channel, delay, timers), delay);
                 });
         }
     });
 };
 
-const getContentForLobbies = result =>
-    parseGameListToEmbed(result).map(game => {
+const getContentForLobbies = (result, timers) =>
+    parseGameListToEmbed(result, timers).map(game => {
         return { botid: game.botid, embed: game.embed };
     });
 
-const updateLobbyWatcher = (guildId, channel, delay) => {
+const updateLobbyWatcher = (guildId, channel, delay, pastTimers) => {
     if (!lobbyWatcher.has(guildId)) return;
     getLobby(guildId, async (result, error) => {
         if (error) {
@@ -77,14 +78,16 @@ const updateLobbyWatcher = (guildId, channel, delay) => {
             try {
                 const loadedLobbies = await result;
                 const messages = lobbyWatcher.get(guildId);
+                const timers = pastTimers ? pastTimers : new Discord.Collection();
                 const headerMessage = messages.get("header");
                 const headerContent = lobbyWatcherCommand.lobbiesCount(loadedLobbies ? loadedLobbies.length : 0);
-                const lobbies = loadedLobbies ? getContentForLobbies(loadedLobbies) : [];
+                const lobbies = loadedLobbies ? getContentForLobbies(loadedLobbies, timers) : [];
                 headerMessage.edit(headerContent);
 
                 //  DELETE OUTDATED GAMES THAT HAVE END OR START
                 messages.forEach((msg, botid) => {
                     if (!lobbies.some(game => game.botid === botid) && botid !== "header") {
+                        timers.delete(botid);
                         msg.delete().then(_ => messages.delete(botid));
                     }
                 });
@@ -99,7 +102,7 @@ const updateLobbyWatcher = (guildId, channel, delay) => {
                         });
                     }
                 });
-                setTimeout(() => updateLobbyWatcher(guildId, channel, delay), delay);
+                setTimeout(() => updateLobbyWatcher(guildId, channel, delay, timers), delay);
             } catch (err) {
                 console.log("Bad end in update");
             }
