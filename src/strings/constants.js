@@ -3,6 +3,9 @@ export const EPMTY_LOBBY_PING = "-";
 export const EMPTY_LOBBY_SERVER = "-";
 export const EMPTY_LOBBY_STATS = "-";
 export const SPACE = "‎‏‏‎ ";
+export const defaultFbtOptionalConfig = {
+    spectatorlivesmatter: false,
+};
 export const fbtMapConfigRestrictions = {
     spectatorlivesmatter: ["true", "false"],
 };

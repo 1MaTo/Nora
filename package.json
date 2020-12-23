@@ -9,7 +9,7 @@
         "build": "babel src/ -d dist/",
         "prod_start": "npm run build && cross-env NODE_ENV=production forever start dist/bot.js",
         "prod_stop": "forever stop dist/bot.js",
-        "prod_restart": "git pull && npm run build && cross-env NODE_ENV=production forever restart dist/bot.js",
+        "prod_restart": "git pull && npm run build && forever restart dist/bot.js",
         "test1": "cross-env NODE_ENV=development forever start dist/bot.js"
     },
     "description": "Bot",

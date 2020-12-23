@@ -3,6 +3,7 @@ import util from "util";
 import { dbConnection } from "../../auth.json";
 import { logError } from "../utils";
 import { parseGameListResults, parseMapName } from "./utils";
+import { defaultFbtOptionalConfig } from "../strings/constants";
 
 export const db = mysql.createConnection(dbConnection);
 
@@ -13,17 +14,6 @@ const asyncDb = {
         return util.promisify(db.query).call(db, sql, args);
     },
 };
-
-/* export const getLobby = callback => {
-    db.query("SELECT * from gamelist", (error, results) => {
-        if (error) {
-            console.error(error);
-            return callback(null, error.message);
-        }
-        if (!results.length) return callback(null, "Empty query");
-        callback(parseGameListResults(results));
-    });
-}; */
 
 export const getLobby = (guildId, callback) => {
     db.query("SELECT * from gamelist", (error, results) => {
@@ -69,7 +59,7 @@ export const getMapConfig = (guildId, map, callback) => {
         }
         if (!results.length || results[0].config === null) return callback(null, "Empty query");
 
-        callback(JSON.parse(results[0].config));
+        callback({ defaultFbtOptionalConfig, ...JSON.parse(results[0].config) });
     });
 };
 
@@ -90,7 +80,6 @@ export const updateMapConfig = (guildId, map, config, callback) => {
             console.error(error);
             return callback(null, error.message);
         }
-        //if (!results.length) return callback(null, "Empty query");
         callback(results);
     });
 };
