@@ -1,5 +1,5 @@
 import { EMPTY_LOBBY_SERVER, EMPTY_LOBBY_STATS, EMPTY_LOBBY_USER_NAME, EPMTY_LOBBY_PING, SPACE } from "../strings/constants";
-import { searchMapConfig } from "./db";
+import { searchMapConfigOrDefault } from "./db";
 import { fbtSettings } from "../../config.json";
 
 export const parseMapName = map => {
@@ -109,7 +109,7 @@ export const buildGameResult = async (guildId, game) => {
     if (game.gamename === "" && game.ownername === "" && game.creatorname === "") {
         return null;
     }
-    const config = await searchMapConfig(guildId, game);
+    const config = await searchMapConfigOrDefault(guildId, game);
     const mapTotalSlots = config.slots;
     const slotsMap = config.slotMap;
     const lobbyPlayers = parseUserNames(game.usernames, mapTotalSlots, [...slotsMap]);
@@ -134,7 +134,7 @@ export const parseGameListResults = async (guildId, results) => {
 };
 
 export const countPlayersInLobby = async (guildId, usernames, mapName, slotstaken, slotstotal) => {
-    const config = await searchMapConfig(guildId, { map: mapName, slotstotal });
+    const config = await searchMapConfigOrDefault(guildId, { map: mapName, slotstotal });
     const table = getLobbyTable(usernames, config.slots, [...config.slotMap]);
     const hasSpectators = config.slotMap.find(item => item.name.toLowerCase() === "spectators");
     if (fbtSettings.spectatorLivesMatter || !table) return slotstaken - (slotstotal - Number(config.slots));

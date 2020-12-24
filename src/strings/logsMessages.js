@@ -1,6 +1,7 @@
 import { defaultCooldown } from "../../config.json";
 
-export const badArguments = (prefix, name, usage) => `Bad arguments for this command\nExample: \`${prefix}${name} ${usage}\``;
+export const badArguments = (prefix, name, usage) =>
+    `Bad arguments for this command\nExample: \`${prefix}${name} ${usage}\``;
 
 export const commandNotFound = "Command not found";
 
@@ -31,12 +32,15 @@ export const lobbyWatcherCommand = {
 export const helpCommand = {
     commandList: "**__List of commands__**\n",
 
-    tipForSingleCommand: prefix => `You can send \`${prefix}help [command name]\` to get info about specific command!\n<> - required\n[] - optional`,
+    tipForSingleCommand: prefix =>
+        `You can send \`${prefix}help [command name]\` to get info about specific command!\n<> - required\n[] - optional`,
 
     cantSentDm: "Can't DM you, do you have DMs disabled?",
 
     commandShort: (prefix, name, usage, description, aliases) =>
-        `\`${prefix}${name}\` ${usage}\n*aliases:* ${aliases && aliases.map(a => `\`${prefix}${a}\``).toString()}\n\`\`\`${description}\`\`\`\n`,
+        `\`${prefix}${name}\` ${usage}\n*aliases:* ${
+            aliases && aliases.map(a => `\`${prefix}${a}\``).toString()
+        }\n\`\`\`${description}\`\`\`\n`,
 
     singleCommandInfo: (prefix, { name, description, usage, cooldown = null, aliases }) =>
         `\`${name}\`\n\`\`\`${description}\`\`\`\n\`${prefix}${name} ${usage}\`\naliases: ${
@@ -73,7 +77,8 @@ export const needPlayerCommand = {
     recreateNotification: "Updating notification...",
     notification: (gameid, gamename, playerCount, role) => `\`[#${gameid}] ${gamename}\` **+${playerCount}**  ${role}`,
     gameSet: (gameid, gamename, role, users) => `\`[#${gameid}] ${gamename}\` **ready to start!** ${role} ${users}`,
-    gameOverSet: (gameid, gamename, overPlayers, role, users) => `\`[#${gameid}] ${gamename}\` is overcrowded by **${overPlayers}** people! ${role} ${users}`,
+    gameOverSet: (gameid, gamename, overPlayers, role, users) =>
+        `\`[#${gameid}] ${gamename}\` is overcrowded by **${overPlayers}** people! ${role} ${users}`,
 };
 
 export const notificationJoinCommand = {
@@ -93,4 +98,14 @@ export const mapConfigCommands = {
     configDeleteFail: "No config to delete",
     configDeleteSuccess: "Config delete success",
     validFieldValues: (key, values) => `Invalid field values for \`${key}\`\nValid values: \`${values.join(", ")}\``,
+};
+
+export const gameStatsCommands = {
+    enabled: "Game stats collecting enabled",
+    disabled: "Game stats collecting disabled",
+    alreadyEnabled: "Game stats collecting is already enabled",
+    gameEnded: duration =>
+        `GG guys, now select *WINNER* team\nPlease __do not participate__ if you dont know game result\nThis message will be deleted in **${
+            duration / 60000
+        }** minutes`,
 };

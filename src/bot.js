@@ -25,6 +25,8 @@ client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 //  map of lobbies comments to monitor
 export const lobbyWatcher = new Discord.Collection();
+// map of gameStatsCollectors
+export const statsCollectors = new Discord.Collection()
 
 //	loading commands to map
 const commandFiles = fs.readdirSync(__dirname + "/commands").filter(file => file.endsWith("js"));
@@ -59,7 +61,9 @@ client.on("message", message => {
     const { valid, commandName, args } = parseCommand(message);
     if (!valid) return false;
 
-    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+    const command =
+        client.commands.get(commandName) ||
+        client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     //	if no such command in map just return
     if (!command) return logError(message, new Error("Undefined command"), fbtSettings.undefinedCommand);

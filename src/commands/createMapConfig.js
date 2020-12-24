@@ -1,7 +1,7 @@
 const { dbErrors, mapConfigCommands } = require("../strings/logsMessages");
 const { fbtSettings } = require("../../config.json");
 const { logError, autodeleteMsg } = require("../utils");
-const { updateMapConfig, searchMapConfig } = require("../db/db");
+const { updateMapConfig, searchMapConfigOrDefault } = require("../db/db");
 const { getMapConfig } = require("../db/db");
 
 module.exports = {

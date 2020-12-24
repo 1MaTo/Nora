@@ -1,5 +1,5 @@
 import { images } from "../strings/links";
-import { parseTimePast } from "../utils";
+import { parseDuration, parseTimePast, toFirstLetterUpperCase } from "../utils";
 import { SPACE } from "./constants";
 
 const usersInLobby = users => {
@@ -123,7 +123,9 @@ export const helpAllCommands = (prefix, commands) => {
                 command.development
                     ? ""
                     : `> \`${prefix}${command.name}\` ${command.usage}\n${
-                          command.aliases ? `> \`${command.aliases.map(alias => `${prefix}${alias}`).join(" ")}\`\n` : ""
+                          command.aliases
+                              ? `> \`${command.aliases.map(alias => `${prefix}${alias}`).join(" ")}\`\n`
+                              : ""
                       }\`\`\`${command.description}\`\`\``
             )
             .join(`\n\n`),
@@ -149,5 +151,26 @@ export const helpSingleCommand = (prefix, { name, description, usage, aliases })
                 value: `\`\`\`${aliases.map(alias => `${prefix}${alias}`).join(" ")}\`\`\``,
             },
         ],
+    };
+};
+
+export const gameStatsPoll = gameData => {
+    return {
+        title: gameData.gamename,
+        color: null,
+        fields: gameData.players.map(team => {
+            return {
+                name: toFirstLetterUpperCase(team.teamName),
+                value: team.teamPlayers.map(player => player.name).join("\n"),
+                inline: true,
+            };
+        }),
+        author: {
+            name: gameData.map,
+        },
+        footer: {
+            text: parseDuration(Number(gameData.duration) * 1000),
+        },
+        timestamp: new Date(gameData.datetime),
     };
 };

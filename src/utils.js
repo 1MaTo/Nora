@@ -1,7 +1,13 @@
 const Discord = require("discord.js");
 import { autodeleteMsgDelay, defaultCooldown, prefix } from "../config.json";
 import { lobbyObserver } from "./strings/embeds";
-import { badArguments, commandInDevelopment, needAdminPermission, onlyForDmCommand, onlyForGuildCommand } from "./strings/logsMessages";
+import {
+    badArguments,
+    commandInDevelopment,
+    needAdminPermission,
+    onlyForDmCommand,
+    onlyForGuildCommand,
+} from "./strings/logsMessages";
 
 export const parseCommand = message => {
     const validCommand = isCommand(message);
@@ -97,13 +103,16 @@ export const parseGameListToEmbed = (gamelist, timers) => {
 
 export const autodeleteMsg = (message, content, seconds = null) => {
     message.channel.send(content).then(botMessage => {
-        message.delete && message.delete({ timeout: autodeleteMsgDelay }).catch(err => console.log("not permissions for delete"));
+        message.delete &&
+            message.delete({ timeout: autodeleteMsgDelay }).catch(err => console.log("not permissions for delete"));
         botMessage.delete({ timeout: seconds || autodeleteMsgDelay }).catch(err => console.log("nothing to delete"));
     });
 };
 
 export const checkValidChannel = (inputChannel, message) => {
-    return inputChannel ? message.client.channels.cache.get(inputChannel.replace(/[#<>]/g, "")) || message.channel : message.channel;
+    return inputChannel
+        ? message.client.channels.cache.get(inputChannel.replace(/[#<>]/g, "")) || message.channel
+        : message.channel;
 };
 
 export const checkValidRole = (inputRole, message) => {
@@ -126,3 +135,23 @@ export const parseTimePast = startPoint => {
 
     return h + ":" + m + ":" + s;
 };
+
+export const parseDuration = duration => {
+    var hours = duration / (1000 * 60 * 60);
+    var absoluteHours = Math.floor(hours);
+    var h = absoluteHours > 9 ? absoluteHours : "0" + absoluteHours;
+
+    var minutes = (hours - absoluteHours) * 60;
+    var absoluteMinutes = Math.floor(minutes);
+    var m = absoluteMinutes > 9 ? absoluteMinutes : "0" + absoluteMinutes;
+
+    var seconds = (minutes - absoluteMinutes) * 60;
+    var absoluteSeconds = Math.floor(seconds);
+    var s = absoluteSeconds > 9 ? absoluteSeconds : "0" + absoluteSeconds;
+
+    return h + ":" + m + ":" + s;
+};
+
+export const uniqueFromArray = array => array.filter((v, i, a) => a.indexOf(v) === i);
+
+export const toFirstLetterUpperCase = string => string[0].toUpperCase() + string.substr(1);
