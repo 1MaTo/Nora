@@ -58,8 +58,7 @@ export const getMapConfig = (guildId, map, callback) => {
             return callback(null, error.message);
         }
         if (!results.length || results[0].config === null) return callback(null, "Empty query");
-
-        callback({ ...defaultFbtOptionalConfig, ...JSON.parse(results[0].config) });
+        callback({ options: defaultFbtOptionalConfig, ...JSON.parse(results[0].config) });
     });
 };
 
@@ -91,7 +90,7 @@ export const searchMapConfigOrDefault = async (guildId, game) => {
     const mapName = parseMapName(game.map);
     const defaultMapConfig = {
         mapName: mapName,
-        ...defaultFbtOptionalConfig,
+        options: defaultFbtOptionalConfig,
         slots: game.slotstotal,
         slotMap: [{ slots: game.slotstotal, name: "Lobby" }],
     };

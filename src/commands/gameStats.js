@@ -30,7 +30,6 @@ module.exports = {
             currGameCount: await getFinishedGamesCount(),
         };
         statsCollectors.set(message.guild.id, newCollectorOptions);
-        //startPolls([95], channel);
         autodeleteMsg(message, gameStatsCommands.enabled);
         console.log(newCollectorOptions.currGameCount);
         setTimeout(() => checkNewFinishedGames(channel), newCollectorOptions.delay);

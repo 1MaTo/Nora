@@ -77,13 +77,15 @@ export const lobbyObserver = ({ name, map, host, owner, slots, slotsTaken, users
     };
 };
 
-export const mapConfig = ({ configName, name, slots, slotMap, spectatorLivesMatter }) => {
+export const mapConfig = ({ configName, name, slots, slotMap, options }) => {
     return {
         title: `${configName}`,
         description: `
         __Optional config__
 
-        [spectatorLivesMatter]: **${spectatorLivesMatter}**
+        ${Object.entries(options)
+            .map(([key, value]) => `[${key}]: **${value}**`)
+            .join("\n")}
 
         __Main config__
 

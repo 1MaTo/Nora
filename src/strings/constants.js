@@ -5,7 +5,9 @@ export const EMPTY_LOBBY_STATS = "-";
 export const SPACE = "‎‏‏‎ ";
 export const defaultFbtOptionalConfig = {
     spectatorLivesMatter: false,
+    fbtHeroStats: false,
 };
 export const fbtMapConfigRestrictions = {
     spectatorlivesmatter: ["true", "false"],
+    fbtherostats: ["true", "false"],
 };

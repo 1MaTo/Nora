@@ -23,11 +23,18 @@ module.exports = {
                     const [field, value] = configItem.trim().split(" ");
                     if (!fbtMapConfigRestrictions[field]) return;
                     Object.entries(config).forEach(([key, _]) => {
-                        if (field === key.toLowerCase() && fbtMapConfigRestrictions[field].indexOf(value.toString()) !== -1) {
+                        if (
+                            field === key.toLowerCase() &&
+                            fbtMapConfigRestrictions[field].indexOf(value.toString()) !== -1
+                        ) {
                             message.react("✅");
-                            return (config[key] = value);
+                            return (config.options[key] = value);
                         } else {
-                            if (field === key.toLowerCase()) autodeleteMsg(message, mapConfigCommands.validFieldValues(key, fbtMapConfigRestrictions[field]));
+                            if (field === key.toLowerCase())
+                                autodeleteMsg(
+                                    message,
+                                    mapConfigCommands.validFieldValues(key, fbtMapConfigRestrictions[field])
+                                );
                         }
                     });
                 });

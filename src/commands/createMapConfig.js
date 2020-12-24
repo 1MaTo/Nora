@@ -3,6 +3,7 @@ const { fbtSettings } = require("../../config.json");
 const { logError, autodeleteMsg } = require("../utils");
 const { updateMapConfig, searchMapConfigOrDefault } = require("../db/db");
 const { getMapConfig } = require("../db/db");
+const { defaultFbtOptionalConfig } = require("../strings/constants");
 
 module.exports = {
     name: "createMapConfig",
@@ -31,7 +32,7 @@ module.exports = {
             let newConfig = {
                 name: map,
                 slots: Number(slots),
-                spectatorLivesMatter: false,
+                options: defaultFbtOptionalConfig,
                 slotMap: teams.map(team => {
                     return { slots: team[1], name: team[0] };
                 }),
