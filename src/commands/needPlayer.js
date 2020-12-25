@@ -54,7 +54,7 @@ module.exports = {
                     gameid: gameid,
                     auhtorId: message.author.id,
                     totalPlayers: totalPlayers,
-                    delay: /* delay * 1000 * 60 */2000,
+                    delay: delay * 1000 * 60,
                     channel: channel,
                     roleToPing: roleToPing,
                     msgs: [],
