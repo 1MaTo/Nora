@@ -1,6 +1,6 @@
 import { images } from "../strings/links";
 import { parseDuration, parseTimePast, toFirstLetterUpperCase } from "../utils";
-import { SPACE } from "./constants";
+import { emptyField, SPACE } from "./constants";
 
 const usersInLobby = users => {
     if (users)
@@ -156,14 +156,16 @@ export const helpSingleCommand = (prefix, { name, description, usage, aliases })
     };
 };
 
-export const gameStatsPoll = gameData => {
+export const gameStatsPoll = (gameData, color, winTeam = null) => {
     return {
         title: gameData.gamename,
-        color: null,
-        fields: gameData.players.map(team => {
+        color: color,
+        fields: gameData.players.map((team, index) => {
             return {
                 name: toFirstLetterUpperCase(team.teamName),
-                value: team.teamPlayers.map(player => player.name).join("\n"),
+                value: team.teamPlayers
+                    .map(player => (winTeam === index ? `🏆 ${player.name}` : player.name))
+                    .join("\n"),
                 inline: true,
             };
         }),

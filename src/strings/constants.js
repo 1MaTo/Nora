@@ -11,3 +11,13 @@ export const fbtMapConfigRestrictions = {
     spectatorlivesmatter: ["true", "false"],
     fbtherostats: ["true", "false"],
 };
+export const colors = {
+    green: "#309228",
+    black: "#000000",
+};
+
+export const emptyField = {
+    name: SPACE,
+    value: SPACE,
+    inline: true,
+};

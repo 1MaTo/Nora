@@ -149,7 +149,6 @@ export const getFinishedGamesId = async () => {
 };
 
 export const getPlayersByGameId = async gamesId => {
-    console.log(gamesId);
     try {
         const players = await asyncDb.query(`
         SELECT 

@@ -4,6 +4,7 @@ const { logError, autodeleteMsg, checkValidChannel } = require("../utils");
 const { statsCollectors } = require("../bot");
 const { getFinishedGamesCount, getFinishedGamesId, getGamesDataByIds, saveMapStats } = require("../db/db");
 const { gameStatsPoll } = require("../strings/embeds");
+const { colors } = require("../strings/constants");
 
 module.exports = {
     name: "gameStats",
@@ -31,7 +32,6 @@ module.exports = {
         };
         statsCollectors.set(message.guild.id, newCollectorOptions);
         autodeleteMsg(message, gameStatsCommands.enabled);
-        console.log(newCollectorOptions.currGameCount);
         setTimeout(() => checkNewFinishedGames(channel), newCollectorOptions.delay);
     },
 };
@@ -46,7 +46,6 @@ const checkNewFinishedGames = async channel => {
     if (gamesId === null) setTimeout(() => checkNewFinishedGames(channel), options.delay);
 
     const newGamesCount = Number(gamesId.length) - Number(options.currGameCount);
-    console.log(newGamesCount);
     if (newGamesCount) {
         options.currGameCount = gamesId.length;
         statsCollectors.set(options);
@@ -64,9 +63,9 @@ const startPolls = async (gamesId, channel) => {
 };
 
 const startGameCollector = async (gameData, channel) => {
-    const deleteDelay = 1000 * 60 * 5;
+    const deleteDelay = 1000 * 60 * 3;
     channel.send(gameStatsCommands.gameEnded(deleteDelay)).then(firstMsg => {
-        firstMsg.channel.send({ embed: gameStatsPoll(gameData) }).then(gameMsg => {
+        firstMsg.channel.send({ embed: gameStatsPoll(gameData, colors.black) }).then(gameMsg => {
             const indexToEmoji = ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣"];
             const currReaction = [];
             try {
@@ -75,23 +74,24 @@ const startGameCollector = async (gameData, channel) => {
                     await gameMsg.react(indexToEmoji[index]);
                 });
                 const reactions = Promise.all(addReactions);
-                setTimeout(() => endGameCollector(gameData.id, gameMsg, currReaction), deleteDelay);
+                setTimeout(() => endGameCollector(gameData.id, gameMsg, currReaction, gameData), deleteDelay);
             } catch (error) {
                 console.log(error);
-                endGameCollector(gameData.id, gameData.id, gameMsg);
+                endGameCollector(gameData.id, gameMsg, currReaction);
             }
         });
         firstMsg.delete({ timeout: deleteDelay });
     });
 };
 
-const endGameCollector = async (gameid, gameMsg, reactions = []) => {
+const endGameCollector = async (gameid, gameMsg, reactions = [], gameData) => {
     const reactionsCount = reactions.map(reactionId => gameMsg.reactions.cache.get(reactionId).count);
     const mostReactCount = Math.max(...reactionsCount);
     if (mostReactCount <= 1) return gameMsg.delete();
     const winTeam = reactionsCount.indexOf(mostReactCount);
     if (reactionsCount.every(reactCount => reactCount === reactionsCount[winTeam])) return gameMsg.delete();
     saveMapStats(gameid, winTeam).then(result => {
-        gameMsg.delete();
+        gameMsg.reactions.removeAll();
+        gameMsg.edit({ embed: gameStatsPoll(gameData, colors.green, winTeam) });
     });
 };
