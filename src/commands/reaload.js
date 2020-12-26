@@ -21,7 +21,9 @@ module.exports = {
                 return autodeleteMsg(message, reloadCommand.errorReboot);
             }
         }
-        const commandToReload = message.client.commands.get(commandName);
+        const commandToReload =
+            message.client.commands.get(commandName) ||
+            message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
         if (commandToReload) {
             delete require.cache[require.resolve(`./${commandToReload.name}.js`)];
             try {

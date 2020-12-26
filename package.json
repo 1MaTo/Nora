@@ -28,6 +28,7 @@
         "forever": "^3.0.4",
         "moment": "^2.29.1",
         "mysql": "^2.18.1",
+        "redis": "^3.0.2",
         "regenerator-runtime": "^0.13.7",
         "shx": "^0.3.3"
     },

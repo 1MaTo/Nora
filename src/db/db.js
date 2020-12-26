@@ -214,6 +214,16 @@ export const getGamesDataByIds = async (gamesId, guildId) => {
     }
 };
 
+export const getPlayersNicknames = async () => {
+    try {
+        const result = await asyncDb.query(`SELECT DISTINCT name FROM gameplayers where name != " " order by name;`);
+        return result.map(item => item.name);
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+};
+
 export const saveMapStats = async (gameid, winTeam) => {
     try {
         const result = await asyncDb.query(`INSERT INTO mapstats (gameid, winteam) VALUES(${gameid}, ${winTeam})`);

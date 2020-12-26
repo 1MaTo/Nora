@@ -18,10 +18,14 @@ export const parseCommand = message => {
         };
     }
     const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const commandName = args.shift().toLowerCase();
+    const command =
+        message.client.commands.get(commandName) ||
+        message.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
     return {
         valid: validCommand,
-        commandName: args.shift().toLowerCase(),
-        args: [...args.map(arg => arg.toLowerCase())],
+        commandName,
+        args: command && command.caseSensitive ? [...args] : [...args.map(arg => arg.toLowerCase())],
     };
 };
 
@@ -109,6 +113,12 @@ export const autodeleteMsg = (message, content, seconds = null) => {
     });
 };
 
+export const autodeleteReaction = (message, reaction, seconds = null) => {
+    message.react(reaction).then(_ => {
+        message.delete({ timeout: autodeleteMsgDelay }).catch(err => console.log("not permissions for delete"));
+    });
+};
+
 export const checkValidChannel = (inputChannel, message) => {
     return inputChannel
         ? message.client.channels.cache.get(inputChannel.replace(/[#<>]/g, "")) || message.channel
@@ -155,3 +165,10 @@ export const parseDuration = duration => {
 export const uniqueFromArray = array => array.filter((v, i, a) => a.indexOf(v) === i);
 
 export const toFirstLetterUpperCase = string => string[0].toUpperCase() + string.substr(1);
+
+export const guildUserRedisKey = {
+    struct: (object, guildId, userId) => [object, guildId, userId].join("&&&"),
+    destruct: key => key.split("&&&"),
+};
+
+export const parseUserId = string => string.replaceAll(/[<>@!]/g, "")

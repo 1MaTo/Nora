@@ -111,3 +111,17 @@ export const gameStatsCommands = {
             duration / 60000
         }** minutes`,
 };
+
+export const nicknameCommand = {
+    noNicknames: `❌ There are no available nicknames in database`,
+    badNickname: `❌ This nickname does not exist in database, you need to play at least 1 game to bind nickname`,
+    badUser: `❌ No such user in this server`,
+    nicknameBind: `✅ Nickname binded`,
+    nicknameUnbind: `✅ Nickname unbinded`,
+    alreadyBind: `❗ Nickname already binded`,
+    alreadyUnbind: `❗ Nickname already unbinded`,
+    noBindedNicknames: `❗ You dont have any binded nicknames`,
+    rebindDone: (from, to) => `:arrows_counterclockwise: Force rebind done\n\`${from}\` :point_right: \`${to}\``,
+    nicknameReserved: user =>
+        `❌ This nickname already reserved by \`${user}\`, ask him to unbind nick or ask admin to rebind this nick for you`,
+};

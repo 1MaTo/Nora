@@ -178,3 +178,11 @@ export const gameStatsPoll = (gameData, color, winTeam = null) => {
         timestamp: new Date(gameData.datetime),
     };
 };
+
+export const defaultEmbed = (title, body, color = null) => {
+    return {
+        title: title,
+        description: body,
+        color: color || "#000000",
+    };
+};

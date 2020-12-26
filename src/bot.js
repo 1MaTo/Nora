@@ -1,14 +1,12 @@
 import "@babel/polyfill";
 import "core-js/stable";
-import regeneratorRuntime from "regenerator-runtime";
+import { token } from "../auth.json";
+import { fbtSettings } from "../config.json";
+import { onCooldown } from "./strings/logsMessages";
+import { autodeleteMsg, checkCommandRequirements, checkCooldownTime, logError, parseCommand } from "./utils";
 const Discord = require("discord.js");
 const client = new Discord.Client();
 const fs = require("fs");
-
-import { onCooldown } from "./strings/logsMessages";
-import { token } from "../auth.json";
-import { fbtSettings } from "../config.json";
-import { autodeleteMsg, checkCommandRequirements, checkCooldownTime, logError, parseCommand } from "./utils";
 
 //  constant for builds
 const production = process.env.NODE_ENV === "production";
@@ -36,9 +34,9 @@ commandFiles.forEach(file => {
     client.commands.set(command.name.toLowerCase(), command);
 });
 
-client.once("ready", () => {
+client.once("ready", async () => {
     console.log("================= SETTING UP =================");
-
+    
     console.log("================= BOT ONLINE =================");
 });
 
