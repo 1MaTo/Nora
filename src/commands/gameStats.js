@@ -1,5 +1,4 @@
-const { dbErrors, gameStatsCommands } = require("../strings/logsMessages");
-const { fbtSettings } = require("../../config.json");
+const { gameStatsCommands } = require("../strings/logsMessages");
 const { logError, autodeleteMsg, checkValidChannel } = require("../utils");
 const { statsCollectors } = require("../bot");
 const { getFinishedGamesCount, getFinishedGamesId, getGamesDataByIds, saveMapStats } = require("../db/db");
@@ -27,10 +26,11 @@ module.exports = {
         const channel = checkValidChannel(args[0], message);
         const newCollectorOptions = {
             channel,
-            delay: 1000,
+            delay: 5000,
             currGameCount: await getFinishedGamesCount(),
         };
         statsCollectors.set(message.guild.id, newCollectorOptions);
+        startPolls([116], channel);
         autodeleteMsg(message, gameStatsCommands.enabled);
         setTimeout(() => checkNewFinishedGames(channel), newCollectorOptions.delay);
     },
@@ -49,7 +49,7 @@ const checkNewFinishedGames = async channel => {
     if (newGamesCount) {
         options.currGameCount = gamesId.length;
         statsCollectors.set(options);
-        startPolls(gamesId.splice(-newGamesCount), channel);
+        setTimeout(() => startPolls(gamesId.splice(-newGamesCount), channel), 10000);
     }
 
     setTimeout(() => checkNewFinishedGames(channel), options.delay);

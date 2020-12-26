@@ -26,14 +26,14 @@ const cooldowns = new Discord.Collection();
 //  map of lobbies comments to monitor
 export const lobbyWatcher = new Discord.Collection();
 // map of gameStatsCollectors
-export const statsCollectors = new Discord.Collection()
+export const statsCollectors = new Discord.Collection();
 
 //	loading commands to map
 const commandFiles = fs.readdirSync(__dirname + "/commands").filter(file => file.endsWith("js"));
 
 commandFiles.forEach(file => {
     const command = require(`./commands/${file}`);
-    client.commands.set(command.name, command);
+    client.commands.set(command.name.toLowerCase(), command);
 });
 
 client.once("ready", () => {

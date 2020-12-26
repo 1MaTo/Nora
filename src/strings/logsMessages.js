@@ -59,7 +59,9 @@ export const lobbyCommand = {
 };
 
 export const reloadCommand = {
+    reboot: `Going to reboot...`,
     commandReloaded: name => `Command \`${name}\` was reloaded`,
+    errorReboot: `Reboot failed...`,
 };
 
 export const needPlayerCommand = {
