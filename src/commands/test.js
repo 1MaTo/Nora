@@ -13,6 +13,6 @@ module.exports = {
     adminOnly: false,
     run: (message, args) => {
         console.log(args[0]);
-        message.channel.send(args[0]);
+        message.channel.send("hi");
     },
 };
