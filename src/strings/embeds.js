@@ -121,14 +121,11 @@ export const helpAllCommands = (prefix, commands) => {
     return {
         title: "Command list",
         description: commands
-            .map(command =>
-                command.development
-                    ? ""
-                    : `> \`${prefix}${command.name}\` ${command.usage}\n${
-                          command.aliases
-                              ? `> \`${command.aliases.map(alias => `${prefix}${alias}`).join(" ")}\`\n`
-                              : ""
-                      }\`\`\`${command.description}\`\`\``
+            .map(
+                command =>
+                    `> \`${prefix}${command.name}\` ${command.usage}\n${
+                        command.aliases ? `> \`${command.aliases.map(alias => `${prefix}${alias}`).join(" ")}\`\n` : ""
+                    }\`\`\`${command.description}\`\`\``
             )
             .join(`\n\n`),
         color: null,

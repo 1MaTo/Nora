@@ -19,9 +19,9 @@ module.exports = {
             if (!command) {
                 return autodeleteMsg(message, "Undefined command");
             }
-            autodeleteMsg(message, { embed: helpSingleCommand(prefix, command) }, 15000 /* helpCommand.singleCommandInfo(prefix, command) */);
+            autodeleteMsg(message, { embed: helpSingleCommand(prefix, command) }, 15000);
         } else {
-            return message.author.send({ embed: helpAllCommands(prefix, commands) }).catch(error => {
+            return message.author.send({ embed: helpAllCommands(prefix, commands.filter(command => !command.development)) }).catch(error => {
                 logError(message, error.message, fbtSettings.cantSendDM);
             });
         }
