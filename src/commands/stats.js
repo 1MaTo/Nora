@@ -28,12 +28,14 @@ export const run = async (message, args) => {
 
     let nicknames = commandArgs;
 
-    if (!nicknames) {
+    if (!nicknames.length) {
         const redisKey = guildUserRedisKey.struct(objectKey.bindNickname, guildId, userId);
         nicknames = await redis.get(redisKey);
     }
 
     if (!nicknames) return autodeleteMsg(message, statsCommand.badNicknames);
+
+    console.log(commandArgs);
 
     switch (statWord) {
         case "total games":
