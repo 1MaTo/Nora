@@ -125,3 +125,9 @@ export const nicknameCommand = {
     nicknameReserved: user =>
         `❌ This nickname already reserved by \`${user}\`, ask him to unbind nick or ask admin to rebind this nick for you`,
 };
+
+export const statsCommand = {
+    badStatWord: `❌ Bad stats command`,
+    badNicknames: `❌ No nickname(s) provided/binded to your account`,
+    noGamesForThisNickname: nicknames => `❌ No games found for \`${nicknames.join("`, `")}\``,
+};

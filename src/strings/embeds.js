@@ -1,6 +1,6 @@
 import { images } from "../strings/links";
 import { parseDuration, parseTimePast, toFirstLetterUpperCase } from "../utils";
-import { emptyField, SPACE } from "./constants";
+import { colors, emptyField, SPACE } from "./constants";
 
 const usersInLobby = users => {
     if (users)
@@ -176,10 +176,33 @@ export const gameStatsPoll = (gameData, color, winTeam = null) => {
     };
 };
 
-export const defaultEmbed = (title, body, color = null) => {
+export const defaultEmbed = (title, body, color = colors.black) => {
     return {
         title: title,
         description: body,
-        color: color || "#000000",
+        color: color,
+    };
+};
+
+export const totalGamesForNicknames = (nicknames, games, color = colors.black) => {
+    return {
+        description: `${games.groupedGames
+            .map(group => {
+                if (group.versions.length === 1)
+                    return `:map: [**${group.totalGames}**] __${group.versions[0].mapVersion}__`;
+                return `:map: [**${group.totalGames}**] __${group.map}__\n
+            ${group.versions
+                .map(version => `> :small_blue_diamond: [**${version.gamesCount}**] ${version.mapVersion}`)
+                .join("\n")}`;
+            })
+            .join("\n\n")}`,
+        color: color,
+        author: {
+            name: `All games for [${nicknames.join("], [")}]`,
+            icon_url: images.fbtMasterMale,
+        },
+        footer: {
+            text: `${games.totalGameCount} games`,
+        },
     };
 };

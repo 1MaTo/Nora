@@ -4,13 +4,14 @@ import { redis } from "../redis/redis";
 import { colors } from "../strings/constants";
 import { defaultEmbed } from "../strings/embeds";
 import { nicknameCommand } from "../strings/logsMessages";
+import { prefix } from "../../config.json";
 import { autodeleteMsg, autodeleteReaction, guildUserRedisKey, parseUserId } from "../utils";
 
 export const name = "nickname";
 export const args = 1;
 export const aliases = ["n"];
-export const usage = "bind <nickname> | unbind <nickname> | show | (ADMIN ONLY) rebind <nickname> <user>";
-export const description = "Bind ingame nickname to your discord id";
+export const usage = "bind [<nickname>] | unbind [<nickname>] | show | (ADMIN ONLY) rebind [<nickname>] <user>";
+export const description = `Bind ingame nickname to your discord id\nExample ${prefix}bind [vasya123]`;
 export const guildOnly = true;
 export const development = false;
 export const adminOnly = false;
@@ -27,7 +28,7 @@ export const run = async (message, args) => {
         });
     }
 
-    const nickname = args[0];
+    const nickname = args.join(" ").split(/[\[\]]/)[1];
 
     if (action === "bind") {
         bindNickname(message, nickname, redisKey);
