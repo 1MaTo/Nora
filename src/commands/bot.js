@@ -17,7 +17,7 @@ export const aliases = ["b"];
 export const usage = "<command to bot> | watch <channel> [max row count] [delay] | stop";
 export const description = "Send command directly to ghost bot";
 export const guildOnly = true;
-export const adminOnly = true;
+export const adminOnly = false;
 export const caseSensitive = true;
 
 const validGuilds = ["408947483763277825", "556150178147467265"];
