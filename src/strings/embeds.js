@@ -206,3 +206,13 @@ export const totalGamesForNicknames = (nicknames, games, color = colors.black) =
         },
     };
 };
+
+export const ghostCommandLog = logs => {
+    return {
+        description: `\`\`\`${logs}\`\`\``,
+        color: "#4848a8",
+        footer: {
+            text: "ghost command line",
+        },
+    };
+};

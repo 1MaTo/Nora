@@ -105,17 +105,21 @@ export const parseGameListToEmbed = (gamelist, timers) => {
     });
 };
 
-export const autodeleteMsg = (message, content, seconds = null) => {
+export const autodeleteMsg = (message, content, milliseconds = null) => {
     message.channel.send(content).then(botMessage => {
         message.delete &&
             message.delete({ timeout: autodeleteMsgDelay }).catch(err => console.log("not permissions for delete"));
-        botMessage.delete({ timeout: seconds || autodeleteMsgDelay }).catch(err => console.log("nothing to delete"));
+        botMessage
+            .delete({ timeout: milliseconds || autodeleteMsgDelay })
+            .catch(err => console.log("nothing to delete"));
     });
 };
 
-export const autodeleteReaction = (message, reaction, seconds = null) => {
+export const autodeleteReaction = (message, reaction, milliseconds = null) => {
     message.react(reaction).then(_ => {
-        message.delete({ timeout: autodeleteMsgDelay }).catch(err => console.log("not permissions for delete"));
+        message
+            .delete({ timeout: milliseconds || autodeleteMsgDelay })
+            .catch(err => console.log("not permissions for delete"));
     });
 };
 
@@ -171,4 +175,4 @@ export const guildUserRedisKey = {
     destruct: key => key.split("&&&"),
 };
 
-export const parseUserId = string => string.replaceAll(/[<>@!]/g, "")
+export const parseUserId = string => string.replaceAll(/[<>@!]/g, "");

@@ -131,3 +131,10 @@ export const statsCommand = {
     badNicknames: `❌ No nickname(s) provided/binded to your account`,
     noGamesForThisNickname: nicknames => `❌ No games found for \`${nicknames.join("`, `")}\``,
 };
+
+export const botCommand = {
+    wrongGuild: `❌ This command is only for one server and one ghost bot`,
+    alreadyWatching: `❌ Already watching on this server`,
+    noPermisions: `❌ Not admin can only use [map|pub|unhost|getgame|getgames|load]`,
+    watchStarted: (channel, rows, delay) => `✅ Show logs in ${channel}, with every ${delay} ms, max row is ${rows}`,
+};

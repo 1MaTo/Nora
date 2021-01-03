@@ -22,6 +22,7 @@
         "@babel/plugin-transform-async-to-generator": "^7.12.1",
         "@babel/polyfill": "^7.12.1",
         "@babel/preset-env": "^7.12.7",
+        "axios": "^0.21.1",
         "core-js": "^3.8.1",
         "cross-env": "^7.0.2",
         "discord.js": "^12.4.1",

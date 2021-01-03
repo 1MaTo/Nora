@@ -38,6 +38,7 @@ export const run = async (message, args) => {
     console.log(commandArgs);
 
     switch (statWord) {
+        case "tg":
         case "total games":
             const games = await totalGames(guildId, nicknames);
             if (!games) return autodeleteMsg(message, statsCommand.noGamesForThisNickname(nicknames));

@@ -1,18 +1,17 @@
-const { dbErrors } = require("../strings/logsMessages");
-const { fbtSettings } = require("../../config.json");
-const { logError, autodeleteMsg } = require("../utils");
+import { dbErrors } from "../strings/logsMessages";
+import { fbtSettings } from "../../config.json";
+import { logError, autodeleteMsg } from "../utils";
 
-module.exports = {
-    name: "test",
-    args: 0,
-    aliases: ["t", "te"],
-    usage: "<one> <two>",
-    description: "Just test command",
-    guildOnly: true,
-    development: true,
-    adminOnly: false,
-    run: (message, args) => {
-        console.log(args[0]);
-        message.channel.send("hi");
-    },
+export const name = "test";
+export const args = 0;
+export const aliases = ["t", "te"];
+export const usage = "<one> <two>";
+export const description = "Just test command";
+export const guildOnly = true;
+export const development = true;
+export const adminOnly = false;
+export const caseSensitive = true;
+export const run = (message, args) => {
+    console.log(args[0]);
+    message.channel.send("hi");
 };
