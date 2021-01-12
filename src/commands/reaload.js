@@ -9,7 +9,7 @@ module.exports = {
     description: "reload command",
     guildOnly: false,
     development: true,
-    run: (message, args) => {
+    run: async (message, args) => {
         const commandName = args[0];
         if (!commandName) {
             autodeleteMsg(message, reloadCommand.reboot);

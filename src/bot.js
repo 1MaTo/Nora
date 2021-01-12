@@ -5,7 +5,7 @@ import { fbtSettings } from "../config.json";
 import { onCooldown } from "./strings/logsMessages";
 import { autodeleteMsg, checkCommandRequirements, checkCooldownTime, logError, parseCommand } from "./utils";
 const Discord = require("discord.js");
-const client = new Discord.Client();
+export const client = new Discord.Client();
 const fs = require("fs");
 
 //  constant for builds
@@ -36,7 +36,7 @@ commandFiles.forEach(file => {
 
 client.once("ready", async () => {
     console.log("================= SETTING UP =================");
-    
+
     console.log("================= BOT ONLINE =================");
 });
 
@@ -82,6 +82,7 @@ client.on("message", message => {
         command.run(message, args);
     } catch (error) {
         logError(message, error, fbtSettings.failedInCommand);
+        client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
     }
 });
 
