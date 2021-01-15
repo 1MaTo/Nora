@@ -224,7 +224,7 @@ export const changeBotStatus = async status => {
 export const checkGhostStatus = async (defaultTimeout = 1000 * 60 * 1) => {
     try {
         const commandUrl = `http://${ghost.host}:${ghost.port}/cmd?pass=${ghost.password}&cmd=${escape("ggs")}`;
-        const chatUrl = `http://${ghost.host}:${ghost.port}/chat}`;
+        const chatUrl = `http://${ghost.host}:${ghost.port}/chat`;
         const command = await axios.get(commandUrl);
         const chat = await axios.get(chatUrl);
         const gamesString = chat.data
@@ -235,11 +235,12 @@ export const checkGhostStatus = async (defaultTimeout = 1000 * 60 * 1) => {
         if (gamesString) {
             const games = gamesString[gamesString.length - 1];
             const gameCount = games.match(/\$\d+:/g);
-            changeBotStatus({ games: gameCount ? gameCount.length : 0 });
+            changeBotStatus({ ghost: "✅", games: gameCount ? gameCount.length : 0 });
         } else {
-            changeBotStatus({ games: null });
+            changeBotStatus({ ghost: "✅", games: null });
         }
     } catch (error) {
+        console.log(error);
         console.log("Ghost is offline");
         changeBotStatus({ ghost: "❌" });
     }
