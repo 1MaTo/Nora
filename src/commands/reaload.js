@@ -1,6 +1,6 @@
 import { fbtSettings } from "../../config.json";
 import { commandNotFound, reloadCommand, runningCommandError } from "../strings/logsMessages";
-import { autodeleteMsg, logError } from "../utils";
+import { autodeleteMsg, changeBotStatus, logError } from "../utils";
 
 module.exports = {
     name: "reload",
@@ -12,6 +12,7 @@ module.exports = {
     run: async (message, args) => {
         const commandName = args[0];
         if (!commandName) {
+            await changeBotStatus("🔁Reboot...🔁");
             autodeleteMsg(message, reloadCommand.reboot);
             try {
                 let child_process = require("child_process");

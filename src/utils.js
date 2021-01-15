@@ -1,5 +1,7 @@
 const Discord = require("discord.js");
 import { autodeleteMsgDelay, defaultCooldown, prefix } from "../config.json";
+import { BOT_GHOST_STATUS, client, lobbyWatcher } from "./bot";
+import { ghost } from "../auth.json";
 import { lobbyObserver } from "./strings/embeds";
 import {
     badArguments,
@@ -8,6 +10,7 @@ import {
     onlyForDmCommand,
     onlyForGuildCommand,
 } from "./strings/logsMessages";
+import axios from "axios";
 
 export const parseCommand = message => {
     const validCommand = isCommand(message);
@@ -176,3 +179,54 @@ export const guildUserRedisKey = {
 };
 
 export const parseUserId = string => string.replaceAll(/[<>@!]/g, "");
+
+export const changeBotStatus = async status => {
+    if (typeof status === "string") {
+        return client.user.setActivity(status, {
+            type: "PLAYING",
+        });
+    }
+    Object.entries(BOT_GHOST_STATUS).forEach(([key, _]) => {
+        if (status[key] !== undefined) BOT_GHOST_STATUS[key] = status[key];
+    });
+    if (typeof status === "object") {
+        if (BOT_GHOST_STATUS.ghost === "❌") {
+            return client.user.setActivity(`Ghost: ${BOT_GHOST_STATUS.ghost}`, {
+                type: "PLAYING",
+            });
+        }
+        return client.user.setActivity(
+            `${BOT_GHOST_STATUS.ghost && `Ghost ${BOT_GHOST_STATUS.ghost}`} ${
+                BOT_GHOST_STATUS.lobby ? `| Lobby ${BOT_GHOST_STATUS.lobby}` : ""
+            } ${BOT_GHOST_STATUS.games ? `| Games ${BOT_GHOST_STATUS.games}` : ""}`,
+            {
+                type: "PLAYING",
+            }
+        );
+    }
+};
+
+export const checkGhostStatus = async (defaultTimeout = 1000 * 60 * 1) => {
+    try {
+        const commandUrl = `http://${ghost.host}:${ghost.port}/cmd?pass=${ghost.password}&cmd=${escape("ggs")}`;
+        const chatUrl = `http://${ghost.host}:${ghost.port}/chat}`;
+        const command = await axios.get(commandUrl);
+        const chat = await axios.get(chatUrl);
+        const gamesString = chat.data
+            .toString()
+            .replace(/&nbsp;/g, " ")
+            .replace(/<br>/g, "\n")
+            .match(/\(\d+ today+\).*/g);
+        if (gamesString) {
+            const games = gamesString[gamesString.length - 1];
+            const gameCount = games.match(/\$\d+:/g);
+            changeBotStatus({ games: gameCount ? gameCount.length : 0 });
+        } else {
+            changeBotStatus({ games: null });
+        }
+    } catch (error) {
+        console.log("Ghost is offline");
+        changeBotStatus({ ghost: "❌" });
+    }
+    setTimeout(() => checkGhostStatus(defaultTimeout), defaultTimeout);
+};

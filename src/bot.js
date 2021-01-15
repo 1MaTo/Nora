@@ -3,10 +3,19 @@ import "core-js/stable";
 import { token } from "../auth.json";
 import { fbtSettings } from "../config.json";
 import { onCooldown } from "./strings/logsMessages";
-import { autodeleteMsg, checkCommandRequirements, checkCooldownTime, logError, parseCommand } from "./utils";
+import {
+    autodeleteMsg,
+    changeBotStatus,
+    checkCommandRequirements,
+    checkCooldownTime,
+    checkGhostStatus,
+    logError,
+    parseCommand,
+} from "./utils";
 const Discord = require("discord.js");
-export const client = new Discord.Client();
 const fs = require("fs");
+
+export const client = new Discord.Client();
 
 //  constant for builds
 const production = process.env.NODE_ENV === "production";
@@ -25,6 +34,12 @@ const cooldowns = new Discord.Collection();
 export const lobbyWatcher = new Discord.Collection();
 // map of gameStatsCollectors
 export const statsCollectors = new Discord.Collection();
+// info for bot activity status
+export const BOT_GHOST_STATUS = {
+    ghost: undefined,
+    lobby: undefined,
+    games: undefined,
+};
 
 //	loading commands to map
 const commandFiles = fs.readdirSync(__dirname + "/commands").filter(file => file.endsWith("js"));
@@ -36,8 +51,9 @@ commandFiles.forEach(file => {
 
 client.once("ready", async () => {
     console.log("================= SETTING UP =================");
-
+    checkGhostStatus();
     console.log("================= BOT ONLINE =================");
+    changeBotStatus("💤");
 });
 
 client.on("message", message => {
@@ -87,3 +103,27 @@ client.on("message", message => {
 });
 
 client.login(token);
+
+/*var dgram = require("dgram");
+var port = 5868;
+
+const socket = dgram.createSocket({ type: "udp4", reuseAddr: true });
+
+const ghost = dgram.createSocket({ type: "udp4", reuseAddr: true });
+
+ghost.send(Buffer.from("Some bytes"), 6969, "localhost", err => {
+    console.log("send");
+});
+
+socket.on("message", function (msg, info) {
+    console.log(msg.toString());
+});
+
+socket.on("error", err => {
+    console.log(`socket error:\n${err.stack}`);
+});
+
+socket.bind({
+    address: "localhost",
+    port,
+}); */

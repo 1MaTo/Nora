@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-import { checkValidChannel, logError } from "../utils";
+import { checkGhostStatus, checkValidChannel, logError } from "../utils";
 import { client, lobbyWatcher } from "../bot";
 import { fbtSettings } from "../../config.json";
 import { getLobby } from "../db/db";
@@ -48,6 +48,7 @@ module.exports = {
 const startWatching = (message, channel, delay) => {
     getLobby(message.guild.id, async (result, error) => {
         if (error) {
+            lobbyWatcher.delete(guildId);
             client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
             return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
         } else {
@@ -71,6 +72,7 @@ const startWatching = (message, channel, delay) => {
                         setTimeout(() => updateLobbyWatcher(guildId, channel, delay, timers), delay);
                     });
             } catch (error) {
+                lobbyWatcher.delete(guildId);
                 console.log(error);
                 client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
             }
@@ -87,6 +89,7 @@ const updateLobbyWatcher = (guildId, channel, delay, pastTimers) => {
     if (!lobbyWatcher.has(guildId)) return;
     getLobby(guildId, async (result, error) => {
         if (error) {
+            lobbyWatcher.delete(guildId);
             client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
             return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
         } else {
@@ -96,6 +99,7 @@ const updateLobbyWatcher = (guildId, channel, delay, pastTimers) => {
                 const timers = pastTimers ? pastTimers : new Discord.Collection();
                 const headerMessage = messages.get("header");
                 const headerContent = lobbyWatcherCommand.lobbiesCount(loadedLobbies ? loadedLobbies.length : 0);
+                changeBotStatus({ lobby: loadedLobbies ? loadedLobbies.length : 0 });
                 const lobbies = loadedLobbies ? getContentForLobbies(loadedLobbies, timers) : [];
                 headerMessage.edit(headerContent);
 
@@ -119,6 +123,7 @@ const updateLobbyWatcher = (guildId, channel, delay, pastTimers) => {
                 });
                 setTimeout(() => updateLobbyWatcher(guildId, channel, delay, timers), delay);
             } catch (error) {
+                lobbyWatcher.delete(guildId);
                 client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
                 console.log("Bad end in update");
             }
