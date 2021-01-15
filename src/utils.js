@@ -235,9 +235,9 @@ export const checkGhostStatus = async (defaultTimeout = 1000 * 60 * 1) => {
         if (gamesString) {
             const games = gamesString[gamesString.length - 1];
             const gameCount = games.match(/\#\d+:/g);
-            changeBotStatus({ ghost: "✅", games: gameCount ? gameCount.length : 0 });
+            changeBotStatus({ ghost: "✅", games: gameCount ? gameCount.length : null });
         } else {
-            changeBotStatus({ ghost: "✅", games: null });
+            changeBotStatus({ ghost: "✅" });
         }
     } catch (error) {
         console.log(error);
