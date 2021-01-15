@@ -221,6 +221,8 @@ export const changeBotStatus = async status => {
     }
 };
 
+export const pause = time => new Promise(resolve => setTimeout(resolve, time));
+
 export const checkGhostStatus = async (defaultTimeout = 1000 * 60 * 1) => {
     try {
         const commandUrl = `http://${ghost.host}:${ghost.port}/cmd?pass=${ghost.password}&cmd=${escape("ggs")}`;
@@ -232,6 +234,7 @@ export const checkGhostStatus = async (defaultTimeout = 1000 * 60 * 1) => {
             .replace(/&nbsp;/g, " ")
             .replace(/<br>/g, "\n")
             .match(/\(\d+ today+\).*/g);
+        await pause(2000);
         if (gamesString) {
             const games = gamesString[gamesString.length - 1];
             const gameCount = games.match(/\#\d+:/g);
