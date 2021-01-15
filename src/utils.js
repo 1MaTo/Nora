@@ -190,13 +190,13 @@ export const changeBotStatus = async status => {
         if (status[key] !== undefined) BOT_GHOST_STATUS[key] = status[key];
     });
     if (typeof status === "object") {
-        if (BOT_GHOST_STATUS.ghost === "❌") {
-            return client.user.setActivity(`Ghost: ${BOT_GHOST_STATUS.ghost}`, {
+        if (!BOT_GHOST_STATUS.ghost || BOT_GHOST_STATUS.ghost === "❌") {
+            return client.user.setActivity(`Ghost: ❌`, {
                 type: "PLAYING",
             });
         }
         return client.user.setActivity(
-            `${BOT_GHOST_STATUS.ghost && `Ghost ${BOT_GHOST_STATUS.ghost}`} ${
+            `${BOT_GHOST_STATUS.ghost ? `Ghost ${BOT_GHOST_STATUS.ghost}` : "❌"} ${
                 BOT_GHOST_STATUS.lobby ? `| Lobby ${BOT_GHOST_STATUS.lobby}` : ""
             } ${BOT_GHOST_STATUS.games ? `| Games ${BOT_GHOST_STATUS.games}` : ""}`,
             {

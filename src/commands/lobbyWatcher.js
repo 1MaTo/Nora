@@ -1,11 +1,10 @@
 const Discord = require("discord.js");
-import { checkGhostStatus, checkValidChannel, logError } from "../utils";
-import { client, lobbyWatcher } from "../bot";
+import { botOwner } from "../../auth.json";
 import { fbtSettings } from "../../config.json";
+import { client, lobbyWatcher } from "../bot";
 import { getLobby } from "../db/db";
 import { dbErrors, lobbyWatcherCommand } from "../strings/logsMessages";
-import { autodeleteMsg, parseGameListToEmbed } from "../utils";
-import { botOwner } from "../../auth.json";
+import { autodeleteMsg, changeBotStatus, checkValidChannel, logError, parseGameListToEmbed } from "../utils";
 
 module.exports = {
     name: "lobbywatcher",
@@ -40,7 +39,7 @@ module.exports = {
                 startWatching(message, channel, delay);
             }
         } catch (error) {
-            client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+            client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
         }
     },
 };
@@ -49,7 +48,7 @@ const startWatching = (message, channel, delay) => {
     getLobby(message.guild.id, async (result, error) => {
         if (error) {
             lobbyWatcher.delete(guildId);
-            client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+            client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
             return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
         } else {
             try {
@@ -74,7 +73,7 @@ const startWatching = (message, channel, delay) => {
             } catch (error) {
                 lobbyWatcher.delete(guildId);
                 console.log(error);
-                client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+                client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
             }
         }
     });
@@ -90,7 +89,7 @@ const updateLobbyWatcher = (guildId, channel, delay, pastTimers) => {
     getLobby(guildId, async (result, error) => {
         if (error) {
             lobbyWatcher.delete(guildId);
-            client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+            client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
             return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
         } else {
             try {
@@ -124,7 +123,7 @@ const updateLobbyWatcher = (guildId, channel, delay, pastTimers) => {
                 setTimeout(() => updateLobbyWatcher(guildId, channel, delay, timers), delay);
             } catch (error) {
                 lobbyWatcher.delete(guildId);
-                client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+                client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
                 console.log("Bad end in update");
             }
         }
