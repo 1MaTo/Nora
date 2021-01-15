@@ -11,6 +11,7 @@ import {
     onlyForGuildCommand,
 } from "./strings/logsMessages";
 import axios from "axios";
+import { numberToEmoji } from "./strings/constants";
 
 export const parseCommand = message => {
     const validCommand = isCommand(message);
@@ -197,8 +198,22 @@ export const changeBotStatus = async status => {
         }
         return client.user.setActivity(
             `${BOT_GHOST_STATUS.ghost ? `Ghost ${BOT_GHOST_STATUS.ghost}` : "❌"} ${
-                BOT_GHOST_STATUS.lobby ? `| Lobby ${BOT_GHOST_STATUS.lobby}` : ""
-            } ${BOT_GHOST_STATUS.games ? `| Games ${BOT_GHOST_STATUS.games}` : ""}`,
+                BOT_GHOST_STATUS.lobby
+                    ? `| Lobby ${
+                          Number(BOT_GHOST_STATUS.lobby) < 11
+                              ? numberToEmoji[BOT_GHOST_STATUS.lobby]
+                              : BOT_GHOST_STATUS.lobby
+                      }`
+                    : ""
+            } ${
+                BOT_GHOST_STATUS.games
+                    ? `| Games ${
+                          Number(BOT_GHOST_STATUS.games) < 11
+                              ? numberToEmoji[BOT_GHOST_STATUS.games]
+                              : BOT_GHOST_STATUS.games
+                      }`
+                    : ""
+            }`,
             {
                 type: "PLAYING",
             }
