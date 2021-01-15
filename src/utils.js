@@ -227,14 +227,15 @@ export const checkGhostStatus = async (defaultTimeout = 1000 * 60 * 1) => {
     try {
         const commandUrl = `http://${ghost.host}:${ghost.port}/cmd?pass=${ghost.password}&cmd=${escape("ggs")}`;
         const chatUrl = `http://${ghost.host}:${ghost.port}/chat`;
-        const command = await axios.get(commandUrl);
+        await axios.get(commandUrl);
+        await pause(2000);
         const chat = await axios.get(chatUrl);
         const gamesString = chat.data
             .toString()
             .replace(/&nbsp;/g, " ")
             .replace(/<br>/g, "\n")
             .match(/\(\d+ today+\).*/g);
-        await pause(2000);
+        console.log(chat.data);
         if (gamesString) {
             const games = gamesString[gamesString.length - 1];
             const gameCount = games.match(/\#\d+:/g);
