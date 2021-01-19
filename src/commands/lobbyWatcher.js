@@ -145,7 +145,7 @@ export const updateLobbyWatcher = async (guildId, channel, delay, pastTimers) =>
                 await setLobbyMessagesData(guildId, channel.id, messages, delay, timers);
                 setTimeout(() => updateLobbyWatcher(guildId, channel, delay, timers), delay);
             } catch (error) {
-                await clearLobbyMessagesData(guildId);
+                //await clearLobbyMessagesData(guildId);
                 sendReportToOwner(error);
                 console.log("Bad end in update");
             }
