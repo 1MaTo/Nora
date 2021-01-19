@@ -9,6 +9,8 @@ import {
     checkCommandRequirements,
     checkCooldownTime,
     checkGhostStatus,
+    loadGameStatsFromDB,
+    loadLobbyWatchersFromDB,
     logError,
     parseCommand,
 } from "./utils";
@@ -18,8 +20,8 @@ const fs = require("fs");
 export const client = new Discord.Client();
 
 //  constant for builds
-const production = process.env.NODE_ENV === "production";
-const development = process.env.NODE_ENV === "development";
+export const production = process.env.NODE_ENV === "production";
+export const development = process.env.NODE_ENV === "development";
 //  util map
 export const utilmap = new Discord.Collection();
 //  map of notifications for games
@@ -51,9 +53,15 @@ commandFiles.forEach(file => {
 
 client.once("ready", async () => {
     console.log("================= SETTING UP =================");
-    checkGhostStatus();
-    console.log("================= BOT ONLINE =================");
+
     changeBotStatus("💤");
+
+    await loadLobbyWatchersFromDB();
+    await loadGameStatsFromDB();
+
+    checkGhostStatus();
+
+    console.log("================= BOT ONLINE =================");
 });
 
 client.on("message", message => {

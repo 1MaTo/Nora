@@ -1,41 +1,45 @@
-const { gameStatsCommands } = require("../strings/logsMessages");
-const { logError, autodeleteMsg, checkValidChannel } = require("../utils");
-const { statsCollectors } = require("../bot");
-const { getFinishedGamesCount, getFinishedGamesId, getGamesDataByIds, saveMapStats } = require("../db/db");
-const { gameStatsPoll } = require("../strings/embeds");
-const { colors } = require("../strings/constants");
+import { gameStatsCommands } from "../strings/logsMessages";
+import { autodeleteMsg, checkValidChannel, guildRedisKey } from "../utils";
+import { getFinishedGamesCount, getFinishedGamesId, getGamesDataByIds, saveMapStats } from "../db/db";
+import { gameStatsPoll } from "../strings/embeds";
+import { colors } from "../strings/constants";
+import { objectKey } from "../redis/objects";
+import { redis } from "../redis/redis";
+import { statsCollectors } from "../bot";
 
-module.exports = {
-    name: "gameStats",
-    args: 0,
-    aliases: ["gs"],
-    usage: "<channel> | stop",
-    description:
-        "Command to enable/disable game stats collecting.\nIf no arguments provided, channel will be the one you tiped command",
-    guildOnly: true,
-    development: false,
-    adminOnly: true,
-    run: async (message, args) => {
-        if (args[0] === "stop") {
-            statsCollectors.delete(message.guild.id);
-            return autodeleteMsg(message, gameStatsCommands.disabled);
-        }
+export const name = "gameStats";
+export const args = 0;
+export const aliases = ["gs"];
+export const usage = "<channel> | stop";
+export const description =
+    "Command to enable/disable game stats collecting.\nIf no arguments provided, channel will be the one you tiped command";
+export const guildOnly = true;
+export const development = false;
+export const adminOnly = true;
+export const run = async (message, args) => {
+    const redisKey = guildRedisKey.struct(objectKey.gameStats, message.guild.id);
 
-        if (statsCollectors.has(message.guild.id)) return autodeleteMsg(message, gameStatsCommands.alreadyEnabled);
+    if (args[0] === "stop") {
+        statsCollectors.delete(message.guild.id);
+        await redis.del(redisKey);
+        return autodeleteMsg(message, gameStatsCommands.disabled);
+    }
 
-        const channel = checkValidChannel(args[0], message);
-        const newCollectorOptions = {
-            channel,
-            delay: 5000,
-            currGameCount: await getFinishedGamesCount(),
-        };
-        statsCollectors.set(message.guild.id, newCollectorOptions);
-        autodeleteMsg(message, gameStatsCommands.enabled);
-        setTimeout(() => checkNewFinishedGames(channel), newCollectorOptions.delay);
-    },
+    if (statsCollectors.has(message.guild.id)) return autodeleteMsg(message, gameStatsCommands.alreadyEnabled);
+
+    const channel = checkValidChannel(args[0], message);
+    const newCollectorOptions = {
+        channel,
+        delay: 5000,
+        currGameCount: await getFinishedGamesCount(),
+    };
+    statsCollectors.set(message.guild.id, newCollectorOptions);
+    await redis.set(redisKey, { ...newCollectorOptions, channel: channel.id });
+    autodeleteMsg(message, gameStatsCommands.enabled);
+    setTimeout(() => checkNewFinishedGames(channel), newCollectorOptions.delay);
 };
 
-const checkNewFinishedGames = async channel => {
+export const checkNewFinishedGames = async channel => {
     const options = statsCollectors.get(channel.guild.id);
 
     if (!options) return autodeleteMsg({ channel }, gameStatsCommands.disabled);
@@ -47,7 +51,9 @@ const checkNewFinishedGames = async channel => {
     const newGamesCount = Number(gamesId.length) - Number(options.currGameCount);
     if (newGamesCount) {
         options.currGameCount = gamesId.length;
-        statsCollectors.set(options);
+        statsCollectors.set(channel.guild.id, options);
+        const redisKey = guildRedisKey.struct(objectKey.gameStats, channel.guild.id);
+        await redis.set(redisKey, { ...options, channel: channel.id });
         setTimeout(() => startPolls(gamesId.splice(-newGamesCount), channel), 10000);
     }
 
@@ -57,6 +63,7 @@ const checkNewFinishedGames = async channel => {
 const startPolls = async (gamesId, channel) => {
     const gamesData = await getGamesDataByIds(gamesId, channel.guild.id);
     gamesData.forEach(game => {
+        if (game.players.length < 2) return;
         startGameCollector(game, channel);
     });
 };
@@ -72,7 +79,6 @@ const startGameCollector = async (gameData, channel) => {
                     currReaction.push(indexToEmoji[index]);
                     await gameMsg.react(indexToEmoji[index]);
                 });
-                const reactions = Promise.all(addReactions);
                 setTimeout(() => endGameCollector(gameData.id, gameMsg, currReaction, gameData), deleteDelay);
             } catch (error) {
                 console.log(error);
@@ -89,7 +95,7 @@ const endGameCollector = async (gameid, gameMsg, reactions = [], gameData) => {
     if (mostReactCount <= 1) return gameMsg.delete();
     const winTeam = reactionsCount.indexOf(mostReactCount);
     if (reactionsCount.every(reactCount => reactCount === reactionsCount[winTeam])) return gameMsg.delete();
-    saveMapStats(gameid, winTeam).then(result => {
+    saveMapStats(gameid, winTeam).then(() => {
         gameMsg.reactions.removeAll();
         gameMsg.edit({ embed: gameStatsPoll(gameData, colors.green, winTeam) });
     });

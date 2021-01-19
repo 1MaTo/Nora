@@ -1,54 +1,62 @@
 const Discord = require("discord.js");
-import { botOwner } from "../../auth.json";
 import { fbtSettings } from "../../config.json";
-import { client, lobbyWatcher } from "../bot";
+import { lobbyWatcher } from "../bot";
 import { getLobby } from "../db/db";
+import { objectKey } from "../redis/objects";
+import { redis } from "../redis/redis";
 import { dbErrors, lobbyWatcherCommand } from "../strings/logsMessages";
-import { autodeleteMsg, changeBotStatus, checkValidChannel, logError, parseGameListToEmbed } from "../utils";
+import {
+    autodeleteMsg,
+    changeBotStatus,
+    checkValidChannel,
+    guildRedisKey,
+    logError,
+    parseGameListToEmbed,
+    sendReportToOwner,
+} from "../utils";
 
-module.exports = {
-    name: "lobbywatcher",
-    aliases: ["lw"],
-    args: 0,
-    usage: `[channel | stop] [delay in ms]`,
-    description:
-        "Frequently looking for games in real time until you stop this command\ndelay: min - 3000, max - 60000, default - 10000",
-    guildOnly: true,
-    adminOnly: false,
-    development: false,
-    run: (message, args) => {
-        try {
-            if (args[0] === "stop") {
-                const isWatching = lobbyWatcher.has(message.guild.id);
-                if (isWatching) {
-                    const messages = lobbyWatcher.get(message.guild.id);
-                    messages.forEach(msg => msg.delete());
-                    lobbyWatcher.delete(message.guild.id);
-                    return autodeleteMsg(message, lobbyWatcherCommand.stopedWathing);
-                } else {
-                    return autodeleteMsg(message, lobbyWatcherCommand.nothingToStop);
-                }
-            }
-            const channel = checkValidChannel(args[0], message);
-            const delay = !isNaN(args[1]) ? (args[1] >= 3000 && args[1] <= 60000 ? args[1] : 10000) : 10000;
-            const guild = lobbyWatcher.get(message.guild.id);
-            if (guild) {
-                return autodeleteMsg(message, lobbyWatcherCommand.alreadyWatchingInThisGuild);
+export const name = "lobbywatcher";
+export const aliases = ["lw"];
+export const args = 0;
+export const usage = `[channel | stop] [delay in ms]`;
+export const description =
+    "Frequently looking for games in real time until you stop this command\ndelay: min - 3000, max - 60000, default - 10000";
+export const guildOnly = true;
+export const adminOnly = false;
+export const development = false;
+export const run = async (message, args) => {
+    try {
+        if (args[0] === "stop") {
+            const isWatching = lobbyWatcher.has(message.guild.id);
+            if (isWatching) {
+                const messages = lobbyWatcher.get(message.guild.id);
+                messages.forEach(msg => msg.delete());
+                await clearLobbyMessagesData(message.guild.id);
+                return autodeleteMsg(message, lobbyWatcherCommand.stopedWathing);
             } else {
-                autodeleteMsg(message, lobbyWatcherCommand.startWatching(channel.id, delay));
-                startWatching(message, channel, delay);
+                return autodeleteMsg(message, lobbyWatcherCommand.nothingToStop);
             }
-        } catch (error) {
-            client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
         }
-    },
+        const channel = checkValidChannel(args[0], message);
+        const delay = !isNaN(args[1]) ? (args[1] >= 3000 && args[1] <= 60000 ? args[1] : 10000) : 10000;
+        const guild = lobbyWatcher.get(message.guild.id);
+        if (guild) {
+            return autodeleteMsg(message, lobbyWatcherCommand.alreadyWatchingInThisGuild);
+        } else {
+            autodeleteMsg(message, lobbyWatcherCommand.startWatching(channel.id, delay));
+            startWatching(message, channel, delay);
+        }
+    } catch (error) {
+        sendReportToOwner(error);
+        console.log(error);
+    }
 };
 
-const startWatching = (message, channel, delay) => {
+const startWatching = async (message, channel, delay) => {
     getLobby(message.guild.id, async (result, error) => {
         if (error) {
-            lobbyWatcher.delete(guildId);
-            client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+            await clearLobbyMessagesData(guildId);
+            sendReportToOwner(error);
             return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
         } else {
             try {
@@ -58,22 +66,21 @@ const startWatching = (message, channel, delay) => {
                 const guildId = message.guild.id;
                 const headerContent = lobbyWatcherCommand.lobbiesCount(loadedLobbies ? loadedLobbies.length : 0);
                 const lobbies = loadedLobbies ? getContentForLobbies(loadedLobbies, timers) : [];
-                channel
-                    .send(headerContent)
-                    .then(headerMessage => messages.set("header", headerMessage))
-                    .then(_ => {
-                        lobbies.forEach(game => {
-                            channel
-                                .send({ embed: game.embed })
-                                .then(embedMessage => messages.set(game.botid, embedMessage));
-                        });
-                        lobbyWatcher.set(guildId, messages);
-                        setTimeout(() => updateLobbyWatcher(guildId, channel, delay, timers), delay);
-                    });
+                const headerMessage = await channel.send(headerContent);
+                messages.set("header", headerMessage);
+                await Promise.all(
+                    lobbies.map(async game => {
+                        const embedMessage = await channel.send({ embed: game.embed });
+                        messages.set(game.botid, embedMessage);
+                    })
+                );
+                lobbyWatcher.set(guildId, messages);
+                await setLobbyMessagesData(guildId, channel.id, messages, delay, timers);
+                setTimeout(() => updateLobbyWatcher(guildId, channel, delay, timers), delay);
             } catch (error) {
-                lobbyWatcher.delete(guildId);
+                await clearLobbyMessagesData(guildId);
                 console.log(error);
-                client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+                sendReportToOwner(error);
             }
         }
     });
@@ -84,48 +91,83 @@ const getContentForLobbies = (result, timers) =>
         return { botid: game.botid, embed: game.embed };
     });
 
-const updateLobbyWatcher = (guildId, channel, delay, pastTimers) => {
+export const updateLobbyWatcher = async (guildId, channel, delay, pastTimers) => {
     if (!lobbyWatcher.has(guildId)) return;
     getLobby(guildId, async (result, error) => {
         if (error) {
-            lobbyWatcher.delete(guildId);
-            client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+            await clearLobbyMessagesData(guildId);
+            sendReportToOwner(error);
             return logError(message, new Error(error), dbErrors.queryError, fbtSettings.db);
         } else {
             try {
                 const loadedLobbies = await result;
                 const messages = lobbyWatcher.get(guildId);
                 const timers = pastTimers ? pastTimers : new Discord.Collection();
-                const headerMessage = messages.get("header");
+                let headerMessage = messages.get("header");
                 const headerContent = lobbyWatcherCommand.lobbiesCount(loadedLobbies ? loadedLobbies.length : 0);
                 changeBotStatus({ lobby: loadedLobbies ? loadedLobbies.length : 0 });
                 const lobbies = loadedLobbies ? getContentForLobbies(loadedLobbies, timers) : [];
-                headerMessage.edit(headerContent);
+
+                try {
+                    await headerMessage.edit(headerContent);
+                } catch (err) {
+                    headerMessage = await channel.send(headerContent);
+                    messages.set("header", headerMessage);
+                }
 
                 //  DELETE OUTDATED GAMES THAT HAVE END OR START
-                messages.forEach((msg, botid) => {
-                    if (!lobbies.some(game => game.botid === botid) && botid !== "header") {
-                        timers.delete(botid);
-                        msg.delete().then(_ => messages.delete(botid));
-                    }
-                });
-                lobbies.forEach(game => {
-                    const existLobbyMessage = messages.get(game.botid);
-                    if (existLobbyMessage) {
-                        existLobbyMessage.edit({ embed: game.embed });
-                    } else {
-                        headerMessage.channel.send({ embed: game.embed }).then(newLobbyMessage => {
+                await Promise.all(
+                    messages.map(async (msg, botid) => {
+                        if (!lobbies.some(game => game.botid === botid) && botid !== "header") {
+                            timers.delete(botid);
+                            await msg.delete();
+                            messages.delete(botid);
+                        }
+                    })
+                );
+
+                await Promise.all(
+                    lobbies.map(async game => {
+                        const existLobbyMessage = messages.get(game.botid);
+                        if (existLobbyMessage) {
+                            try {
+                                await existLobbyMessage.edit({ embed: game.embed });
+                            } catch (error) {
+                                const newLobbyMessage = await headerMessage.channel.send({ embed: game.embed });
+                                messages.set(game.botid, newLobbyMessage);
+                            }
+                        } else {
+                            const newLobbyMessage = await headerMessage.channel.send({ embed: game.embed });
                             messages.set(game.botid, newLobbyMessage);
-                            lobbyWatcher.set(guildId, messages);
-                        });
-                    }
-                });
+                        }
+                    })
+                );
+                await setLobbyMessagesData(guildId, channel.id, messages, delay, timers);
                 setTimeout(() => updateLobbyWatcher(guildId, channel, delay, timers), delay);
             } catch (error) {
-                lobbyWatcher.delete(guildId);
-                client.users.cache.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+                await clearLobbyMessagesData(guildId);
+                sendReportToOwner(error);
                 console.log("Bad end in update");
             }
         }
     });
+};
+
+const setLobbyMessagesData = async (guildId, channelId, messages, delay, timers) => {
+    const redisKey = guildRedisKey.struct(objectKey.lobbyWatcher, guildId);
+    const msgIds = [...messages.entries()].map(([key, msg]) => {
+        return { key: key, id: msg.id };
+    });
+    await redis.set(redisKey, {
+        channel: channelId,
+        messages: [...msgIds],
+        delay,
+        timers: [...timers.entries()],
+    });
+};
+
+const clearLobbyMessagesData = async guildId => {
+    const redisKey = guildRedisKey.struct(objectKey.lobbyWatcher, guildId);
+    await redis.del(redisKey);
+    lobbyWatcher.delete(guildId);
 };

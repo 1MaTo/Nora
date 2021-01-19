@@ -5,7 +5,7 @@ import { colors } from "../strings/constants";
 import { defaultEmbed } from "../strings/embeds";
 import { nicknameCommand } from "../strings/logsMessages";
 import { prefix } from "../../config.json";
-import { autodeleteMsg, autodeleteReaction, guildUserRedisKey, parseUserId } from "../utils";
+import { autodeleteMsg, autodeleteReaction, getUserById, guildUserRedisKey, parseUserId } from "../utils";
 
 export const name = "nickname";
 export const args = 1;
@@ -41,7 +41,7 @@ export const run = async (message, args) => {
     if (action === "rebind") {
         if (!message.member.hasPermission("ADMINISTRATOR")) return autodeleteMsg(message, needAdminPermission);
 
-        const existUser = args[1] && message.guild.members.cache.has(parseUserId(args[1]));
+        const existUser = args[1] && (await getUserById(message.guild, parseUserId(args[1])));
 
         if (!existUser) return autodeleteMsg(message, nicknameCommand.badUser);
 

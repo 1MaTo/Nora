@@ -1,7 +1,13 @@
 const Discord = require("discord.js");
+import axios from "axios";
+import { botOwner, ghost } from "../auth.json";
 import { autodeleteMsgDelay, defaultCooldown, prefix } from "../config.json";
-import { BOT_GHOST_STATUS, client, lobbyWatcher } from "./bot";
-import { ghost } from "../auth.json";
+import { BOT_GHOST_STATUS, client, development, lobbyWatcher, statsCollectors } from "./bot";
+import { updateLobbyWatcher } from "./commands/lobbyWatcher";
+import { checkNewFinishedGames } from "./commands/gameStats";
+import { objectKey } from "./redis/objects";
+import { redis } from "./redis/redis";
+import { numberToEmoji } from "./strings/constants";
 import { lobbyObserver } from "./strings/embeds";
 import {
     badArguments,
@@ -10,8 +16,6 @@ import {
     onlyForDmCommand,
     onlyForGuildCommand,
 } from "./strings/logsMessages";
-import axios from "axios";
-import { numberToEmoji } from "./strings/constants";
 
 export const parseCommand = message => {
     const validCommand = isCommand(message);
@@ -179,9 +183,15 @@ export const guildUserRedisKey = {
     destruct: key => key.split("&&&"),
 };
 
+export const guildRedisKey = {
+    struct: (object, guildId) => [object, guildId].join("###"),
+    destruct: key => key.split("###"),
+};
+
 export const parseUserId = string => string.replaceAll(/[<>@!]/g, "");
 
 export const changeBotStatus = async status => {
+    if (development) return;
     if (typeof status === "string") {
         return client.user.setActivity(status, {
             type: "PLAYING",
@@ -235,7 +245,6 @@ export const checkGhostStatus = async (defaultTimeout = 1000 * 60 * 1) => {
             .replace(/&nbsp;/g, " ")
             .replace(/<br>/g, "\n")
             .match(/\(\d+ today+\).*/g);
-        console.log(chat.data);
         if (gamesString) {
             const games = gamesString[gamesString.length - 1];
             const gameCount = games.match(/\#\d+:/g);
@@ -249,4 +258,73 @@ export const checkGhostStatus = async (defaultTimeout = 1000 * 60 * 1) => {
         changeBotStatus({ ghost: "❌" });
     }
     setTimeout(() => checkGhostStatus(defaultTimeout), defaultTimeout);
+};
+
+export const getUserById = async (guild, id) => {
+    try {
+        const user = await guild.members.fetch({ user: id, cache: false });
+        return user;
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
+};
+
+export const sendReportToOwner = async message => {
+    try {
+        const owner = await client.users.fetch(botOwner.id, false);
+        owner.send(`**REPORT**\n\`\`\`${message}\`\`\``);
+    } catch (error) {
+        console.log("Cant send msg to owner: ", error);
+    }
+};
+
+export const loadLobbyWatchersFromDB = async () => {
+    const guildIds = client.guilds.cache.map(guild => guild.id);
+    try {
+        await Promise.all(
+            guildIds.map(async guildId => {
+                const redisKey = guildRedisKey.struct(objectKey.lobbyWatcher, guildId);
+                const data = await redis.get(redisKey);
+                if (!data) return;
+                const channel = await client.channels.fetch(data.channel);
+                const messages = (
+                    await Promise.all(
+                        data.messages.map(async msg => {
+                            try {
+                                const fetchedMsg = await channel.messages.fetch(msg.id);
+                                return [msg.key, fetchedMsg];
+                            } catch (error) {
+                                return null;
+                            }
+                        })
+                    )
+                ).filter(msg => msg !== null);
+                lobbyWatcher.set(guildId, new Discord.Collection(messages));
+                updateLobbyWatcher(guildId, channel, data.delay, new Discord.Collection(data.timers));
+            })
+        );
+    } catch (error) {
+        console.log(error);
+        sendReportToOwner("Cant load lobby watchers: " + error);
+    }
+};
+
+export const loadGameStatsFromDB = async () => {
+    const guildIds = client.guilds.cache.map(guild => guild.id);
+    try {
+        await Promise.all(
+            guildIds.map(async guildId => {
+                const redisKey = guildRedisKey.struct(objectKey.gameStats, guildId);
+                const data = await redis.get(redisKey);
+                if (!data) return;
+                const channel = await client.channels.fetch(data.channel);
+                statsCollectors.set(guildId, { ...data, channel });
+                checkNewFinishedGames(channel);
+            })
+        );
+    } catch (error) {
+        console.log(error);
+        sendReportToOwner("Cant load lobby watchers: " + error);
+    }
 };
