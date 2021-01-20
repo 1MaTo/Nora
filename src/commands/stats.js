@@ -44,7 +44,8 @@ export const run = async (message, args) => {
         case "winrate":
         case "wr":
             const results = await calculateUserWinrate(nicknames);
-            if (!results) return autodeleteMsg(message, statsCommand.noGamesForThisNickname(nicknames));
+            if (!results.user.nicknames.length)
+                return autodeleteMsg(message, statsCommand.noGamesForThisNickname(nicknames));
             watchStatsMessage(message, results);
             return true;
         default:
