@@ -1,5 +1,5 @@
 import { images } from "../strings/links";
-import { parseDuration, parseTimePast, toFirstLetterUpperCase } from "../utils";
+import { parseDuration, parseTimePast, toFirstLetterUpperCase, getWinrateColor } from "../utils";
 import { colors, emptyField, SPACE } from "./constants";
 
 const usersInLobby = users => {
@@ -235,7 +235,7 @@ export const userWinRate = stats => {
                         `\`${nickname}\` 🔸 **${percent}%** 🔸 [ 🔺  **${win}** |🔻**  ${lose}** ]`
                 )
                 .join("\n\n")} `,
-        color: null,
+        color: getWinrateColor(stats.user.percent),
         author: {
             name: "📝FBT winrate stats 📝",
         },
