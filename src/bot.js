@@ -54,6 +54,8 @@ commandFiles.forEach(file => {
 client.once("ready", async () => {
     console.log("================= SETTING UP =================");
 
+    if (development) return console.log("================= BOT ONLINE IN DEVELOPMENT =================");
+
     changeBotStatus("💤");
 
     await loadLobbyWatchersFromDB();

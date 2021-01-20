@@ -216,3 +216,33 @@ export const ghostCommandLog = logs => {
         },
     };
 };
+
+export const userWinRate = stats => {
+    const userNickname =
+        stats.user.nicknames.length > 1
+            ? `${stats.user.nicknames[0]} [...${stats.user.nicknames.length}]`
+            : stats.user.nicknames[0];
+
+    return {
+        title: `${userNickname} 🔸 ${stats.user.percent}% 🔸 [ 🔺${stats.user.win} |🔻${stats.user.lose} ]`,
+        description: `${stats.teammatesMode ? "🤝 __Teammates ranking__ 🤝" : "😈 __Enemies ranking__ 😈"}
+        
+            Sorted by *${stats.sortMethod}*
+
+            ${stats.teammates
+                .map(
+                    ({ nickname, win, lose, percent }) =>
+                        `\`${nickname}\` 🔸 **${percent}%** 🔸 [ 🔺  **${win}** |🔻**  ${lose}** ]`
+                )
+                .join("\n\n")} `,
+        color: null,
+        author: {
+            name: "📝FBT winrate stats 📝",
+        },
+        footer: {
+            text: `${stats.user.win + stats.user.lose} games ● ${stats.totalTeammates} teammates ● page ${stats.page}/${
+                stats.maxPage
+            }`,
+        },
+    };
+};

@@ -233,3 +233,18 @@ export const saveMapStats = async (gameid, winTeam) => {
         return null;
     }
 };
+
+export const getGamesResults = async () => {
+    try {
+        const games = await asyncDb.query(`
+            SELECT gameplayers.gameid, gameplayers.name, (winteam = team)  as win
+            FROM ghost.mapstats 
+            inner join games on gameid = games.id 
+            inner join gameplayers on gameplayers.gameid = games.id
+            where map like '%fbt%'`);
+        return games;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+};
