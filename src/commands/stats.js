@@ -243,7 +243,7 @@ const watchStatsMessage = async (message, stats) => {
                 board.edit(constructEmbed());
                 break;
             case "➡":
-                if (currentPage === maxPage) return;
+                if (currentPage === maxPage - 1) return;
                 currentPage++;
                 board.edit(constructEmbed());
                 break;
@@ -263,6 +263,7 @@ const watchStatsMessage = async (message, stats) => {
                 break;
             case "🔄":
                 currentPage = 0;
+                maxEntities = stats.enemies.length;
                 maxPage = Math.ceil(maxEntities / entityOnPage);
                 teammatesMode = !teammatesMode;
                 sortMethod = {
