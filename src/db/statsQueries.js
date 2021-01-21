@@ -27,3 +27,24 @@ export const getGamesCount = async (nicknames, minIngameTime = 900) => {
         return null;
     }
 };
+
+export const getPlayerWinrate = async (nicknames, map) => {
+    try {
+        const fromGamesWithNicknames = `
+        from gameplayers
+        inner join games on games.id = gameplayers.gameid
+        inner join mapstats on mapstats.gameid = games.id
+        where gameplayers.name in ("${nicknames.join(',"')}") and map like '%${map}%'`;
+
+        const result = await asyncDb.query(`
+        select 
+        round(((select count(*)
+        ${fromGamesWithNicknames} and winteam = team) / count(games.id) * 100)) as winrate
+        ${fromGamesWithNicknames};`);
+
+        return result[0].winrate;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+};

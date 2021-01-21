@@ -1,11 +1,18 @@
 import { gameStatsCommands } from "../strings/logsMessages";
 import { autodeleteMsg, checkValidChannel, guildRedisKey } from "../utils";
-import { getFinishedGamesCount, getFinishedGamesId, getGamesDataByIds, saveMapStats } from "../db/db";
+import {
+    getFinishedGamesCount,
+    getFinishedGamesId,
+    getGamesDataByIds,
+    saveMapStats,
+    searchMapConfigOrDefault,
+} from "../db/db";
 import { gameStatsPoll } from "../strings/embeds";
 import { colors } from "../strings/constants";
 import { objectKey } from "../redis/objects";
 import { redis } from "../redis/redis";
 import { statsCollectors } from "../bot";
+import { parseMapName } from "../db/utils";
 
 export const name = "gameStats";
 export const args = 0;
@@ -64,12 +71,14 @@ const startPolls = async (gamesId, channel) => {
     const gamesData = await getGamesDataByIds(gamesId, channel.guild.id);
     gamesData.forEach(game => {
         if (game.players.length < 2) return;
+        const config = searchMapConfigOrDefault(channel.guild.id, { map: parseMapName(game.map), slotstotal: null });
+        if (config.options.ranking === "false") return;
         startGameCollector(game, channel);
     });
 };
 
 const startGameCollector = async (gameData, channel) => {
-    const deleteDelay = 1000 * 60 * 3;
+    const deleteDelay = 1000 * 60 * 2;
     channel.send(gameStatsCommands.gameEnded(deleteDelay)).then(firstMsg => {
         firstMsg.channel.send({ embed: gameStatsPoll(gameData, colors.black) }).then(gameMsg => {
             const indexToEmoji = ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣"];

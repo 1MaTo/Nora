@@ -2,14 +2,16 @@ export const EMPTY_LOBBY_USER_NAME = "open";
 export const EPMTY_LOBBY_PING = "-";
 export const EMPTY_LOBBY_SERVER = "-";
 export const EMPTY_LOBBY_STATS = "-";
+export const EMPTY_LOBBY_WINRATE = "unranked";
 export const SPACE = "‎‏‏‎ ";
+
 export const defaultFbtOptionalConfig = {
-    spectatorLivesMatter: false,
-    fbtHeroStats: false,
+    spectatorLivesMatter: "false",
+    ranking: "false",
 };
 export const fbtMapConfigRestrictions = {
     spectatorlivesmatter: ["true", "false"],
-    fbtherostats: ["true", "false"],
+    ranking: ["true", "false"],
 };
 export const colors = {
     green: "#309228",

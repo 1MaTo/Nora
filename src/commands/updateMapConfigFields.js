@@ -9,7 +9,7 @@ module.exports = {
     args: 3,
     aliases: ["umcf"],
     usage: "<map> <field> <value> | <field> <value> | ...",
-    description: "Use this command to change __optional__ fields in map config",
+    description: "Use this command to change optional fields in map config",
     guildOnly: true,
     development: false,
     adminOnly: false,
@@ -22,7 +22,7 @@ module.exports = {
                 .forEach(configItem => {
                     const [field, value] = configItem.trim().split(" ");
                     if (!fbtMapConfigRestrictions[field]) return;
-                    Object.entries(config).forEach(([key, _]) => {
+                    Object.entries(config.options).forEach(([key, _]) => {
                         if (
                             field === key.toLowerCase() &&
                             fbtMapConfigRestrictions[field].indexOf(value.toString()) !== -1

@@ -1,6 +1,6 @@
 import "@babel/polyfill";
 import "core-js/stable";
-import { token } from "../auth.json";
+import { token, botOwner } from "../auth.json";
 import { fbtSettings } from "../config.json";
 import { onCooldown } from "./strings/logsMessages";
 import {
@@ -13,6 +13,7 @@ import {
     loadLobbyWatchersFromDB,
     logError,
     parseCommand,
+    sendReportToOwner,
 } from "./utils";
 const Discord = require("discord.js");
 const fs = require("fs");
@@ -108,7 +109,7 @@ client.on("message", message => {
         command.run(message, args);
     } catch (error) {
         logError(message, error, fbtSettings.failedInCommand);
-        client.users.get(botOwner.id).send(`**CRASH**\n\`\`\`${error}\`\`\``);
+        sendReportToOwner(error);
     }
 });
 

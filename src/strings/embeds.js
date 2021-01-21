@@ -16,8 +16,8 @@ const usersInLobby = users => {
                 inline: true,
             },
             {
-                name: "`Server`",
-                value: users.servers,
+                name: `\`${users.optionField.title}\``,
+                value: users.optionField.fields,
                 inline: true,
             },
         ];

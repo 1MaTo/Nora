@@ -1,6 +1,14 @@
-import { EMPTY_LOBBY_SERVER, EMPTY_LOBBY_STATS, EMPTY_LOBBY_USER_NAME, EPMTY_LOBBY_PING, SPACE } from "../strings/constants";
+import {
+    EMPTY_LOBBY_SERVER,
+    EMPTY_LOBBY_STATS,
+    EMPTY_LOBBY_USER_NAME,
+    EMPTY_LOBBY_WINRATE,
+    EPMTY_LOBBY_PING,
+    SPACE,
+} from "../strings/constants";
 import { searchMapConfigOrDefault } from "./db";
 import { fbtSettings } from "../../config.json";
+import { getPlayerWinrate } from "./statsQueries";
 
 export const parseMapName = map => {
     const indexOfLastBackSlash = map.lastIndexOf("\\") + 1;
@@ -8,7 +16,7 @@ export const parseMapName = map => {
     return map.slice(indexOfLastBackSlash, indexOfMapFileType);
 };
 
-export const parseUserNames = (userNamesRaw, totalSlots, slotsMap) => {
+export const parseUserNames = async (userNamesRaw, totalSlots, slotsMap, map, ranking) => {
     //  Clean up from tabs and fill with empty symbols
     const cleanedUsersLobby = userNamesRaw.split("\t").map(field => {
         if (field === "") return EMPTY_LOBBY_STATS;
@@ -33,32 +41,52 @@ export const parseUserNames = (userNamesRaw, totalSlots, slotsMap) => {
             name: `\`${name[0].toUpperCase() + name.substr(1)}\``,
             server: SPACE,
             ping: SPACE,
+            winrate: SPACE,
         });
     });
     //  Rename fields if needed
-    const completeMass = usersMass.map(user => {
-        //  If this is empty string just return all object without editing
-        if (user.name === SPACE || user.ping === SPACE || user.server === SPACE) {
-            return user;
-        }
-        //  Change ping
-        const ping = user.ping === EMPTY_LOBBY_STATS ? EPMTY_LOBBY_PING : user.ping + "ms";
-        //  Change username
-        const name = user.name === EMPTY_LOBBY_STATS ? EMPTY_LOBBY_USER_NAME : user.name;
-        //  Change server
-        const server = user.server === EMPTY_LOBBY_STATS ? EMPTY_LOBBY_SERVER : user.server;
-        return { name, ping, server };
-    });
+    const completeMass = await Promise.all(
+        usersMass.map(async user => {
+            //  If this is empty string just return all object without editing
+            if (user.name === SPACE || user.ping === SPACE) {
+                return user;
+            }
+            //  Change ping
+            const ping = user.ping === EMPTY_LOBBY_STATS ? EPMTY_LOBBY_PING : user.ping + "ms";
+
+            //  Change username
+            const name = user.name === EMPTY_LOBBY_STATS ? EMPTY_LOBBY_USER_NAME : user.name;
+
+            //  Change server
+            const server = user.server === EMPTY_LOBBY_STATS ? EMPTY_LOBBY_SERVER : user.server;
+
+            //  Add winrate
+            if (!ranking) return { name, ping, server, winrate };
+
+            const isWinrate = await getPlayerWinrate([user.name], map);
+
+            const winrate =
+                user.ping === EMPTY_LOBBY_STATS ? EMPTY_LOBBY_STATS : isWinrate ? `${isWinrate}%` : EMPTY_LOBBY_WINRATE;
+
+            return { name, ping, server, winrate };
+        })
+    );
     //  Make strings for embed
     let nicks = "";
     let pings = "";
+    let winrates = "";
     let servers = "";
     completeMass.forEach(player => {
         nicks += player.name + "\n";
         pings += player.ping + "\n";
+        winrates += player.winrate + "\n";
         servers += player.server + "\n";
     });
-    return { nicks, pings, servers };
+    return {
+        nicks,
+        pings,
+        optionField: ranking ? { title: "Winrate", fields: winrates } : { title: "Server", fields: servers },
+    };
 };
 
 export const getLobbyTable = (userNamesRaw, totalSlots, slotsMap) => {
@@ -112,7 +140,13 @@ export const buildGameResult = async (guildId, game) => {
     const config = await searchMapConfigOrDefault(guildId, game);
     const mapTotalSlots = config.slots;
     const slotsMap = config.slotMap;
-    const lobbyPlayers = parseUserNames(game.usernames, mapTotalSlots, [...slotsMap]);
+    const lobbyPlayers = await parseUserNames(
+        game.usernames,
+        mapTotalSlots,
+        [...slotsMap],
+        config.name || config.mapName,
+        Boolean(config.options.ranking === "true")
+    );
     return {
         botid: game.botid,
         name: game.gamename,
@@ -137,14 +171,25 @@ export const countPlayersInLobby = async (guildId, usernames, mapName, slotstake
     const config = await searchMapConfigOrDefault(guildId, { map: mapName, slotstotal });
     const table = getLobbyTable(usernames, config.slots, [...config.slotMap]);
     const hasSpectators = config.slotMap.find(item => item.name.toLowerCase() === "spectators");
-    if (fbtSettings.spectatorLivesMatter || !table) return slotstaken - (slotstotal - Number(config.slots));
+    if (config.options.spectatorLivesMatter === "true" || !table)
+        return slotstaken - (slotstotal - Number(config.slots));
     if (hasSpectators) {
         const specIndex = table.findIndex(
-            player => player.name.replaceAll("`", "").toLowerCase() === "spectators" && player.ping === SPACE && player.server === SPACE
+            player =>
+                player.name.replaceAll("`", "").toLowerCase() === "spectators" &&
+                player.ping === SPACE &&
+                player.server === SPACE
         );
         const specPlayers = table.slice(specIndex + 1, specIndex + Number(hasSpectators.slots) + 1);
         const actualSpecPlayer = specPlayers.reduce((summ, player) => {
-            return summ + (player.name === EMPTY_LOBBY_USER_NAME && player.ping === EPMTY_LOBBY_PING && player.server === EMPTY_LOBBY_SERVER ? 0 : 1);
+            return (
+                summ +
+                (player.name === EMPTY_LOBBY_USER_NAME &&
+                player.ping === EPMTY_LOBBY_PING &&
+                player.server === EMPTY_LOBBY_SERVER
+                    ? 0
+                    : 1)
+            );
         }, 0);
         return slotstaken - (slotstotal - Number(config.slots)) - actualSpecPlayer;
     }

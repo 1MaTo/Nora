@@ -174,7 +174,7 @@ const calculateUserWinrate = async nicknames => {
                 {
                     nickname: user[0],
                     ...user[1],
-                    percent: Math.floor((user[1].win / (user[1].win + user[1].lose)) * 100),
+                    percent: Math.round((user[1].win / (user[1].win + user[1].lose)) * 100),
                 },
             ];
         }, [])
