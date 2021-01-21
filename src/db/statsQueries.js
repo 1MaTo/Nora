@@ -1,5 +1,6 @@
 import { asyncDb } from "./db";
 import { parseMapName } from "./utils";
+import { gamesToBeRanked } from "../../config.json";
 
 export const getGamesCount = async (nicknames, minIngameTime = 900) => {
     try {
@@ -28,7 +29,27 @@ export const getGamesCount = async (nicknames, minIngameTime = 900) => {
     }
 };
 
+export const getStatsGameCount = async (nicknames, map) => {
+    try {
+        const result = await asyncDb.query(`
+        select count(*) as count
+        from gameplayers
+         inner join games on games.id = gameplayers.gameid
+         inner join mapstats on mapstats.gameid = games.id
+         where gameplayers.name in ("${nicknames.join(',"')}") and map like '%${map}%';`);
+        if (!result.length) return null;
+        return result.count;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+};
+
 export const getPlayerWinrate = async (nicknames, map) => {
+    const gamesCount = await getStatsGameCount(nicknames, map);
+
+    if (Number(gamesCount) < Number(gamesToBeRanked)) return null;
+
     try {
         const fromGamesWithNicknames = `
         from gameplayers

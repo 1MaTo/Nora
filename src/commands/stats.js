@@ -1,5 +1,5 @@
 import { dbErrors, statsCommand } from "../strings/logsMessages";
-import { fbtSettings } from "../../config.json";
+import { fbtSettings, gamesToBeRanked } from "../../config.json";
 import { logError, autodeleteMsg, uniqueFromArray, guildUserRedisKey } from "../utils";
 import { getGamesCount } from "../db/statsQueries";
 import { searchMapConfig, getGamesResults } from "../db/db";
@@ -44,7 +44,8 @@ export const run = async (message, args) => {
         case "winrate":
         case "wr":
             const results = await calculateUserWinrate(nicknames);
-            if (!results.user.nicknames.length)
+            if (results[0] === "unranked") return autodeleteMsg(message, statsCommand.unRanked(results[1]));
+            if (!results || !results.user.nicknames.length)
                 return autodeleteMsg(message, statsCommand.noGamesForThisNickname(nicknames));
             watchStatsMessage(message, results);
             return true;
@@ -166,6 +167,10 @@ const calculateUserWinrate = async nicknames => {
         },
         { nicknames: [], win: 0, lose: 0 }
     );
+
+    const totalGames = winRates.user.win + winRates.user.lose;
+    if (totalGames < Number(gamesToBeRanked)) return ["unranked", gamesToBeRanked - totalGames];
+
     winRates.user.percent = Math.round((winRates.user.win / (winRates.user.win + winRates.user.lose)) * 100);
     winRates.teammates = Object.entries(winRates.teammates)
         .reduce((users, user) => {
@@ -178,6 +183,7 @@ const calculateUserWinrate = async nicknames => {
                 },
             ];
         }, [])
+        //.filter(user => user.win + user.lose >= gamesToBeRanked)
         .sort(sortByGamesCount);
 
     winRates.enemies = Object.entries(winRates.enemies)
@@ -191,7 +197,9 @@ const calculateUserWinrate = async nicknames => {
                 },
             ];
         }, [])
+        //.filter(user => user.win + user.lose >= gamesToBeRanked)
         .sort(sortByGamesCount);
+
     return winRates;
 };
 

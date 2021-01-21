@@ -130,6 +130,7 @@ export const statsCommand = {
     badStatWord: `❌ Bad stats command`,
     badNicknames: `❌ No nickname(s) provided/binded to your account`,
     noGamesForThisNickname: nicknames => `❌ No games found for \`${nicknames.join("`, `")}\``,
+    unRanked: games => `❌ \`${games}\` more games to get ranked`,
 };
 
 export const botCommand = {

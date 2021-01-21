@@ -2,6 +2,7 @@
   "prefix": "!",
   "defaultCooldown": 0.5,
   "autodeleteMsgDelay": 10000,
+  "gamesToBeRanked": 1,
   "fbtSettings": {
     "db": false,
     "undefinedCommand": false,
