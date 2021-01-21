@@ -69,12 +69,17 @@ export const checkNewFinishedGames = async channel => {
 
 const startPolls = async (gamesId, channel) => {
     const gamesData = await getGamesDataByIds(gamesId, channel.guild.id);
-    gamesData.forEach(game => {
-        if (game.players.length < 2) return;
-        const config = searchMapConfigOrDefault(channel.guild.id, { map: parseMapName(game.map), slotstotal: null });
-        if (config.options.ranking === "false") return;
-        startGameCollector(game, channel);
-    });
+    await Promise.all(
+        gamesData.map(async game => {
+            if (game.players.length < 2) return;
+            const config = await searchMapConfigOrDefault(channel.guild.id, {
+                map: parseMapName(game.map),
+                slotstotal: null,
+            });
+            if (config.options.ranking === "false") return;
+            startGameCollector(game, channel);
+        })
+    );
 };
 
 const startGameCollector = async (gameData, channel) => {
