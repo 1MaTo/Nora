@@ -59,7 +59,7 @@ export const run = async (message, args) => {
     const ghostCommand = args.join(" ");
     const isAdmin = message.member.hasPermission("ADMINISTRATOR");
 
-    if (!ghostCommand.match(/map|pub|unhost|getgame|getgames|load/g) && !isAdmin)
+    if (!ghostCommand.match(/map|pub|unhost|getgame|getgames|load|start/g) && !isAdmin)
         return autodeleteMsg(message, botCommand.noPermisions);
 
     sendCommand(ghostCommand).then(response => {
