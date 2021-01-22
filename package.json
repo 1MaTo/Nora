@@ -1,41 +1,40 @@
 {
-    "name": "nora",
-    "version": "0.0.1",
-    "scripts": {
-        "start": "cross-env NODE_ENV=development babel-node src/bot.js",
-        "start_db": "babel-node src/db/db.js",
-        "rebuild-commands": "babel src/commands/ -d dist/commands/",
-        "prebuild": "shx rm -rf dist/",
-        "build": "babel src/ -d dist/",
-        "prod_start": "npm run build && cross-env NODE_ENV=production forever start dist/bot.js",
-        "prod_stop": "forever stop dist/bot.js",
-        "prod_restart": "git pull && npm run build && forever restart dist/bot.js",
-        "test1": "cross-env NODE_ENV=development forever start dist/bot.js"
-    },
-    "description": "Bot",
-    "main": "bot.js",
-    "author": "MaTo",
-    "dependencies": {
-        "@babel/cli": "^7.12.7",
-        "@babel/core": "^7.12.7",
-        "@babel/node": "^7.12.6",
-        "@babel/plugin-transform-async-to-generator": "^7.12.1",
-        "@babel/polyfill": "^7.12.1",
-        "@babel/preset-env": "^7.12.7",
-        "axios": "^0.21.1",
-        "core-js": "^3.8.1",
-        "cross-env": "^7.0.2",
-        "discord.js": "^12.4.1",
-        "forever": "^3.0.4",
-        "moment": "^2.29.1",
-        "mysql": "^2.18.1",
-        "redis": "^3.0.2",
-        "regenerator-runtime": "^0.13.7",
-        "shx": "^0.3.3"
-    },
-    "prettier": {
-        "tabWidth": 4,
-        "arrowParens": "avoid",
-        "printWidth": 120
-    }
+  "name": "nora",
+  "version": "2.0.0",
+  "description": "Typescript version",
+  "main": "build/bot.js",
+  "dependencies": {
+    "@types/node": "^14.14.22",
+    "axios": "^0.21.1",
+    "core-js": "^3.8.1",
+    "discord.js": "^12.5.1",
+    "forever": "^3.0.4",
+    "mysql": "^2.18.1",
+    "redis": "^3.0.2",
+    "shx": "^0.3.3",
+    "slash-create": "^1.3.0",
+    "typescript": "^4.1.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "tsc && cross-env NODE_ENV=development node build/bot.js",
+    "clear_build": "shx rm -rf build/",
+    "get_build": "git checkout build && git pull",
+    "copy_auth": "shx touch build/auth.json && shx cp auth.json build/auth.json",
+    "setup_build": "npm run clear_build && npm run get_build && npm run copy_auth",
+    "prod_start": "cross-env NODE_ENV=production forever start build/bot.js",
+    "production_bot_start": "npm run setup_build && npm run prod_start",
+    "production_bot_stop": "forever stop build/bot.js",
+    "production_bot_restart": "npm run setup_build && forever restart build/bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1MaTo/Nora.git"
+  },
+  "author": "MaTo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1MaTo/Nora/issues"
+  },
+  "homepage": "https://github.com/1MaTo/Nora#readme"
 }
