@@ -1,8 +1,9 @@
 import { Client, WSEventType } from "discord.js";
-import { GatewayServer, SlashCreator } from "slash-create";
+import { GatewayServer, SlashCommand, SlashCreator } from "slash-create";
 import { token, appId, publicKey } from "./auth.json";
 import { log } from "./utils/log";
 import path from "path";
+import test from "./commands/test";
 
 export const client = new Client();
 
@@ -24,6 +25,12 @@ creator
       client.ws.on("INTERACTION_CREATE" as WSEventType, handler)
     )
   )
-  .registerCommandsIn(path.join(__dirname, "commands"));
+  .registerCommandsIn(path.join(__dirname, "commands"))
+  .syncCommands({
+    deleteCommands: true,
+    syncGuilds: true,
+    skipGuildErrors: true,
+  })
+  .reregisterCommand(new test(null), new test(null));
 
 client.login(token);
