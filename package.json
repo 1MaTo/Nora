@@ -29,7 +29,7 @@
     "production_bot_start": "npm run setup_build && npm run prod_start",
     "production_bot_stop": "forever stop build/bot.js",
     "production_bot_restart": "npm run setup_build && forever restart build/bot.js",
-    "test": ""
+    "test": "shx sed -i /build /src .gitignore"
   },
   "repository": {
     "type": "git",
