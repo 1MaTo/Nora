@@ -24,7 +24,7 @@
     "clear_build": "shx rm -rf build/",
     "get_build": "git checkout build && git pull",
     "copy_auth": "shx touch build/auth.json && shx cp auth.json build/auth.json",
-    "setup_build": "npm run clear_build && npm run get_build && npm run copy_auth",
+    "setup_build": "git reset --hard && npm run copy_auth",
     "prod_start": "cross-env NODE_ENV=production forever start build/bot.js",
     "production_bot_start": "npm run setup_build && npm run prod_start",
     "production_bot_stop": "forever stop build/bot.js",
