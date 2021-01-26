@@ -29,7 +29,7 @@
     "change_gitignore": "shx sed -i /build /src .gitignore",
     "remove_src": "shx rm -rf src/",
     "remove_tsconfig": "shx rm tsconfig.json",
-    "push_to_remote": "git add . && git commit -m 'build' && git push --set-upstream origin build && checkout ts",
+    "push_to_remote": "git add . && git commit -m 'build' && git push --set-upstream origin build && git checkout ts",
     "setup_build": "npm run delete_branch && npm run create_branch && npm run change_gitignore && npm run remove_src && npm run remove_tsconfig && npm run push_to_remote",
     "prod_start": "cross-env NODE_ENV=production forever start build/bot.js",
     "production_bot_start": "npm run setup_build && npm run prod_start",
