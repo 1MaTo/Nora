@@ -1,7 +1,7 @@
 import { CommandContext, SlashCommand } from "slash-create";
 import { creator } from "../bot";
 import { ghostCommand } from "../commandsObjects/ghost";
-import { guildIDs } from "../utils/globals";
+import { guildIDs, production } from "../utils/globals";
 import { log } from "../utils/log";
 import { updateSlashCommand } from "../utils/updateSlashCommand";
 
@@ -23,6 +23,7 @@ export default class test extends SlashCommand {
     return false;
   }
   async run(ctx: CommandContext) {
+    if (production) return;
     //const guild = await this.creator.api.getCommands("408947483763277825");
     //log(guild);
     //sendResponse(ctx.channelID, "Hey");
