@@ -25,7 +25,7 @@
     "get_build": "git checkout build && git pull",
     "copy_auth": "shx touch build/auth.json && shx cp auth.json build/auth.json",
     "delete_branch": "git push origin --delete build",
-    "create_branch": "git push -u origin/ts build && git checkout build",
+    "create_branch": "git checkout -b build",
     "change_gitignore": "shx sed -i /build /src .gitignore",
     "remove_src": "shx rm -rf src/",
     "remove_tsconfig": "shx rm tsconfig.json",
