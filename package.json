@@ -30,7 +30,7 @@
     "remove_src": "shx rm -rf src/",
     "remove_tsconfig": "shx rm tsconfig.json",
     "push_to_remote": "git add . && git commit -m 'build' && git push && checkout ts",
-    "setup_build": "npm run delete_branch && npm run create_branch && npm run change_gitignore && remove_src && remove_tsconfig && push_to_remote",
+    "setup_build": "npm run delete_branch && npm run create_branch && npm run change_gitignore && npm run remove_src && npm run remove_tsconfig && npm run push_to_remote",
     "prod_start": "cross-env NODE_ENV=production forever start build/bot.js",
     "production_bot_start": "npm run setup_build && npm run prod_start",
     "production_bot_stop": "forever stop build/bot.js",
