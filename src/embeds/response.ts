@@ -43,3 +43,13 @@ export const warning = (message: string) => {
     },
   };
 };
+
+export const loading = (message: string = "Loading...") => {
+  return {
+    footer: {
+      text: message,
+      icon_url:
+        "https://cdn.iconscout.com/icon/premium/png-256-thumb/loading-2673387-2217899.png",
+    },
+  };
+};

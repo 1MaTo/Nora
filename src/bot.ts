@@ -1,13 +1,12 @@
 import { Client, WSEventType } from "discord.js";
-import { GatewayServer, SlashCommand, SlashCreator } from "slash-create";
-import { token, appId, publicKey } from "./auth.json";
-import { log } from "./utils/log";
 import path from "path";
-import test from "./commands/test";
+import { GatewayServer, SlashCreator } from "slash-create";
+import { appId, publicKey, token } from "./auth.json";
+import { log } from "./utils/log";
 
 export const client = new Client();
 
-const creator = new SlashCreator({
+export const creator = new SlashCreator({
   applicationID: appId,
   publicKey: publicKey,
   token: token,
@@ -30,7 +29,6 @@ creator
     deleteCommands: true,
     syncGuilds: true,
     skipGuildErrors: true,
-  })
-  .reregisterCommand(new test(null), new test(null));
+  });
 
 client.login(token);
