@@ -24,7 +24,7 @@
     "clear_build": "shx rm -rf build/",
     "get_build": "git checkout build && git pull",
     "copy_auth": "shx touch build/auth.json && shx cp auth.json build/auth.json",
-    "delete_branch": "git push origin --delete build",
+    "delete_branch": "git push origin --delete build && git branch -D build",
     "create_branch": "git checkout -b build",
     "change_gitignore": "shx sed -i /build /src .gitignore",
     "remove_src": "shx rm -rf src/",
