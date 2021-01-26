@@ -22,7 +22,7 @@
   "scripts": {
     "start": "tsc && cross-env NODE_ENV=development node build/bot.js",
     "clear_build": "shx rm -rf build/",
-    "get_build": "git checkout build && git pull",
+    "get_build": "git pull && git checkout build && npm run copy_auth",
     "copy_auth": "shx touch build/auth.json && shx cp auth.json build/auth.json",
     "back_auth": "shx touch src/auth.json && shx cp build/auth.json src/auth.json",
     "delete_branch": "git push origin --delete build && git branch -D build",
@@ -33,9 +33,9 @@
     "push_to_remote": "git add . && git commit -m 'build' && git push --set-upstream origin build && git checkout ts",
     "setup_build": "npm run delete_branch && npm run create_branch && npm run change_gitignore && npm run remove_src && npm run remove_tsconfig && npm run push_to_remote && npm run back_auth",
     "prod_start": "cross-env NODE_ENV=production forever start build/bot.js",
-    "production_bot_start": "npm run setup_build && npm run prod_start",
+    "production_bot_start": "get_build && npm run prod_start",
     "production_bot_stop": "forever stop build/bot.js",
-    "production_bot_restart": "npm run setup_build && forever restart build/bot.js",
+    "production_bot_restart": "npm run get_build && forever restart build/bot.js",
     "test": "shx sed -i /build /src .gitignore"
   },
   "repository": {
