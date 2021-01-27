@@ -18,6 +18,10 @@ client.once("ready", async () => {
   log("------> BOT IN DEVELOPMENT");
 });
 
+client.on("error", (error) => {
+  log(error.message);
+});
+
 creator
   .withServer(
     new GatewayServer((handler) =>

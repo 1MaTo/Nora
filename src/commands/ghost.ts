@@ -2,7 +2,7 @@ import { CommandContext, SlashCommand } from "slash-create";
 import { ghostCommand } from "../commandsObjects/ghost";
 import { error, loading, success, warning } from "../embeds/response";
 import { sendResponse } from "../utils/discordMessage";
-import { ghostCmd } from "../utils/globals";
+import { ghostCmd, guildIDs, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
 import {
   checkLogsForKeyWords,
@@ -24,6 +24,7 @@ export default class ghost extends SlashCommand {
   }
 
   async run(ctx: CommandContext) {
+    if (!production && ctx.member.id !== ownerID) return;
     //log(ctx.options);
 
     if (ctx.options.pub) {

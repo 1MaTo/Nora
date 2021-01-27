@@ -1,9 +1,12 @@
 import { CommandContext, SlashCommand } from "slash-create";
 import { creator } from "../bot";
-import { ghostCommand } from "../commandsObjects/ghost";
-import { guildIDs, production } from "../utils/globals";
+import { ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
-import { updateSlashCommand } from "../utils/updateSlashCommand";
+import {
+  createOrUpdateMapConfig,
+  deleteMapConfig,
+  searchMapConfigByName,
+} from "../utils/mapConfig";
 
 export default class test extends SlashCommand {
   constructor(creator: any) {
@@ -23,11 +26,27 @@ export default class test extends SlashCommand {
     return false;
   }
   async run(ctx: CommandContext) {
-    if (production) return;
+    if (!production && ctx.member.id !== ownerID) return;
     //const guild = await this.creator.api.getCommands("408947483763277825");
     //log(guild);
     //sendResponse(ctx.channelID, "Hey");
-    updateSlashCommand(guildIDs.ghostGuild, ghostCommand);
-    log(creator.commands.array());
+    //updateSlashCommand(guildIDs.ghostGuild, ghostCommand);
+
+    /* await deleteMapConfig(ctx.guildID, "fbt");
+    await createOrUpdateMapConfig(ctx.guildID, {
+      guildID: ctx.guildID,
+      name: "fbt",
+      slotMap: [
+        { name: "Team 1", slots: 4 },
+        { name: "Team 2", slots: 4 },
+        { name: "Spectators", slots: 2 },
+      ],
+      options: undefined,
+      slots: 10,
+    });
+    const config = await searchMapConfigByName("fbt", ctx.guildID); */
+
+    log("sdasd");
+    return;
   }
 }

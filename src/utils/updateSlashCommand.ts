@@ -1,7 +1,5 @@
 import { PartialApplicationCommand } from "slash-create";
 import { creator } from "../bot";
-import { ghostCommand } from "../commandsObjects/ghost";
-import { guildIDs } from "./globals";
 import { log } from "./log";
 
 export const updateSlashCommand = async (

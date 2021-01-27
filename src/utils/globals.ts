@@ -16,4 +16,11 @@ export const ghostCmd = {
 
 export const guildIDs = {
   ghostGuild: "408947483763277825",
+  debugGuild: "556150178147467265",
+};
+
+export const ownerID = "245209137103896586";
+
+export const stats = {
+  gamesToBeRanked: 1,
 };
