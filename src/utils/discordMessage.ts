@@ -1,15 +1,15 @@
 import { Snowflake, TextChannel } from "discord.js";
 import { client } from "../bot";
-import { getChannel } from "./discordChannel";
+import { getTextChannel } from "./discordChannel";
 import { log } from "./log";
 
 export const sendResponse = async (
-  id: Snowflake,
+  channelID: Snowflake,
   content: any,
   deleteTimeOut: null | number = null
 ) => {
   try {
-    const channel = (await getChannel(id)) as TextChannel;
+    const channel = await getTextChannel(channelID);
     const message = await channel.send(content);
     if (deleteTimeOut) message.delete({ timeout: deleteTimeOut });
 
@@ -17,6 +17,20 @@ export const sendResponse = async (
   } catch (error) {
     log(error);
 
+    return null;
+  }
+};
+
+export const getMessageById = async (
+  messageID: Snowflake,
+  channelID: Snowflake
+) => {
+  try {
+    const channel = await getTextChannel(channelID);
+    const message = await channel.messages.fetch(messageID, true);
+    return message;
+  } catch (error) {
+    log(error);
     return null;
   }
 };

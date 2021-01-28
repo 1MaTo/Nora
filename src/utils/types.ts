@@ -52,3 +52,16 @@ type lobbyInfo = {
   slots: number;
   slotsTaken: number;
 };
+
+type lobbyWatcherInfo = {
+  delay: number;
+  guildID: string;
+  channelID: string;
+  headerID: string | undefined;
+  lobbysID: Array<lobbyWatcherLobyMessageInfo>;
+};
+
+type lobbyWatcherLobyMessageInfo = {
+  messageID: string;
+  botID: number;
+};

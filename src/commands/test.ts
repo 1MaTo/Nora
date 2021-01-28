@@ -1,19 +1,15 @@
 import { CommandContext, SlashCommand } from "slash-create";
-import { creator } from "../bot";
-import { ownerID, production } from "../utils/globals";
+import { lobbyCommand } from "../commandsObjects/lobby";
+import { guildIDs, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
-import {
-  createOrUpdateMapConfig,
-  deleteMapConfig,
-  searchMapConfigByName,
-} from "../utils/mapConfig";
+import { updateSlashCommand } from "../utils/updateSlashCommand";
 
 export default class test extends SlashCommand {
   constructor(creator: any) {
     super(creator, {
       name: "test",
       description: "try me",
-      guildID: "408947483763277825",
+      guildID: guildIDs.ghostGuild,
       requiredPermissions: ["ADMINISTRATOR"],
       throttling: { usages: 1, duration: 1 },
     });
@@ -21,16 +17,13 @@ export default class test extends SlashCommand {
     // Not required initially, but required for reloading with a fresh file.
     this.filePath = __filename;
   }
-  async onError(error: Error, ctx: CommandContext) {
-    log(error.message);
-    return false;
-  }
+
   async run(ctx: CommandContext) {
     if (!production && ctx.member.id !== ownerID) return;
     //const guild = await this.creator.api.getCommands("408947483763277825");
     //log(guild);
     //sendResponse(ctx.channelID, "Hey");
-    //updateSlashCommand(guildIDs.ghostGuild, ghostCommand);
+    //updateSlashCommand(guildIDs.ghostGuild, lobbyCommand);
 
     /* await deleteMapConfig(ctx.guildID, "fbt");
     await createOrUpdateMapConfig(ctx.guildID, {

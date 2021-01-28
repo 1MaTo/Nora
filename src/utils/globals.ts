@@ -14,6 +14,12 @@ export const ghostCmd = {
   deleteMessageTimeout: 4000,
 };
 
+export const msgDeleteTimeout = {
+  short: 3000,
+  default: 5000,
+  long: 10000,
+};
+
 export const guildIDs = {
   ghostGuild: "408947483763277825",
   debugGuild: "556150178147467265",

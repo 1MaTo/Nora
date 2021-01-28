@@ -1,12 +1,14 @@
-import { Snowflake } from "discord.js";
+import { Snowflake, TextChannel } from "discord.js";
 import { client } from "../bot";
 import { log } from "./log";
 
-export const getChannel = async (id: Snowflake) => {
+export const getTextChannel = async (
+  id: Snowflake
+): Promise<TextChannel | null> => {
   try {
     const channel = await client.channels.fetch(id, true);
-
-    return channel;
+    if (channel.type !== "text") return null;
+    return channel as TextChannel;
   } catch (error) {
     log(error);
 

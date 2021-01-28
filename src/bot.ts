@@ -2,6 +2,7 @@ import { Client, WSEventType } from "discord.js";
 import path from "path";
 import { GatewayServer, SlashCreator } from "slash-create";
 import { appId, publicKey, token } from "./auth.json";
+import { guildIDs, production } from "./utils/globals";
 import { log } from "./utils/log";
 
 export const client = new Client();
@@ -18,9 +19,16 @@ client.once("ready", async () => {
   log("------> BOT IN DEVELOPMENT");
 });
 
-client.on("error", (error) => {
-  log(error.message);
-});
+creator.on("debug", (message) => log("[DEBUG] ----> ", message));
+creator.on("warn", (message) => log("[WARNING] ----> ", message));
+creator.on("error", (error) => log("[ERROR] ----> ", error));
+creator.on("synced", () => log("[COMMAND SYNCED]"));
+creator.on("commandRegister", (command) =>
+  log(`[REGISTERED COMMAND] ----> ${command.commandName}`)
+);
+creator.on("commandError", (command, error) =>
+  log(`[COMMAND ERROR] [${command.commandName}] ----> `, error)
+);
 
 creator
   .withServer(
@@ -29,10 +37,6 @@ creator
     )
   )
   .registerCommandsIn(path.join(__dirname, "commands"))
-  .syncCommands({
-    deleteCommands: true,
-    syncGuilds: true,
-    skipGuildErrors: true,
-  });
+  .syncCommands();
 
 client.login(token);

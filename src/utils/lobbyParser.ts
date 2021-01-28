@@ -1,4 +1,5 @@
 import { getLobbyList, getPlayerWinrate } from "../db/queries";
+import { log } from "./log";
 import { searchMapConfigByMapName } from "./mapConfig";
 
 export const EMPTY_LOBBY_USER_NAME = "open";

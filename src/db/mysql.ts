@@ -29,6 +29,7 @@ export const makeQuery = async (query: string) => {
   try {
     const result = await dbQuery(query);
     if (!result.length) return null;
+    return result;
   } catch (error) {
     log(error);
     return null;

@@ -2,7 +2,7 @@ import { CommandContext, SlashCommand } from "slash-create";
 import { ghostCommand } from "../commandsObjects/ghost";
 import { error, loading, success, warning } from "../embeds/response";
 import { sendResponse } from "../utils/discordMessage";
-import { ghostCmd, guildIDs, ownerID, production } from "../utils/globals";
+import { ghostCmd, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
 import {
   checkLogsForKeyWords,
@@ -18,14 +18,8 @@ export default class ghost extends SlashCommand {
     this.filePath = __filename;
   }
 
-  async onError(error: Error, ctx: CommandContext) {
-    log(error.message);
-    return false;
-  }
-
   async run(ctx: CommandContext) {
     if (!production && ctx.member.id !== ownerID) return;
-    //log(ctx.options);
 
     if (ctx.options.pub) {
       const message = await sendResponse(ctx.channelID, { embed: loading() });
