@@ -105,7 +105,7 @@ export const updateLobbyWatcher = async (guildId, channel, delay, pastTimers) =>
                 const timers = pastTimers ? pastTimers : new Discord.Collection();
                 let headerMessage = messages.get("header");
                 const headerContent = lobbyWatcherCommand.lobbiesCount(loadedLobbies ? loadedLobbies.length : 0);
-                //changeBotStatus({ lobby: loadedLobbies ? loadedLobbies.length : 0 });
+                changeBotStatus({ lobby: loadedLobbies ? loadedLobbies.length : 0 });
                 const lobbies = loadedLobbies ? getContentForLobbies(loadedLobbies, timers) : [];
 
                 try {

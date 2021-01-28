@@ -62,7 +62,7 @@ client.once("ready", async () => {
     await loadLobbyWatchersFromDB();
     await loadGameStatsFromDB();
 
-    //checkGhostStatus();
+    checkGhostStatus();
 
     console.log("================= BOT ONLINE =================");
 });
