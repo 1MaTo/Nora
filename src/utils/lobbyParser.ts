@@ -34,7 +34,7 @@ export const getPlayersTableFromRawString = async (
           ? await getPlayerWinrate(name, mapName)
           : EMPTY_LOBBY_DEFAULT;
       return {
-        name: name || EMPTY_LOBBY_DEFAULT,
+        name: `> ${name || EMPTY_LOBBY_DEFAULT}`,
         server: server || EMPTY_LOBBY_DEFAULT,
         ping: ping || EMPTY_LOBBY_DEFAULT,
         winrate: winrate || EMPTY_LOBBY_WINRATE,
@@ -52,7 +52,7 @@ export const getPlayersTableFromRawString = async (
     slotsSumm = slotsSumm + slots;
     if (slotsSumm > totalSlots) return;
     playersArray.splice(totalSlots - slotsSumm, 0, {
-      name: title,
+      name: `\`${title[0].toUpperCase() + title.substr(1)}\``,
       server: SPACE,
       ping: SPACE,
       winrate: SPACE,
@@ -93,20 +93,26 @@ export const getPlayersTableFromRawString = async (
 export const playersLobbyToString = (
   lobbyTable: Array<lobbyTable>,
   optionField: optionLobbyField
-) => {
+): lobbyStrings => {
   //  Make strings for embed
   const lobbyFields = lobbyTable.reduce(
     (obj, player) => {
       return {
         nicks: obj.nicks + player.name + "\n",
         pings: obj.pings + player.ping + "\n",
-        option: obj.option + player[optionField] + "\n",
+        option: {
+          fieldName: optionField,
+          string: obj.option.string + player[optionField] + "\n",
+        },
       };
     },
     {
       nicks: "",
       pings: "",
-      option: "",
+      option: {
+        fieldName: "",
+        string: "",
+      },
     }
   );
   return lobbyFields;
@@ -120,7 +126,7 @@ export const getFullLobbyInfo = async (guildID: string, game: lobbyGame) => {
   ) {
     return null;
   }
-  const mapName = parseMapName(game.gamename);
+  const mapName = parseMapName(game.map);
   const defaultConfig = {
     name: mapName,
     guildID: guildID,
@@ -135,7 +141,7 @@ export const getFullLobbyInfo = async (guildID: string, game: lobbyGame) => {
     (await searchMapConfigByMapName(mapName, guildID)) || defaultConfig;
   const lobbyTable = await getPlayersTableFromRawString(
     game.usernames,
-    game.slotstotal,
+    config.slots,
     config.slotMap,
     config.options.ranking,
     config.name
@@ -146,11 +152,11 @@ export const getFullLobbyInfo = async (guildID: string, game: lobbyGame) => {
     gamename: game.gamename,
     owner: game.ownername,
     host: game.creatorname,
-    mapname: config.name,
+    mapname: mapName,
     players: lobbyTable,
     slots: config.slots,
     slotsTaken: game.slotstaken - (game.slotstotal - config.slots),
-  } as lobbyInfo;
+  } as lobbyInfo<Array<lobbyTable>>;
 };
 
 export const getCurrentLobbies = async (guildID: string) => {

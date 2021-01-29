@@ -2,6 +2,10 @@ import { CommandContext, SlashCommand } from "slash-create";
 import { lobbyCommand } from "../commandsObjects/lobby";
 import { guildIDs, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
+import {
+  searchMapConfigByMapName,
+  searchMapConfigByName,
+} from "../utils/mapConfig";
 import { updateSlashCommand } from "../utils/updateSlashCommand";
 
 export default class test extends SlashCommand {
@@ -36,10 +40,12 @@ export default class test extends SlashCommand {
       ],
       options: undefined,
       slots: 10,
-    });
-    const config = await searchMapConfigByName("fbt", ctx.guildID); */
+    });*/
 
-    log("sdasd");
+    const configOne = await searchMapConfigByName("fbt", ctx.guildID);
+    const configTwo = await searchMapConfigByMapName("FBT 169", ctx.guildID);
+
+    log(configOne, configTwo);
     return;
   }
 }

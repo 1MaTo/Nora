@@ -1,8 +1,12 @@
+import { parse } from "path";
+import { header, lobbyGame } from "../embeds/lobby";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
 import { getMessageById, sendResponse } from "./discordMessage";
-import { getCurrentLobbies } from "./lobbyParser";
+import { getCurrentLobbies, playersLobbyToString } from "./lobbyParser";
 import { log } from "./log";
+import { searchMapConfigByMapName } from "./mapConfig";
+import { getPassedTime } from "./timePassed";
 
 export const lobbyWatcherUpdater = async (guildID: string) => {
   const key = redisKey.struct(groupsKey.lobbyWatcher, [guildID]);
@@ -20,14 +24,21 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
 
   // UPDATING HEADER MESSAGE
   try {
-    await headerMsg.edit(`edit: ${Date.now()}`);
+    await headerMsg.edit({
+      embed: header(
+        games.length,
+        getPassedTime(settings.startTime, Date.now())
+      ),
+    });
   } catch (error) {
     // IF FAILED TO UPDATE  HEADER MESSAGE CRATE NEW ONE
     log(error);
-    const newHeaderMsg = await sendResponse(
-      settings.channelID,
-      `just created new header message ${Date.now()}`
-    );
+    const newHeaderMsg = await sendResponse(settings.channelID, {
+      embed: header(
+        games.length,
+        getPassedTime(settings.startTime, Date.now())
+      ),
+    });
     settings.headerID = newHeaderMsg.id;
   }
 
@@ -57,6 +68,16 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
   // UPDATING CURRENT LOBBY MESSAGES
   await Promise.all(
     games.map(async (game) => {
+      const config = await searchMapConfigByMapName(game.mapname, guildID);
+      const optionField =
+        config && config.options.ranking
+          ? optionLobbyField.winrate
+          : optionLobbyField.server;
+      const parsedPlayers = playersLobbyToString(game.players, optionField);
+      const parsedGame = {
+        ...game,
+        players: parsedPlayers,
+      } as lobbyInfo<lobbyStrings>;
       const existMsg = settings.lobbysID.find(
         (msg) => msg.botID === game.botid
       );
@@ -66,16 +87,23 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
           settings.channelID
         );
         try {
-          await msg.edit(`im edited ${Date.now()}`);
+          await msg.edit({
+            embed: lobbyGame(
+              parsedGame,
+              getPassedTime(existMsg.startTime, Date.now())
+            ),
+          });
         } catch (error) {
           log(error);
           // IF FAILED TO UPDATE MESSAGE BUT ITS EXIST SKIP TO NEXT TIME
           if (msg) return;
           // ELSE CREATE NEW ONE
-          const newMsg = await sendResponse(
-            settings.channelID,
-            `My previus message was deleted and now here we go`
-          );
+          const newMsg = await sendResponse(settings.channelID, {
+            embed: lobbyGame(
+              parsedGame,
+              getPassedTime(existMsg.startTime, Date.now())
+            ),
+          });
           const msgIndex = settings.lobbysID.findIndex(
             (lobbyMsg) => lobbyMsg.botID === existMsg.botID
           );
@@ -86,14 +114,15 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
           }
         }
       } else {
-        const newLobbyMsg = await sendResponse(
-          settings.channelID,
-          `I'm just a new lobby message`
-        );
+        const startTime = Date.now();
+        const newLobbyMsg = await sendResponse(settings.channelID, {
+          embed: lobbyGame(parsedGame, getPassedTime(startTime, Date.now())),
+        });
         if (newLobbyMsg) {
           settings.lobbysID.push({
             botID: game.botid,
             messageID: newLobbyMsg.id,
+            startTime: Date.now(),
           });
         }
       }

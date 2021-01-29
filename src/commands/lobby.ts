@@ -1,5 +1,6 @@
 import { CommandContext, SlashCommand } from "slash-create";
 import { lobbyCommand } from "../commandsObjects/lobby";
+import { header } from "../embeds/lobby";
 import { success, warning } from "../embeds/response";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
@@ -7,6 +8,7 @@ import { getTextChannel } from "../utils/discordChannel";
 import { sendResponse } from "../utils/discordMessage";
 import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
+import { getPassedTime } from "../utils/timePassed";
 import { lobbyWatcherUpdater } from "../utils/timerFuncs";
 
 export default class lobby extends SlashCommand {
@@ -95,10 +97,14 @@ const startLobbyWatcher = async (
   delay: number
 ) => {
   try {
-    const headerMsg = await sendResponse(channelID, "header");
+    const startTime = Date.now();
+    const headerMsg = await sendResponse(channelID, {
+      embed: header(0, getPassedTime(startTime, Date.now())),
+    });
     const key = redisKey.struct(groupsKey.lobbyWatcher, [guildID]);
 
     redis.set(key, {
+      startTime: startTime,
       channelID: channelID,
       guildID: guildID,
       delay: delay,

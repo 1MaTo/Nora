@@ -9,6 +9,8 @@ client.on("error", (error) => {
   log(error);
 });
 
+client.on("reconnecting", () => {});
+
 const getObj = promisify(client.get).bind(client);
 const setObj = promisify(client.set).bind(client);
 const mgetObj = promisify(client.mget).bind(client);

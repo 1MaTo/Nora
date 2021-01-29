@@ -23,7 +23,7 @@ type lobbyTable = {
   winrate: string;
 };
 
-enum optionLobbyField {
+const enum optionLobbyField {
   server = "server",
   winrate = "winrate",
 }
@@ -42,18 +42,29 @@ type lobbyGame = {
   totalplayers: number;
 };
 
-type lobbyInfo = {
+type lobbyInfo<T> = {
   botid: number;
   gamename: string;
   owner: string;
   host: string;
   mapname: string;
-  players: Array<lobbyTable>;
+  players: T;
   slots: number;
   slotsTaken: number;
+  mapImage: string | undefined;
+};
+
+type lobbyStrings = {
+  nicks: string;
+  pings: string;
+  option: {
+    fieldName: string;
+    string: string;
+  };
 };
 
 type lobbyWatcherInfo = {
+  startTime: number;
   delay: number;
   guildID: string;
   channelID: string;
@@ -63,5 +74,6 @@ type lobbyWatcherInfo = {
 
 type lobbyWatcherLobyMessageInfo = {
   messageID: string;
+  startTime: number;
   botID: number;
 };
