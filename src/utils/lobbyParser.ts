@@ -156,6 +156,7 @@ export const getFullLobbyInfo = async (guildID: string, game: lobbyGame) => {
     players: lobbyTable,
     slots: config.slots,
     slotsTaken: game.slotstaken - (game.slotstotal - config.slots),
+    mapImage: config.options.mapImage,
   } as lobbyInfo<Array<lobbyTable>>;
 };
 

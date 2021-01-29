@@ -1,5 +1,6 @@
 import { CommandContext, SlashCommand } from "slash-create";
 import { lobbyCommand } from "../commandsObjects/lobby";
+import { mapconfigCommand } from "../commandsObjects/mapconfig";
 import { guildIDs, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
 import {
@@ -42,10 +43,11 @@ export default class test extends SlashCommand {
       slots: 10,
     });*/
 
-    const configOne = await searchMapConfigByName("fbt", ctx.guildID);
+    /* const configOne = await searchMapConfigByName("fbt", ctx.guildID);
     const configTwo = await searchMapConfigByMapName("FBT 169", ctx.guildID);
 
-    log(configOne, configTwo);
+    log(configOne, configTwo); */
+    updateSlashCommand(guildIDs.ghostGuild, mapconfigCommand);
     return;
   }
 }

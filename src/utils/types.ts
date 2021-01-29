@@ -9,6 +9,7 @@ type mapConfig = {
 type mapConfigOption = {
   ranking: boolean;
   spectatorLivesMatter: boolean;
+  mapImage: string | undefined;
 };
 
 type mapConfigSlotMap = {
