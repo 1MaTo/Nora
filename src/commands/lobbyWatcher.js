@@ -23,7 +23,7 @@ export const description =
     "Frequently looking for games in real time until you stop this command\ndelay: min - 3000, max - 60000, default - 10000";
 export const guildOnly = true;
 export const adminOnly = false;
-export const development = false;
+export const development = true;
 export const run = async (message, args) => {
     try {
         if (args[0] === "stop") {
