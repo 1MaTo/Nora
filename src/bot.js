@@ -59,7 +59,7 @@ client.once("ready", async () => {
 
     changeBotStatus("💤");
 
-    await loadLobbyWatchersFromDB();
+    //await loadLobbyWatchersFromDB();
     await loadGameStatsFromDB();
 
     //checkGhostStatus();
