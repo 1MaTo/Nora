@@ -45,6 +45,12 @@ export const mapconfigCommand = {
           type: CommandOptionType.SUB_COMMAND,
           options: [
             {
+              name: "name",
+              description: "Config name",
+              type: CommandOptionType.STRING,
+              required: true,
+            },
+            {
               name: "status",
               description: "Enable or disable option",
               type: CommandOptionType.BOOLEAN,
@@ -58,10 +64,36 @@ export const mapconfigCommand = {
           type: CommandOptionType.SUB_COMMAND,
           options: [
             {
+              name: "name",
+              description: "Config name",
+              type: CommandOptionType.STRING,
+              required: true,
+            },
+            {
               name: "status",
               description: "Enable or disable option",
               type: CommandOptionType.BOOLEAN,
               required: true,
+            },
+          ],
+        },
+        {
+          name: "image",
+          description: "Update image for map config",
+          type: CommandOptionType.SUB_COMMAND,
+          options: [
+            {
+              name: "name",
+              description: "Config name",
+              type: CommandOptionType.STRING,
+              required: true,
+            },
+            {
+              name: "link",
+              description:
+                "Past link to image or leave blank for deleting image",
+              type: CommandOptionType.STRING,
+              required: false,
             },
           ],
         },
