@@ -6,6 +6,7 @@ import { guildIDs, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
 import { updateSlashCommand } from "../utils/updateSlashCommand";
 import { keyDivider } from "../redis/kies";
+import { report } from "../utils/reportToOwner";
 
 export default class test extends SlashCommand {
   constructor(creator: any) {
@@ -22,7 +23,7 @@ export default class test extends SlashCommand {
   }
 
   async run(ctx: CommandContext) {
-    if (!production && ctx.member.id !== ownerID) return;
+    if (ctx.member.id !== ownerID) return;
     //const guild = await this.creator.api.getCommands("408947483763277825");
     //log(guild);
     //sendResponse(ctx.channelID, "Hey");
@@ -46,10 +47,6 @@ export default class test extends SlashCommand {
 
     log(configOne, configTwo); */
     //updateSlashCommand(undefined, reloadCommand);
-    const redisKeys = await redis.scanForPattern(
-      `${groupsKey.lobbyWatcher}${keyDivider}*`
-    );
-    log(redisKeys);
-    return;
+    report("Hi im here");
   }
 }
