@@ -17,9 +17,11 @@ export const creator = new SlashCreator({
 client.once("ready", async () => {
   log("------> SETTING UP");
 
-  log("------> RESTARTING LOBBY WATCHERS");
-  const lwCount = await restartLobbyWatcher();
-  log(`------> LOBBY WATCHERS RESTARTED [ ${lwCount} ]`);
+  if (!production) {
+    log("------> RESTARTING LOBBY WATCHERS");
+    const lwCount = await restartLobbyWatcher();
+    log(`------> LOBBY WATCHERS RESTARTED [ ${lwCount} ]`);
+  }
 
   log("------> BOT IN DEVELOPMENT");
 });
