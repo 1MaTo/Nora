@@ -173,7 +173,7 @@ const loadMapCfg = async (map: string) => {
   const result = await checkLogsForKeyWords(
     /CONFIG] loading file/,
     rows,
-    1000,
+    500,
     3000
   );
   if (result) {
@@ -189,7 +189,7 @@ const loadMap = async (map: string) => {
   const result = await checkLogsForKeyWords(
     /MAP] loading MPQ file/,
     rows,
-    1000,
+    500,
     3000
   );
   if (result) {

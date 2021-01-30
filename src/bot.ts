@@ -17,7 +17,7 @@ export const creator = new SlashCreator({
 client.once("ready", async () => {
   log("------> SETTING UP");
 
-  if (!production) {
+  if (production) {
     log("------> RESTARTING LOBBY WATCHERS");
     const lwCount = await restartLobbyWatcher();
     log(`------> LOBBY WATCHERS RESTARTED [ ${lwCount} ]`);
