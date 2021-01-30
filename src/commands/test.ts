@@ -14,7 +14,6 @@ export default class test extends SlashCommand {
       name: "test",
       description: "try me",
       guildID: guildIDs.ghostGuild,
-      requiredPermissions: ["ADMINISTRATOR"],
       throttling: { usages: 1, duration: 1 },
     });
 
@@ -48,5 +47,6 @@ export default class test extends SlashCommand {
     log(configOne, configTwo); */
     //updateSlashCommand(undefined, reloadCommand);
     report("Hi im here");
+    return "erere";
   }
 }
