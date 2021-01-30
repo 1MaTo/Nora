@@ -40,7 +40,7 @@ export default class test extends SlashCommand {
 
     log(configOne, configTwo); */
     //updateSlashCommand(undefined, reloadCommand);
-    report("Hi im here and reloaded myself! ... ffff");
+    report("Hi im here and reloaded myself! NICE");
     return;
   }
 }
