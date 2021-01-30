@@ -1,11 +1,5 @@
 import { CommandContext, SlashCommand } from "slash-create";
-import { reloadCommand } from "../commandsObjects/reload";
-import { groupsKey } from "../redis/kies";
-import { redis } from "../redis/redis";
-import { guildIDs, ownerID, production } from "../utils/globals";
-import { log } from "../utils/log";
-import { updateSlashCommand } from "../utils/updateSlashCommand";
-import { keyDivider } from "../redis/kies";
+import { guildIDs, ownerID } from "../utils/globals";
 import { report } from "../utils/reportToOwner";
 
 export default class test extends SlashCommand {
