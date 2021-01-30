@@ -15,7 +15,7 @@ export default class reload extends SlashCommand {
   async run(ctx: CommandContext) {
     if (ctx.member.id !== ownerID) return;
 
-    await report(`Reload with \`${ctx.options["update"] as boolean}\``);
+    await report(`Reload with ${ctx.options["update"] as boolean}`);
     reloadBot(ctx.options["update"] as boolean);
     return;
   }
