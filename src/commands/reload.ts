@@ -1,7 +1,8 @@
 import { CommandContext, SlashCommand } from "slash-create";
 import { reloadCommand } from "../commandsObjects/reload";
-import { guildIDs, ownerID, production } from "../utils/globals";
+import { ownerID } from "../utils/globals";
 import { reloadBot } from "../utils/reloadBot";
+import { report } from "../utils/reportToOwner";
 
 export default class reload extends SlashCommand {
   constructor(creator: any) {
@@ -14,6 +15,7 @@ export default class reload extends SlashCommand {
   async run(ctx: CommandContext) {
     if (ctx.member.id !== ownerID) return;
 
+    await report(`Reload with \`${ctx.options["update"] as boolean}\``);
     reloadBot(ctx.options["update"] as boolean);
     return;
   }
