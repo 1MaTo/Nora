@@ -4,6 +4,7 @@ import { GatewayServer, SlashCreator } from "slash-create";
 import { appId, publicKey, token } from "./auth.json";
 import { guildIDs, production } from "./utils/globals";
 import { log } from "./utils/log";
+import { restartLobbyWatcher } from "./utils/restartLobbyWatcher";
 
 export const client = new Client();
 
@@ -15,6 +16,10 @@ export const creator = new SlashCreator({
 
 client.once("ready", async () => {
   log("------> SETTING UP");
+
+  log("------> RESTARTING LOBBY WATCHERS");
+  const lwCount = await restartLobbyWatcher();
+  log(`------> LOBBY WATCHERS RESTARTED [ ${lwCount} ]`);
 
   log("------> BOT IN DEVELOPMENT");
 });

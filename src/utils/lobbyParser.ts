@@ -37,7 +37,7 @@ export const getPlayersTableFromRawString = async (
         name: `> ${name || EMPTY_LOBBY_DEFAULT}`,
         server: server || EMPTY_LOBBY_DEFAULT,
         ping: ping || EMPTY_LOBBY_DEFAULT,
-        winrate: winrate || EMPTY_LOBBY_WINRATE,
+        winrate: winrate || EMPTY_LOBBY_DEFAULT,
       };
     })
   );
@@ -79,8 +79,8 @@ export const getPlayersTableFromRawString = async (
           : player.name;
 
       const winrate =
-        player.winrate === EMPTY_LOBBY_WINRATE
-          ? EMPTY_LOBBY_WINRATE
+        player.winrate === EMPTY_LOBBY_DEFAULT
+          ? EMPTY_LOBBY_DEFAULT
           : `${player.winrate}%`;
 
       return { ...player, ping, name, winrate };

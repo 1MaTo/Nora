@@ -1,3 +1,5 @@
+import { EMPTY_LOBBY_USER_NAME, SPACE } from "../utils/lobbyParser";
+
 export const lobbyGame = (data: lobbyInfo<lobbyStrings>, uptime: string) => {
   const main = {
     color: null,
@@ -16,24 +18,7 @@ export const lobbyGame = (data: lobbyInfo<lobbyStrings>, uptime: string) => {
         name: "※ Map",
         value: `\`\`\`c\n${data.mapname}\n\`\`\``,
       },
-      {
-        name: "Nickname",
-        value: data.players.nicks,
-        inline: true,
-      },
-      {
-        name: "Ping",
-        value: data.players.pings,
-        inline: true,
-      },
-      {
-        name: `${
-          data.players.option.fieldName[0].toUpperCase() +
-          data.players.option.fieldName.substr(1)
-        }`,
-        value: data.players.option.string,
-        inline: true,
-      },
+      ...playersTable(data.players, data.slotsTaken === 0),
     ],
     footer: {
       text: `${data.slotsTaken}/${data.slots} [ ${uptime} ]‎‏‏‎`,
@@ -47,6 +32,7 @@ export const lobbyGame = (data: lobbyInfo<lobbyStrings>, uptime: string) => {
       url: data.mapImage,
     },
   };
+
   return {
     ...main,
     ...image,
@@ -61,4 +47,35 @@ export const header = (gameCount: number, time: string) => {
       text: `[ ${time} ]`,
     },
   };
+};
+
+const playersTable = (players: lobbyStrings, empty: boolean) => {
+  if (empty)
+    return [
+      {
+        name: "※ Empty lobby",
+        value: SPACE,
+        inline: false,
+      },
+    ];
+  return [
+    {
+      name: "Nickname",
+      value: players.nicks,
+      inline: true,
+    },
+    {
+      name: "Ping",
+      value: players.pings,
+      inline: true,
+    },
+    {
+      name: `${
+        players.option.fieldName[0].toUpperCase() +
+        players.option.fieldName.substr(1)
+      }`,
+      value: players.option.string,
+      inline: true,
+    },
+  ];
 };

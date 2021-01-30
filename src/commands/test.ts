@@ -1,13 +1,11 @@
 import { CommandContext, SlashCommand } from "slash-create";
-import { lobbyCommand } from "../commandsObjects/lobby";
-import { mapconfigCommand } from "../commandsObjects/mapconfig";
+import { reloadCommand } from "../commandsObjects/reload";
+import { groupsKey } from "../redis/kies";
+import { redis } from "../redis/redis";
 import { guildIDs, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
-import {
-  searchMapConfigByMapName,
-  searchMapConfigByName,
-} from "../utils/mapConfig";
 import { updateSlashCommand } from "../utils/updateSlashCommand";
+import { keyDivider } from "../redis/kies";
 
 export default class test extends SlashCommand {
   constructor(creator: any) {
@@ -47,7 +45,11 @@ export default class test extends SlashCommand {
     const configTwo = await searchMapConfigByMapName("FBT 169", ctx.guildID);
 
     log(configOne, configTwo); */
-    updateSlashCommand(guildIDs.ghostGuild, mapconfigCommand);
+    //updateSlashCommand(undefined, reloadCommand);
+    const redisKeys = await redis.scanForPattern(
+      `${groupsKey.lobbyWatcher}${keyDivider}*`
+    );
+    log(redisKeys);
     return;
   }
 }

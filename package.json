@@ -37,7 +37,8 @@
     "prod_start": "cross-env NODE_ENV=production forever start build/bot.js",
     "production_bot_start": "npm run get_build && npm run prod_start",
     "production_bot_stop": "forever stop build/bot.js",
-    "production_bot_restart": "npm run get_build && forever restart build/bot.js",
+    "production_bot_restart": "forever restart build/bot.js",
+    "production_bot_restart_with_updates": "npm run get_build && forever restart build/bot.js",
     "test": "shx sed -i /build /src .gitignore sssss"
   },
   "repository": {

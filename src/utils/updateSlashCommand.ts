@@ -3,7 +3,7 @@ import { creator } from "../bot";
 import { log } from "./log";
 
 export const updateSlashCommand = async (
-  guildID: string,
+  guildID: string | undefined,
   command: PartialApplicationCommand
 ) => {
   try {

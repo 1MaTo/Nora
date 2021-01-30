@@ -5,10 +5,10 @@ export const groupsKey = {
   mapConfig: "GUILD_MAP_CONFIG",
 };
 
-const divider = "#@$@#$@#";
+export const keyDivider = "#@$@#$@#";
 
 export const redisKey = {
   struct: (groupKey: string, kies: Array<string>) =>
-    [groupKey, ...kies].join(divider),
-  destruct: (key: string) => key.split(divider).slice(1),
+    [groupKey, ...kies].join(keyDivider),
+  destruct: (key: string) => key.split(keyDivider).slice(1),
 };

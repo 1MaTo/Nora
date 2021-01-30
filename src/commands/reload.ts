@@ -1,0 +1,20 @@
+import { CommandContext, SlashCommand } from "slash-create";
+import { reloadCommand } from "../commandsObjects/reload";
+import { guildIDs, ownerID, production } from "../utils/globals";
+import { reloadBot } from "../utils/reloadBot";
+
+export default class reload extends SlashCommand {
+  constructor(creator: any) {
+    super(creator, reloadCommand);
+
+    // Not required initially, but required for reloading with a fresh file.
+    this.filePath = __filename;
+  }
+
+  async run(ctx: CommandContext) {
+    if (ctx.member.id !== ownerID) return;
+
+    reloadBot(ctx.options["update"] as boolean);
+    return;
+  }
+}
