@@ -1,5 +1,6 @@
 import { CommandContext, SlashCommand } from "slash-create";
 import { nicknameCommand } from "../commandsObjects/nickname";
+import { statsCommand } from "../commandsObjects/stats";
 import { guildIDs, ownerID } from "../utils/globals";
 import { report } from "../utils/reportToOwner";
 import { updateSlashCommand } from "../utils/updateSlashCommand";
@@ -41,7 +42,7 @@ export default class test extends SlashCommand {
     const configTwo = await searchMapConfigByMapName("FBT 169", ctx.guildID);
 
     log(configOne, configTwo); */
-    updateSlashCommand(guildIDs.ghostGuild, nicknameCommand);
+    updateSlashCommand(guildIDs.ghostGuild, statsCommand);
     //report("Hi im here and reloaded myself! NICE");
     return;
   }

@@ -1,4 +1,5 @@
 import { stats } from "../utils/globals";
+import { parseMapName } from "../utils/lobbyParser";
 import { log } from "../utils/log";
 import { dbQuery, makeQuery } from "./mysql";
 
@@ -55,4 +56,41 @@ export const getNicknames = async () => {
   return result && result.length > 0
     ? result.map((item: any) => item.name)
     : null;
+};
+
+export const getGamesCountInfo = async (
+  nickname: string,
+  minIngameTime: number = 900
+): Promise<null | gamesCountInfo> => {
+  const query = `
+    SELECT 
+        count(gameid) as gamesCount, 
+        group_concat(gameid) as gamesId,  
+        group_concat(team) as teams,
+        map
+    FROM ghost.gameplayers 
+    inner join games on games.id = gameplayers.gameid
+    where name = '${nickname}' and duration >= ${minIngameTime}
+    group by map order by gamesCount desc`;
+
+  const result = await makeQuery(query);
+
+  return (
+    result &&
+    result.map(
+      (game: {
+        gamesCount: number;
+        gamesId: string;
+        teams: string;
+        map: string;
+      }) => {
+        return {
+          ...game,
+          gamesID: game.gamesId.split(","),
+          teams: game.teams.split(","),
+          map: parseMapName(game.map),
+        };
+      }
+    )
+  );
 };

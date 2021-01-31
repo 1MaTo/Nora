@@ -78,3 +78,10 @@ type lobbyWatcherLobyMessageInfo = {
   startTime: number;
   botID: number;
 };
+
+type gamesCountInfo = {
+  gamesCount: number;
+  gamesID: Array<number>;
+  teams: Array<number>;
+  map: string;
+};
