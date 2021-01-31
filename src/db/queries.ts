@@ -46,3 +46,13 @@ export const getStatsGameCount = async (
 
   return result ? result.count : 0;
 };
+
+export const getNicknames = async () => {
+  const query = `SELECT DISTINCT name FROM gameplayers where name != " " order by name;`;
+
+  const result = await makeQuery(query);
+
+  return result && result.length > 0
+    ? result.map((item: any) => item.name)
+    : null;
+};
