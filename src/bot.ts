@@ -29,28 +29,17 @@ client.once("ready", async () => {
   gamesStatusUpdater(1000 * 60 * 10); */
 
   await changeBotStatus("☀ Just woke up");
+  await sleep(2000);
 
-  if (production) {
+  if (!production) {
     // Restart lobby watchers
-    sleep(2000);
-    await changeBotStatus("🔄 Reconnecting to watchers");
-    sleep(2000);
     const lwCount = await restartLobbyWatcher();
-    sleep(2000);
-    await changeBotStatus(`✅ [${lwCount}] Reconnection complete`);
-    sleep(2000);
-
-    await changeBotStatus("🔄 Reconnecting to gamestats");
-    sleep(2000);
     const gsCount = await restartGamestats();
-    sleep(2000);
-    await changeBotStatus(`✅ [${gsCount}] Reconnection complete`);
-    sleep(2000);
 
     // Check for ghost status (available or no)
-    await ghostStatusUpdater();
-    await lobbyStatusUpdater();
-    await gamesStatusUpdater(1000 * 60 * 10);
+    setTimeout(() => ghostStatusUpdater(), 5000);
+    setTimeout(() => lobbyStatusUpdater(), 10000);
+    setTimeout(() => gamesStatusUpdater(1000 * 60 * 10), 15000);
   }
 
   await updateStatusInfo();
