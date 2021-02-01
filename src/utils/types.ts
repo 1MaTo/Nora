@@ -104,3 +104,22 @@ const enum optionLobbyField {
   server = "server",
   winrate = "winrate",
 }
+
+type gamestatsInfo = {
+  guildID: string;
+  channelID: string;
+  delay: number;
+  prevGamesCount: number | undefined;
+};
+
+type gameDataByIdsGamestats = {
+  id: number;
+  map: string;
+  datetime: Date;
+  gamename: string;
+  duration: number;
+  players: Array<{
+    teamName: string;
+    teamPlayers: Array<{ gameid: number; name: string; team: number }>;
+  }>;
+};

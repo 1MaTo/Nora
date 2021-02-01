@@ -5,7 +5,7 @@ import { appId, publicKey, token } from "./auth.json";
 import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
 import { production } from "./utils/globals";
 import { log } from "./utils/log";
-import { restartLobbyWatcher } from "./utils/restartLobbyWatcher";
+import { restartGamestats, restartLobbyWatcher } from "./utils/restartTimers";
 import {
   gamesStatusUpdater,
   ghostStatusUpdater,
@@ -23,9 +23,9 @@ export const creator = new SlashCreator({
 client.once("ready", async () => {
   log("------> SETTING UP");
 
-  ghostStatusUpdater();
+  /* ghostStatusUpdater();
   lobbyStatusUpdater();
-  gamesStatusUpdater(1000 * 60 * 10);
+  gamesStatusUpdater(1000 * 60 * 10); */
 
   await changeBotStatus("☀ Just woke up");
 
@@ -34,6 +34,10 @@ client.once("ready", async () => {
     await changeBotStatus("🔄 Reconnecting to watchers");
     const lwCount = await restartLobbyWatcher();
     await changeBotStatus(`✅ [${lwCount}] Reconnection complete`);
+
+    await changeBotStatus("🔄 Reconnecting to gamestats");
+    const gsCount = await restartGamestats();
+    await changeBotStatus(`✅ [${gsCount}] Reconnection complete`);
 
     // Check for ghost status (available or no)
     ghostStatusUpdater();

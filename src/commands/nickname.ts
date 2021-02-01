@@ -20,8 +20,6 @@ export default class nickname extends SlashCommand {
   async run(ctx: CommandContext) {
     if (!production && ctx.member.id !== ownerID) return;
 
-    log(ctx.options);
-
     if (ctx.options.bind) {
       const nick = ctx.options.bind["nickname"];
       const isFree = await freeNickname(nick, ctx.guildID);

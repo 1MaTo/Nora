@@ -1,10 +1,12 @@
-import { getLobbyList } from "../db/queries";
+import gamestats from "../commands/gamestats";
+import { getFinishedGamesId, getLobbyList } from "../db/queries";
 import { header, lobbyGame } from "../embeds/lobby";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
 import { changeBotStatus } from "./botStatus";
 import { getMessageById, sendResponse } from "./discordMessage";
 import { botStatusInfo } from "./events";
+import { startGamestatsPolls } from "./gamestatsUtils";
 import { botStatusVariables } from "./globals";
 import { getCurrentLobbies, playersLobbyToString } from "./lobbyParser";
 import { log } from "./log";
@@ -140,6 +142,39 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
   await redis.set(key, settings);
 
   setTimeout(() => lobbyWatcherUpdater(settings.guildID), settings.delay);
+};
+
+export const gamestatsUpdater = async (guildID: string) => {
+  const key = redisKey.struct(groupsKey.gameStats, [guildID]);
+  const settings = (await redis.get(key)) as gamestatsInfo;
+
+  if (!settings) return;
+
+  const ids = await getFinishedGamesId();
+
+  if (!ids)
+    setTimeout(() => gamestatsUpdater(settings.guildID), settings.delay);
+
+  if (!settings.prevGamesCount) settings.prevGamesCount = ids.length;
+
+  const newGamesCount = ids.length - settings.prevGamesCount;
+
+  if (newGamesCount) {
+    settings.prevGamesCount = ids.length;
+    const key = redisKey.struct(groupsKey.gameStats, [settings.guildID]);
+    await redis.set(key, settings);
+    setTimeout(
+      () =>
+        startGamestatsPolls(
+          ids.splice(-newGamesCount),
+          settings.channelID,
+          settings.guildID
+        ),
+      15000
+    );
+  }
+
+  setTimeout(() => gamestatsUpdater(settings.guildID), settings.delay);
 };
 
 export const ghostStatusUpdater = async () => {

@@ -1,6 +1,8 @@
 import { stats } from "../utils/globals";
 import { parseMapName } from "../utils/lobbyParser";
 import { log } from "../utils/log";
+import { searchMapConfigByMapName } from "../utils/mapConfig";
+import { uniqueFromArray } from "../utils/uniqueFromArray";
 import { dbQuery, makeQuery } from "./mysql";
 
 export const getLobbyList = async (): Promise<Array<lobbyGame>> | null => {
@@ -93,4 +95,109 @@ export const getGamesCountInfo = async (
       }
     )
   );
+};
+
+export const getFinishedGamesId = async () => {
+  const query = `SELECT id from games`;
+  const result = await makeQuery(query);
+  return result ? result.map((game: any) => game.id) : null;
+};
+
+export const getPlayersByGameId = async (gamesID: Array<number>) => {
+  const query = `
+    SELECT 
+        gameplayers.gameid,
+        gameplayers.name, 
+        gameplayers.team 
+    FROM ghost.gameplayers
+    where gameplayers.gameid in (${gamesID.join(",")}) 
+    order by gameid, team`;
+
+  const players = await makeQuery(query);
+
+  return players as Array<{
+    gameid: number;
+    name: string;
+    team: number;
+  }> | null;
+};
+
+export const getGamesDataByIds = async (
+  gamesID: Array<number>,
+  guildID: string
+): Promise<Array<gameDataByIdsGamestats> | null> => {
+  try {
+    const players = await getPlayersByGameId(gamesID);
+    const query = `
+    SELECT 
+        id, 
+        map, 
+        datetime, 
+        gamename, 
+        duration 
+    FROM games where id in (${gamesID.join(",")})`;
+    const gamesData = await makeQuery(query);
+
+    if (!gamesData.length || !players) return null;
+
+    const parsedGamesData = await Promise.all(
+      gamesData.map(
+        async (game: {
+          id: number;
+          map: string;
+          datetime: string;
+          gamename: string;
+          duration: number;
+        }) => {
+          const gamePlayers = players.filter(
+            (player) => player.gameid === game.id
+          );
+          const teams = uniqueFromArray(
+            gamePlayers.map((player) => player.team)
+          );
+          const parsedTeams = [];
+          const mapConfig = await searchMapConfigByMapName(game.map, guildID);
+
+          if (mapConfig)
+            teams.forEach((team) =>
+              mapConfig.slotMap[team] &&
+              mapConfig.slotMap[team].name.toLowerCase() !== "spectators"
+                ? parsedTeams.push(mapConfig.slotMap[team].name)
+                : null
+            );
+          else teams.forEach((team) => parsedTeams.push(`Team ${team + 1}`));
+
+          return {
+            id: game.id,
+            map: parseMapName(game.map),
+            datetime: new Date(game.datetime),
+            gamename: game.gamename.replace(/#\d+/g, "").trim(),
+            duration: game.duration,
+            players: parsedTeams.map((teamName, index) => {
+              const teamPlayers = gamePlayers.filter(
+                (player) => player.team === index
+              );
+              return { teamName, teamPlayers };
+            }),
+          };
+        }
+      )
+    );
+    if (!parsedGamesData) return null;
+    return parsedGamesData as Array<gameDataByIdsGamestats>;
+  } catch (error) {
+    log(error);
+    return null;
+  }
+};
+
+export const saveMapStats = async (gameID: number, winTeam: number) => {
+  const query = `INSERT INTO mapstats (gameid, winteam) VALUES(${gameID}, ${winTeam})`;
+  try {
+    const result = await makeQuery(query);
+    return true;
+  } catch (error) {
+    log(error);
+    return null;
+  }
 };

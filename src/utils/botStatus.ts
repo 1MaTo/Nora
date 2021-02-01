@@ -4,11 +4,11 @@ import { log } from "./log";
 
 export const changeBotStatus = async (message: string) => {
   try {
-    //if (!production) return;
+    if (!production) return;
     await client.user.setActivity(message);
     return;
-  } catch (err) {
-    log(err);
+  } catch (error) {
+    log(error);
     return;
   }
 };

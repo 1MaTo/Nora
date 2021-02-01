@@ -1,6 +1,6 @@
 import { groupsKey, keyDivider, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
-import { lobbyWatcherUpdater } from "./timerFuncs";
+import { gamestatsUpdater, lobbyWatcherUpdater } from "./timerFuncs";
 
 export const restartLobbyWatcher = async () => {
   const lobbyWatcherKeys = await redis.scanForPattern(
@@ -13,4 +13,17 @@ export const restartLobbyWatcher = async () => {
     });
 
   return lobbyWatcherKeys ? lobbyWatcherKeys.length : 0;
+};
+
+export const restartGamestats = async () => {
+  const gamestatsKeys = await redis.scanForPattern(
+    `${groupsKey.gameStats}${keyDivider}*`
+  );
+  gamestatsKeys &&
+    gamestatsKeys.map((key) => {
+      const guildID = redisKey.destruct(key);
+      gamestatsUpdater(guildID[0]);
+    });
+
+  return gamestatsKeys ? gamestatsKeys.length : 0;
 };
