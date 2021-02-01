@@ -12,6 +12,7 @@ import { redis } from "../redis/redis";
 import { log } from "../utils/log";
 import { sendResponse } from "../utils/discordMessage";
 import { success, warning } from "../embeds/response";
+import { gamestatsUpdater } from "../utils/timerFuncs";
 
 export default class gamestats extends SlashCommand {
   constructor(creator: any) {
@@ -90,7 +91,7 @@ const startGamestats = async (
     } as gamestatsInfo;
 
     await redis.set(key, settings);
-    setTimeout(() => null, delay);
+    setTimeout(() => gamestatsUpdater(settings.guildID), delay);
     await sendResponse(
       channelID,
       { embed: success("Gamestats started") },

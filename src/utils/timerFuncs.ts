@@ -155,21 +155,20 @@ export const gamestatsUpdater = async (guildID: string) => {
   if (!ids)
     setTimeout(() => gamestatsUpdater(settings.guildID), settings.delay);
 
-  if (!settings.prevGamesCount) settings.prevGamesCount = ids.length;
+  if (!settings.prevGamesCount) {
+    settings.prevGamesCount = ids.length;
+    await redis.set(key, settings);
+  }
 
   const newGamesCount = ids.length - settings.prevGamesCount;
 
   if (newGamesCount) {
     settings.prevGamesCount = ids.length;
-    const key = redisKey.struct(groupsKey.gameStats, [settings.guildID]);
     await redis.set(key, settings);
+    const idToPoll = ids.splice(-newGamesCount);
+    log("start", idToPoll);
     setTimeout(
-      () =>
-        startGamestatsPolls(
-          ids.splice(-newGamesCount),
-          settings.channelID,
-          settings.guildID
-        ),
+      () => startGamestatsPolls(idToPoll, settings.channelID, settings.guildID),
       15000
     );
   }
