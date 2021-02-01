@@ -35,12 +35,12 @@ export const run = async (message, args) => {
     if (!nicknames) return autodeleteMsg(message, statsCommand.badNicknames);
 
     switch (statWord) {
-        case "tg":
+        /* case "tg":
         case "total games":
             const games = await totalGames(guildId, nicknames);
             if (!games) return autodeleteMsg(message, statsCommand.noGamesForThisNickname(nicknames));
             const groupedGamesdata = groupGamesWithConfig(games);
-            return autodeleteMsg(message, { embed: totalGamesForNicknames(nicknames, groupedGamesdata) }, 20000);
+            return autodeleteMsg(message, { embed: totalGamesForNicknames(nicknames, groupedGamesdata) }, 20000); */
         case "winrate":
         case "wr":
             const results = await calculateUserWinrate(nicknames);
