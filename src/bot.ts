@@ -45,7 +45,7 @@ client.once("ready", async () => {
     gamesStatusUpdater(1000 * 60 * 10);
   }
 
-  updateStatusInfo();
+  await updateStatusInfo();
 
   log("------> BOT IN DEVELOPMENT");
 });
