@@ -57,7 +57,7 @@ client.once("ready", async () => {
 
     if (development) return console.log("================= BOT ONLINE IN DEVELOPMENT =================");
 
-    changeBotStatus("💤");
+    //changeBotStatus("💤");
 
     //await loadLobbyWatchersFromDB();
     await loadGameStatsFromDB();
