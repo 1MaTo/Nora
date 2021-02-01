@@ -25,6 +25,7 @@ client.once("ready", async () => {
 
   ghostStatusUpdater();
   lobbyStatusUpdater();
+  gamesStatusUpdater(1000 * 60 * 10);
 
   await changeBotStatus("☀ Just woke up");
 
