@@ -61,7 +61,7 @@ export const getNicknames = async () => {
 export const getGamesCountInfo = async (
   nickname: string,
   minIngameTime: number = 900
-): Promise<null | gamesCountInfo> => {
+): Promise<null | Array<gamesCountInfo>> => {
   const query = `
     SELECT 
         count(gameid) as gamesCount, 

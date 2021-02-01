@@ -84,4 +84,19 @@ type gamesCountInfo = {
   gamesID: Array<number>;
   teams: Array<number>;
   map: string;
+  mapVersion: string | undefined;
+};
+
+type gamesCountGroupedInfo = {
+  totalGamesCount: number;
+  groupedGames: Array<{
+    map: string;
+    totalGames: number;
+    versions: Array<gamesCountVersions>;
+  }>;
+};
+
+type gamesCountVersions = {
+  gamesCount: number;
+  mapVersion: string;
 };

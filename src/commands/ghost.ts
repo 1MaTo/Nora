@@ -3,7 +3,6 @@ import { ghostCommand } from "../commandsObjects/ghost";
 import { error, loading, success, warning } from "../embeds/response";
 import { sendResponse } from "../utils/discordMessage";
 import { ghostCmd, ownerID, production } from "../utils/globals";
-import { log } from "../utils/log";
 import {
   checkLogsForKeyWords,
   getChatRows,
