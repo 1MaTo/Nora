@@ -6,6 +6,7 @@ import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
 import { production } from "./utils/globals";
 import { log } from "./utils/log";
 import { restartGamestats, restartLobbyWatcher } from "./utils/restartTimers";
+import { sleep } from "./utils/sleep";
 import {
   gamesStatusUpdater,
   ghostStatusUpdater,
@@ -31,18 +32,25 @@ client.once("ready", async () => {
 
   if (production) {
     // Restart lobby watchers
+    sleep(2000);
     await changeBotStatus("🔄 Reconnecting to watchers");
+    sleep(2000);
     const lwCount = await restartLobbyWatcher();
+    sleep(2000);
     await changeBotStatus(`✅ [${lwCount}] Reconnection complete`);
+    sleep(2000);
 
     await changeBotStatus("🔄 Reconnecting to gamestats");
+    sleep(2000);
     const gsCount = await restartGamestats();
+    sleep(2000);
     await changeBotStatus(`✅ [${gsCount}] Reconnection complete`);
+    sleep(2000);
 
     // Check for ghost status (available or no)
-    ghostStatusUpdater();
-    lobbyStatusUpdater();
-    gamesStatusUpdater(1000 * 60 * 10);
+    await ghostStatusUpdater();
+    await lobbyStatusUpdater();
+    await gamesStatusUpdater(1000 * 60 * 10);
   }
 
   await updateStatusInfo();
