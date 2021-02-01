@@ -31,7 +31,7 @@ client.once("ready", async () => {
   await changeBotStatus("☀ Just woke up");
   await sleep(2000);
 
-  if (!production) {
+  if (production) {
     // Restart lobby watchers
     const lwCount = await restartLobbyWatcher();
     const gsCount = await restartGamestats();
