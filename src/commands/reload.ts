@@ -1,5 +1,6 @@
 import { CommandContext, SlashCommand } from "slash-create";
 import { reloadCommand } from "../commandsObjects/reload";
+import { changeBotStatus } from "../utils/botStatus";
 import { ownerID } from "../utils/globals";
 import { reloadBot } from "../utils/reloadBot";
 import { report } from "../utils/reportToOwner";
@@ -15,7 +16,8 @@ export default class reload extends SlashCommand {
   async run(ctx: CommandContext) {
     if (ctx.member.id !== ownerID) return;
 
-    await report(`Reload with ${ctx.options["update"] as boolean}`);
+    changeBotStatus("🔄 Reboot 🔄");
+
     reloadBot(ctx.options["update"] as boolean);
     return;
   }

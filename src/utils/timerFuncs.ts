@@ -1,11 +1,19 @@
-import { parse } from "path";
+import { getLobbyList } from "../db/queries";
 import { header, lobbyGame } from "../embeds/lobby";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
+import { changeBotStatus } from "./botStatus";
 import { getMessageById, sendResponse } from "./discordMessage";
+import { botStatusInfo } from "./events";
+import { botStatusVariables } from "./globals";
 import { getCurrentLobbies, playersLobbyToString } from "./lobbyParser";
 import { log } from "./log";
 import { searchMapConfigByMapName } from "./mapConfig";
+import {
+  checkLogsForKeyWords,
+  getChatRows,
+  sendCommand,
+} from "./requestToGuiServer";
 import { getPassedTime } from "./timePassed";
 
 export const lobbyWatcherUpdater = async (guildID: string) => {
@@ -132,4 +140,63 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
   await redis.set(key, settings);
 
   setTimeout(() => lobbyWatcherUpdater(settings.guildID), settings.delay);
+};
+
+export const ghostStatusUpdater = async () => {
+  const rows = await getChatRows();
+  const changedState = botStatusVariables.ghost !== Boolean(rows);
+  if (changedState) {
+    botStatusVariables.ghost = Boolean(rows);
+    botStatusInfo.emit(botEvent.update);
+  }
+  setTimeout(() => ghostStatusUpdater(), 5000);
+};
+
+export const lobbyStatusUpdater = async () => {
+  const games = (await getLobbyList()).filter(
+    (game) =>
+      !(
+        game.gamename === "" &&
+        game.ownername === "" &&
+        game.creatorname === ""
+      )
+  );
+
+  const changedState = botStatusVariables.lobbyCount !== games.length;
+
+  if (changedState) {
+    botStatusVariables.lobbyCount = games.length;
+    botStatusInfo.emit(botEvent.update);
+  }
+  setTimeout(() => lobbyStatusUpdater(), 5000);
+};
+
+export const gamesStatusUpdater = async (delay: number) => {
+  const rows = await getChatRows();
+  const sent = await sendCommand("ggs");
+
+  if (!sent) return setTimeout(() => gamesStatusUpdater(delay), delay);
+
+  const result = await checkLogsForKeyWords(
+    /\(\d+ today+\).*/g,
+    rows,
+    500,
+    5000
+  );
+  log(result);
+
+  if (!result) return setTimeout(() => gamesStatusUpdater(delay), delay);
+
+  const gameCount = (result as string).match(/\#\d+:/g);
+
+  if (!gameCount) return setTimeout(() => gamesStatusUpdater(delay), delay);
+
+  const changedState = botStatusVariables.gameCount !== gameCount.length;
+
+  if (changedState) {
+    botStatusVariables.lobbyCount = gameCount.length;
+    botStatusInfo.emit(botEvent.update);
+  }
+
+  setTimeout(() => gamesStatusUpdater(delay), delay);
 };

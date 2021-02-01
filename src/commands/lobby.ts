@@ -6,7 +6,13 @@ import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
 import { getTextChannel } from "../utils/discordChannel";
 import { sendResponse } from "../utils/discordMessage";
-import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
+import { botStatusInfo } from "../utils/events";
+import {
+  botStatusVariables,
+  msgDeleteTimeout,
+  ownerID,
+  production,
+} from "../utils/globals";
 import { log } from "../utils/log";
 import { getPassedTime } from "../utils/timePassed";
 import { lobbyWatcherUpdater } from "../utils/timerFuncs";
@@ -79,6 +85,7 @@ const isRunning = async (guildID: string): Promise<lobbyWatcherInfo | null> => {
 const stopLobbyWatcher = async (guildID: string) => {
   const key = redisKey.struct(groupsKey.lobbyWatcher, [guildID]);
   const settings = (await redis.get(key)) as lobbyWatcherInfo;
+
   if (settings) {
     const channel = await getTextChannel(settings.channelID);
     const lobbiesToMsgID = settings.lobbysID.reduce(

@@ -2,9 +2,15 @@ import { Client, WSEventType } from "discord.js";
 import path from "path";
 import { GatewayServer, SlashCreator } from "slash-create";
 import { appId, publicKey, token } from "./auth.json";
-import { guildIDs, production } from "./utils/globals";
+import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
+import { production } from "./utils/globals";
 import { log } from "./utils/log";
 import { restartLobbyWatcher } from "./utils/restartLobbyWatcher";
+import {
+  gamesStatusUpdater,
+  ghostStatusUpdater,
+  lobbyStatusUpdater,
+} from "./utils/timerFuncs";
 
 export const client = new Client();
 
@@ -17,11 +23,24 @@ export const creator = new SlashCreator({
 client.once("ready", async () => {
   log("------> SETTING UP");
 
+  ghostStatusUpdater();
+  lobbyStatusUpdater();
+
+  await changeBotStatus("☀ Just woke up");
+
   if (production) {
-    log("------> RESTARTING LOBBY WATCHERS");
+    // Restart lobby watchers
+    await changeBotStatus("🔄 Reconnecting to watchers");
     const lwCount = await restartLobbyWatcher();
-    log(`------> LOBBY WATCHERS RESTARTED [ ${lwCount} ]`);
+    await changeBotStatus(`✅ [${lwCount}] Reconnection complete`);
+
+    // Check for ghost status (available or no)
+    ghostStatusUpdater();
+    lobbyStatusUpdater();
+    gamesStatusUpdater(1000 * 60 * 10);
   }
+
+  updateStatusInfo();
 
   log("------> BOT IN DEVELOPMENT");
 });

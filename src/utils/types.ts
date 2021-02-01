@@ -24,11 +24,6 @@ type lobbyTable = {
   winrate: string;
 };
 
-const enum optionLobbyField {
-  server = "server",
-  winrate = "winrate",
-}
-
 type lobbyGame = {
   id: number;
   botid: number;
@@ -100,3 +95,12 @@ type gamesCountVersions = {
   gamesCount: number;
   mapVersion: string;
 };
+
+const enum botEvent {
+  update = "update",
+}
+
+const enum optionLobbyField {
+  server = "server",
+  winrate = "winrate",
+}
