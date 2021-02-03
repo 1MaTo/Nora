@@ -60,7 +60,7 @@ client.once("ready", async () => {
     //changeBotStatus("💤");
 
     //await loadLobbyWatchersFromDB();
-    await loadGameStatsFromDB();
+    //await loadGameStatsFromDB();
 
     //checkGhostStatus();
 
