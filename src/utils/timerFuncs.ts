@@ -1,9 +1,7 @@
-import gamestats from "../commands/gamestats";
 import { getFinishedGamesId, getLobbyList } from "../db/queries";
 import { header, lobbyGame } from "../embeds/lobby";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
-import { changeBotStatus } from "./botStatus";
 import { getMessageById, sendResponse } from "./discordMessage";
 import { botStatusInfo } from "./events";
 import { startGamestatsPolls } from "./gamestatsUtils";
@@ -166,13 +164,11 @@ export const gamestatsUpdater = async (guildID: string) => {
     settings.prevGamesCount = ids.length;
     await redis.set(key, settings);
     const idToPoll = ids.splice(-newGamesCount);
-    log("start", idToPoll);
     setTimeout(
       () => startGamestatsPolls(idToPoll, settings.channelID, settings.guildID),
       15000
     );
   }
-
   setTimeout(() => gamestatsUpdater(settings.guildID), settings.delay);
 };
 
@@ -228,7 +224,7 @@ export const gamesStatusUpdater = async (delay: number) => {
   const changedState = botStatusVariables.gameCount !== gameCount.length;
 
   if (changedState) {
-    botStatusVariables.lobbyCount = gameCount.length;
+    botStatusVariables.gameCount = gameCount.length;
     botStatusInfo.emit(botEvent.update);
   }
 

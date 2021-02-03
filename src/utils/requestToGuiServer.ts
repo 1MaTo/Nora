@@ -56,6 +56,7 @@ export const checkLogsForKeyWords = async (
       const currRows = await getChatRows();
       if (currRows !== rows) {
         const logs = (await getChatLogs()).slice(-Math.abs(rows - currRows));
+        log(logs);
         const patternSuccess = logs.reduce((arr, row) => {
           if (row.match(pattern)) return [...arr, row];
           return [...arr];

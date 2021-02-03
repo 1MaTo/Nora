@@ -1,4 +1,3 @@
-import { Message } from "discord.js";
 import { getGamesDataByIds, saveMapStats } from "../db/queries";
 import { gameStatsPoll } from "../embeds/gameStats";
 import { getMessageById, sendResponse } from "./discordMessage";
