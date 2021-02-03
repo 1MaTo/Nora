@@ -213,7 +213,6 @@ export const gamesStatusUpdater = async (delay: number) => {
     500,
     5000
   );
-  log(result);
 
   if (!result) return setTimeout(() => gamesStatusUpdater(delay), delay);
 

@@ -31,7 +31,7 @@ client.once("ready", async () => {
   await changeBotStatus("☀ Just woke up");
   await sleep(2000);
 
-  //setTimeout(() => gamesStatusUpdater(5000), 1000);
+  setTimeout(() => gamesStatusUpdater(5000), 1000);
 
   if (production) {
     // Restart lobby watchers
@@ -41,7 +41,7 @@ client.once("ready", async () => {
     // Check for ghost status (available or no)
     setTimeout(() => ghostStatusUpdater(), 5000);
     setTimeout(() => lobbyStatusUpdater(), 10000);
-    setTimeout(() => gamesStatusUpdater(1000 * 60 * 10), 15000);
+    setTimeout(() => gamesStatusUpdater(1000 * 60 * 5), 15000);
   }
 
   await updateStatusInfo();
