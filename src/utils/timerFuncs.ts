@@ -218,7 +218,11 @@ export const gamesStatusUpdater = async (delay: number) => {
 
   const gameCount = (result as string).match(/\#\d+:/g);
 
-  if (!gameCount) return setTimeout(() => gamesStatusUpdater(delay), delay);
+  if (!gameCount) {
+    botStatusVariables.gameCount = 0;
+    botStatusInfo.emit(botEvent.update);
+    return setTimeout(() => gamesStatusUpdater(delay), delay);
+  }
 
   const changedState = botStatusVariables.gameCount !== gameCount.length;
 

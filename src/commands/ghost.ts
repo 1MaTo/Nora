@@ -2,7 +2,13 @@ import { CommandContext, SlashCommand } from "slash-create";
 import { ghostCommand } from "../commandsObjects/ghost";
 import { error, loading, success, warning } from "../embeds/response";
 import { sendResponse } from "../utils/discordMessage";
-import { ghostCmd, ownerID, production } from "../utils/globals";
+import { botStatusInfo } from "../utils/events";
+import {
+  botStatusVariables,
+  ghostCmd,
+  ownerID,
+  production,
+} from "../utils/globals";
 import {
   checkLogsForKeyWords,
   getChatRows,
@@ -61,6 +67,9 @@ export default class ghost extends SlashCommand {
       const result = await startGame(ctx.options.start["force"]);
 
       if (result) {
+        botStatusVariables.gameCount += 1;
+        botStatusInfo.emit(botEvent.update);
+
         message.edit({ embed: success(`Game ${result} started`) });
       } else if (result === false) {
         message.edit({

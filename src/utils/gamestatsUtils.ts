@@ -1,7 +1,8 @@
 import { getGamesDataByIds, saveMapStats } from "../db/queries";
 import { gameStatsPoll } from "../embeds/gameStats";
 import { getMessageById, sendResponse } from "./discordMessage";
-import { numberToEmoji, palette } from "./globals";
+import { botStatusInfo } from "./events";
+import { botStatusVariables, numberToEmoji, palette } from "./globals";
 import { log } from "./log";
 import { searchMapConfigByMapName } from "./mapConfig";
 
@@ -25,6 +26,11 @@ const startGameCollector = async (
   gameData: gameDataByIdsGamestats,
   channelID: string
 ) => {
+  if (botStatusVariables.gameCount > 0) {
+    botStatusVariables.gameCount -= 1;
+    botStatusInfo.emit(botEvent.update);
+  }
+
   const deleteDelay = 1000 * 60 * 10;
   const message = await sendResponse(channelID, {
     embed: gameStatsPoll(gameData),
