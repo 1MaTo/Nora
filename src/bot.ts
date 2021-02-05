@@ -24,17 +24,12 @@ export const creator = new SlashCreator({
 client.once("ready", async () => {
   log("------> SETTING UP");
 
-  /* ghostStatusUpdater();
-  lobbyStatusUpdater();
-  gamesStatusUpdater(1000 * 60 * 10); */
-
-  await changeBotStatus("☀ Just woke up");
-  await sleep(2000);
-
-  //setTimeout(() => gamesStatusUpdater(5000), 1000);
-
   if (production) {
     // Restart lobby watchers
+    await changeBotStatus("☀ Just woke up");
+
+    sleep(2000);
+
     const lwCount = await restartLobbyWatcher();
     const gsCount = await restartGamestats();
 
@@ -42,9 +37,9 @@ client.once("ready", async () => {
     setTimeout(() => ghostStatusUpdater(), 5000);
     setTimeout(() => lobbyStatusUpdater(), 10000);
     setTimeout(() => gamesStatusUpdater(1000 * 60 * 5), 15000);
-  }
 
-  await updateStatusInfo();
+    await updateStatusInfo();
+  }
 
   log("------> BOT IN DEVELOPMENT");
 });

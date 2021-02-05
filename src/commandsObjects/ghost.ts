@@ -48,32 +48,20 @@ export const ghostCommand = {
           required: true,
           choices: [
             {
-              name: "CBM Last",
-              value: "CBM Last",
+              name: "FBT 169.1 FIX (127)",
+              value: "FBT 169.1 FIX (127)",
             },
             {
               name: "Dream of Wings Original Sin",
               value: "Dream of Wings Original Sin",
             },
             {
-              name: "FBT 169 FIX (127)",
-              value: "FBT 169 FIX (127)",
+              name: "Flower Moon Festival v1.5.80",
+              value: "Flower Moon Festival v1.5.80",
             },
             {
-              name: "FBT 169",
-              value: "FBT 169",
-            },
-            {
-              name: "Aniki 6.6.4 fixed",
-              value: "Aniki 6.6.4 fixed",
-            },
-            {
-              name: "HCD18Fix4_END full",
-              value: "HCD18Fix4_END full",
-            },
-            {
-              name: "TH_FBSV_Proto_VP47_Fix4",
-              value: "TH_FBSV_Proto_VP47_Fix4",
+              name: "Dawn Fantasy1.1.021",
+              value: "Dawn Fantasy1.1.021",
             },
           ],
         },

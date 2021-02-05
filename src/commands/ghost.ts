@@ -34,7 +34,7 @@ export default class ghost extends SlashCommand {
         message.edit({ embed: success(`Game ${result} hosted`) });
       } else if (result === false) {
         message.edit({
-          embed: warning(`Can't host, another lobby already exists`),
+          embed: warning(`Another lobby already exists | No map loaded`),
         });
       } else {
         message.edit({ embed: error(`Network error`) });
@@ -73,7 +73,7 @@ export default class ghost extends SlashCommand {
         message.edit({ embed: success(`Game ${result} started`) });
       } else if (result === false) {
         message.edit({
-          embed: warning(`Nothing to start or users are not pinged`),
+          embed: warning(`Nothing to start | Users are not pinged`),
         });
       } else {
         message.edit({ embed: error(`Network error`) });

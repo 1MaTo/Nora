@@ -182,8 +182,11 @@ const freeNickname = async (nickname: string, guildID: string) => {
 
   if (!bindedNicknames) return true;
 
-  const index = bindedNicknames.findIndex(async (key) => {
-    const nick = await redis.get(key);
+  const redisNicknames = await Promise.all(
+    bindedNicknames.map(async (key) => await redis.get(key))
+  );
+
+  const index = redisNicknames.findIndex((nick) => {
     return nick === nickname;
   });
 
