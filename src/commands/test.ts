@@ -3,8 +3,12 @@ import { gamestatsCommand } from "../commandsObjects/gamestats";
 import { ghostCommand } from "../commandsObjects/ghost";
 import { nicknameCommand } from "../commandsObjects/nickname";
 import { statsCommand } from "../commandsObjects/stats";
+import { groupsKey, keyDivider, redisKey } from "../redis/kies";
+import { redis } from "../redis/redis";
+import { sendResponse } from "../utils/discordMessage";
 import { guildIDs, ownerID } from "../utils/globals";
-import { getDiscordUserFromNicknames } from "../utils/nicknameToDiscordUser";
+import { log } from "../utils/log";
+import { getDiscordUsersFromNicknames } from "../utils/nicknameToDiscordUser";
 import { report } from "../utils/reportToOwner";
 import { updateSlashCommand } from "../utils/updateSlashCommand";
 
@@ -48,7 +52,27 @@ export default class test extends SlashCommand {
     //updateSlashCommand(guildIDs.ghostGuild, ghostCommand);
     //report("Hi im here and reloaded myself! NICE");
 
-    await getDiscordUserFromNicknames(["IMaToI"], ctx.guildID);
+    /*   await Promise.all(
+      usersIDs.map(async (id) => await sendResponse(ctx.channelID, `<@${id}>`))
+    ); */
+
+    const keys = await redis.scanForPattern(
+      `${groupsKey.bindNickname}${keyDivider}${ctx.guildID}*`
+    );
+
+    await Promise.all(
+      keys.map(async (key) => {
+        const old = await redis.get(key);
+        await redis.set(key, {
+          nickname: old,
+          discordID: redisKey.destruct(key)[1],
+          settings: {},
+        } as userData);
+      })
+    );
+
+    const users = await getDiscordUsersFromNicknames(["IMaToI"], ctx.guildID);
+    log(users);
     return;
   }
 }

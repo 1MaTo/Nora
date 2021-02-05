@@ -53,3 +53,11 @@ export const loading = (message: string = "Loading...") => {
     },
   };
 };
+
+export const body = (title: string, message: string, color: string = null) => {
+  return {
+    title: title,
+    description: message,
+    color: color,
+  };
+};

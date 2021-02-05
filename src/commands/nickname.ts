@@ -18,6 +18,7 @@ export default class nickname extends SlashCommand {
   }
 
   async run(ctx: CommandContext) {
+    return;
     if (!production && ctx.member.id !== ownerID) return;
 
     if (ctx.options.bind) {
@@ -157,7 +158,11 @@ const bindNickname = async (
   guildID: string
 ) => {
   const key = redisKey.struct(groupsKey.bindNickname, [guildID, userID]);
-  await redis.set(key, nickname);
+  await redis.set(key, {
+    nickname,
+    discordID: userID,
+    settings: {},
+  } as userData);
   return true;
 };
 
@@ -183,11 +188,11 @@ const freeNickname = async (nickname: string, guildID: string) => {
   if (!bindedNicknames) return true;
 
   const redisNicknames = await Promise.all(
-    bindedNicknames.map(async (key) => await redis.get(key))
+    bindedNicknames.map(async (key) => (await redis.get(key)) as userData)
   );
 
-  const index = redisNicknames.findIndex((nick) => {
-    return nick === nickname;
+  const index = redisNicknames.findIndex((user) => {
+    return user.nickname === nickname;
   });
 
   if (index !== -1) return redisKey.destruct(bindedNicknames[index])[1];

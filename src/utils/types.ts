@@ -123,3 +123,11 @@ type gameDataByIdsGamestats = {
     teamPlayers: Array<{ gameid: number; name: string; team: number }>;
   }>;
 };
+
+type userData = {
+  discordID: string;
+  nickname: string;
+  settings: {
+    pingOnStart?: boolean;
+  };
+};

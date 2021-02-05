@@ -1,15 +1,20 @@
-import { groupsKey, keyDivider, redisKey } from "../redis/kies";
+import { groupsKey, keyDivider } from "../redis/kies";
 import { redis } from "../redis/redis";
-import { log } from "./log";
 
-export const getDiscordUserFromNicknames = async (
+export const getDiscordUsersFromNicknames = async (
   nicknames: string[],
   guildID: string
 ) => {
-  const allNicks = (
-    await redis.scanForPattern(
-      `${groupsKey.bindNickname}${keyDivider}${guildID}*`
+  const users = (
+    await Promise.all(
+      (
+        await redis.scanForPattern(
+          `${groupsKey.bindNickname}${keyDivider}${guildID}*`
+        )
+      ).map(async (key) => {
+        return (await redis.get(key)) as userData;
+      })
     )
-  ).map((key) => redisKey.destruct(key)[1]);
-  log(allNicks);
+  ).filter((user) => nicknames.includes(user.nickname));
+  return users;
 };
