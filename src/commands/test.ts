@@ -1,16 +1,5 @@
 import { CommandContext, SlashCommand } from "slash-create";
-import { gamestatsCommand } from "../commandsObjects/gamestats";
-import { ghostCommand } from "../commandsObjects/ghost";
-import { nicknameCommand } from "../commandsObjects/nickname";
-import { statsCommand } from "../commandsObjects/stats";
-import { groupsKey, keyDivider, redisKey } from "../redis/kies";
-import { redis } from "../redis/redis";
-import { sendResponse } from "../utils/discordMessage";
-import { guildIDs, ownerID } from "../utils/globals";
-import { log } from "../utils/log";
-import { getDiscordUsersFromNicknames } from "../utils/nicknameToDiscordUser";
-import { report } from "../utils/reportToOwner";
-import { updateSlashCommand } from "../utils/updateSlashCommand";
+import { guildIDs, ownerID, production } from "../utils/globals";
 
 export default class test extends SlashCommand {
   constructor(creator: any) {
@@ -26,7 +15,7 @@ export default class test extends SlashCommand {
   }
 
   async run(ctx: CommandContext) {
-    if (ctx.member.id !== ownerID) return;
+    if (ctx.member.id !== ownerID || production) return;
     //const guild = await this.creator.api.getCommands("408947483763277825");
     //log(guild);
     //sendResponse(ctx.channelID, "Hey");
@@ -56,7 +45,7 @@ export default class test extends SlashCommand {
       usersIDs.map(async (id) => await sendResponse(ctx.channelID, `<@${id}>`))
     ); */
 
-    const keys = await redis.scanForPattern(
+    /*     const keys = await redis.scanForPattern(
       `${groupsKey.bindNickname}${keyDivider}${ctx.guildID}*`
     );
 
@@ -70,9 +59,31 @@ export default class test extends SlashCommand {
         } as userData);
       })
     );
+ */
+    /*     const game = [
+      {
+        botid: 1,
+        gamename: "fdf #1",
+        owner: "replica",
+        host: "replica",
+        mapname: "FBT 169.1 FIX (127)",
+        players: [
+          {
+            name: "IMaToI",
+            server: "string",
+            ping: "string",
+            winrate: "string",
+          },
+        ] as lobbyTable[],
+        slots: 10,
+        slotsTaken: 1,
+        mapImage: undefined,
+      },
+    ].find((game) => game.gamename == "[fdf #1]".replace(/[\[\]]/g, ""));
 
-    const users = await getDiscordUsersFromNicknames(["IMaToI"], ctx.guildID);
-    log(users);
-    return;
+    log(game, "[fdf #1]");
+    if (game) {
+      pingUsersOnStart(game, ctx.guildID);
+    } */
   }
 }

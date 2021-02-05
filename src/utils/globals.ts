@@ -65,3 +65,5 @@ export const numberToEmoji = (number: number) => {
       return `${number}`;
   }
 };
+
+export const defaultUserData = { ping_on_start: false } as userDataSettings;

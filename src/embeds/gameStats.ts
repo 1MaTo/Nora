@@ -1,4 +1,3 @@
-import { palette } from "../utils/globals";
 import { getPassedTime } from "../utils/timePassed";
 
 export const gameStatsPoll = (

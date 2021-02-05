@@ -1,4 +1,4 @@
-import { EMPTY_LOBBY_USER_NAME, SPACE } from "../utils/lobbyParser";
+import { SPACE } from "../utils/lobbyParser";
 
 export const lobbyGame = (data: lobbyInfo<lobbyStrings>, uptime: string) => {
   const main = {

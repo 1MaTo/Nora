@@ -48,5 +48,18 @@ export const nicknameCommand = {
         },
       ],
     },
+    {
+      name: "ping_on_start",
+      description: "If true - you will get pinged after game start",
+      type: CommandOptionType.SUB_COMMAND,
+      options: [
+        {
+          name: "value",
+          description: "If true - you will get pinged after game start",
+          type: CommandOptionType.BOOLEAN,
+          required: true,
+        },
+      ],
+    },
   ],
 } as SlashCommandOptions;

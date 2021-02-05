@@ -9,6 +9,9 @@ import {
   ownerID,
   production,
 } from "../utils/globals";
+import { getCurrentLobbies } from "../utils/lobbyParser";
+import { log } from "../utils/log";
+import { pingUsersOnStart } from "../utils/notifications";
 import {
   checkLogsForKeyWords,
   getChatRows,
@@ -66,9 +69,20 @@ export default class ghost extends SlashCommand {
       });
       const result = await startGame(ctx.options.start["force"]);
 
+      const games = await getCurrentLobbies(ctx.guildID);
+
       if (result) {
         botStatusVariables.gameCount += 1;
         botStatusInfo.emit(botEvent.update);
+
+        const game = games.find(
+          (game) => game.gamename == result.replace(/[\[\]]/g, "")
+        );
+
+        log(game, result);
+        if (game) {
+          pingUsersOnStart(game, ctx.guildID);
+        }
 
         message.edit({ embed: success(`Game ${result} started`) });
       } else if (result === false) {

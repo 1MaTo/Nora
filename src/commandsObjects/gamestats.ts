@@ -1,4 +1,3 @@
-import { Permissions } from "discord.js";
 import { CommandOptionType, SlashCommandOptions } from "slash-create";
 import { guildIDs } from "../utils/globals";
 

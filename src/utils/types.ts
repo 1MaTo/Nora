@@ -127,7 +127,9 @@ type gameDataByIdsGamestats = {
 type userData = {
   discordID: string;
   nickname: string;
-  settings: {
-    pingOnStart?: boolean;
-  };
+  settings: userDataSettings;
+};
+
+type userDataSettings = {
+  ping_on_start: boolean;
 };

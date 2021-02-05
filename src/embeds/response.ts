@@ -1,4 +1,5 @@
 import { palette } from "../utils/globals";
+import { log } from "../utils/log";
 
 export const success = (message: string) => {
   return {
@@ -55,6 +56,11 @@ export const loading = (message: string = "Loading...") => {
 };
 
 export const body = (title: string, message: string, color: string = null) => {
+  log({
+    title: title,
+    description: message,
+    color: color,
+  });
   return {
     title: title,
     description: message,

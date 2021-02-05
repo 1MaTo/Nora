@@ -6,13 +6,7 @@ import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
 import { getTextChannel } from "../utils/discordChannel";
 import { sendResponse } from "../utils/discordMessage";
-import { botStatusInfo } from "../utils/events";
-import {
-  botStatusVariables,
-  msgDeleteTimeout,
-  ownerID,
-  production,
-} from "../utils/globals";
+import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
 import { getPassedTime } from "../utils/timePassed";
 import { lobbyWatcherUpdater } from "../utils/timerFuncs";

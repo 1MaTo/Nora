@@ -1,17 +1,12 @@
 import { CommandContext, SlashCommand } from "slash-create";
-import {
-  guildIDs,
-  msgDeleteTimeout,
-  ownerID,
-  production,
-} from "../utils/globals";
 import { gamestatsCommand } from "../commandsObjects/gamestats";
-import { getTextChannel } from "../utils/discordChannel";
+import { success, warning } from "../embeds/response";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
-import { log } from "../utils/log";
+import { getTextChannel } from "../utils/discordChannel";
 import { sendResponse } from "../utils/discordMessage";
-import { success, warning } from "../embeds/response";
+import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
+import { log } from "../utils/log";
 import { gamestatsUpdater } from "../utils/timerFuncs";
 
 export default class gamestats extends SlashCommand {

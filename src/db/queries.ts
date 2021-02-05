@@ -3,7 +3,7 @@ import { parseMapName } from "../utils/lobbyParser";
 import { log } from "../utils/log";
 import { searchMapConfigByMapName } from "../utils/mapConfig";
 import { uniqueFromArray } from "../utils/uniqueFromArray";
-import { dbQuery, makeQuery } from "./mysql";
+import { makeQuery } from "./mysql";
 
 export const getLobbyList = async (): Promise<Array<lobbyGame>> | null => {
   const query = `SELECT * from gamelist`;

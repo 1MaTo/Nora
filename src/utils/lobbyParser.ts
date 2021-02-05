@@ -1,10 +1,10 @@
 import { getLobbyList, getPlayerWinrate } from "../db/queries";
-import { log } from "./log";
 import { searchMapConfigByMapName } from "./mapConfig";
 
 export const EMPTY_LOBBY_USER_NAME = "open";
 export const EMPTY_LOBBY_DEFAULT = "-";
 export const EMPTY_LOBBY_WINRATE = "unranked";
+export const USER_LOBBY_PREFIX = "> ";
 export const SPACE = "‎‏‏‎ ";
 
 export const parseMapName = (mapName: string) =>
@@ -34,7 +34,7 @@ export const getPlayersTableFromRawString = async (
           ? await getPlayerWinrate(name, mapName)
           : EMPTY_LOBBY_DEFAULT;
       return {
-        name: `> ${name || EMPTY_LOBBY_DEFAULT}`,
+        name: `${USER_LOBBY_PREFIX}${name || EMPTY_LOBBY_DEFAULT}`,
         server: server || EMPTY_LOBBY_DEFAULT,
         ping: ping || EMPTY_LOBBY_DEFAULT,
         winrate: winrate || EMPTY_LOBBY_DEFAULT,
