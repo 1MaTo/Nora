@@ -146,8 +146,10 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
 
     setTimeout(() => lobbyWatcherUpdater(settings.guildID), settings.delay);
   } catch (err) {
-    report(err);
-    setTimeout(() => lobbyWatcherUpdater(guildID), 1000);
+    const error = err as Error;
+    report(`${error.name}\n\n${error.message}\n\n${error.stack}`);
+    log(error);
+    setTimeout(() => lobbyWatcherUpdater(guildID), 5000);
   }
 };
 
