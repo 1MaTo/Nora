@@ -68,8 +68,8 @@ export const getPlayerWinrateForLobbyWatcher = async (
   ) as playerWinrateStats;
 
   return `${Math.round((stats.win / (stats.win + stats.lose)) * 100)}% | ${
-    stats.streak.count
-  } :small_red_triangle:`;
+    stats.win + stats.lose
+  } | ${stats.streak.count} :small_red_triangle:`;
 };
 
 export const getStatsGameCount = async (
