@@ -1,3 +1,4 @@
+import { stat } from "fs";
 import { stats } from "../utils/globals";
 import { parseMapName } from "../utils/lobbyParser";
 import { log } from "../utils/log";
@@ -10,15 +11,14 @@ export const getLobbyList = async (): Promise<Array<lobbyGame>> | null => {
   return await makeQuery(query);
 };
 
-export const getPlayerWinrate = async (
-  nickname: string,
-  mapName: string
+export const getPlayerWinrateForLobbyWatcher = async (
+  nickname: string
 ): Promise<string | null> => {
-  const gamesPlayed = await getStatsGameCount(nickname, mapName);
+  //const gamesPlayed = await getStatsGameCount(nickname, mapName);
 
-  if (gamesPlayed < stats.gamesToBeRanked) return null;
+  //if (gamesPlayed < stats.gamesToBeRanked) return null;
 
-  const fromGamesWithNicknames = `
+  /* const fromGamesWithNicknames = `
     from gameplayers
     inner join games on games.id = gameplayers.gameid
     inner join mapstats on mapstats.gameid = games.id
@@ -27,11 +27,47 @@ export const getPlayerWinrate = async (
   const query = `
     select 
     round(((select count(*) ${fromGamesWithNicknames} and winteam = team) / count(games.id) * 100)) as winrate
-    ${fromGamesWithNicknames};`;
+    ${fromGamesWithNicknames};`; */
+
+  const query = `
+    select flag
+    from w3mmdplayers 
+    inner join gameplayers on 
+        w3mmdplayers.gameid = gameplayers.gameid 
+        and w3mmdplayers.pid = gameplayers.colour 
+    inner join games on 
+        games.id = gameplayers.gameid
+    where category = "fbtmmd" 
+        and team < 2 
+            and flag in ("loser", "winner") 
+        and gameplayers.name = "${nickname}"
+        and duration >= 900`;
 
   const result = await makeQuery(query);
 
-  return result ? result[0].winrate : null;
+  if (!result.length) return null;
+
+  const stats = result.reduce(
+    (stat: playerWinrateStats, result: string) => {
+      if (result === "loser") {
+        stat.lose++;
+      } else {
+        stat.win++;
+      }
+      if (stat.streak.type === result) {
+        stat.streak.count++;
+      } else {
+        stat.streak.type = result;
+        stat.streak.count = 1;
+      }
+      return stat;
+    },
+    { win: 0, lose: 0, streak: { type: "winner", count: 0 } }
+  ) as playerWinrateStats;
+
+  return `${stats.win / (stats.win + stats.lose)}% | ${
+    stats.streak.count
+  } :small_red_triangle:`;
 };
 
 export const getStatsGameCount = async (

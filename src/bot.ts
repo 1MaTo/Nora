@@ -5,6 +5,7 @@ import { appId, publicKey, token } from "./auth.json";
 import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
 import { production } from "./utils/globals";
 import { log } from "./utils/log";
+import { reloadBot } from "./utils/reloadBot";
 import { restartGamestats, restartLobbyWatcher } from "./utils/restartTimers";
 import { sleep } from "./utils/sleep";
 import {
@@ -37,7 +38,10 @@ client.once("ready", async () => {
     setTimeout(() => ghostStatusUpdater(), 5000);
     setTimeout(() => lobbyStatusUpdater(), 10000);
     setTimeout(() => gamesStatusUpdater(1000 * 60 * 5), 15000);
-
+    setTimeout(async () => {
+      await changeBotStatus("🔄 Planned reboot 🔄");
+      await reloadBot(false);
+    }, 1000 * 60 * 60 * 24);
     await updateStatusInfo();
   }
 

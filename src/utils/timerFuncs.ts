@@ -2,6 +2,7 @@ import { getFinishedGamesId, getLobbyList } from "../db/queries";
 import { header, lobbyGame } from "../embeds/lobby";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
+import { changeBotStatus } from "./botStatus";
 import { getMessageById, sendResponse } from "./discordMessage";
 import { botStatusInfo } from "./events";
 import { startGamestatsPolls } from "./gamestatsUtils";
@@ -9,6 +10,7 @@ import { botStatusVariables } from "./globals";
 import { getCurrentLobbies, playersLobbyToString } from "./lobbyParser";
 import { log } from "./log";
 import { searchMapConfigByMapName } from "./mapConfig";
+import { reloadBot } from "./reloadBot";
 import { report } from "./reportToOwner";
 import {
   checkLogsForKeyWords,
@@ -147,9 +149,12 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
     setTimeout(() => lobbyWatcherUpdater(settings.guildID), settings.delay);
   } catch (err) {
     const error = err as Error;
-    report(`${error.name}\n\n${error.message}\n\n${error.stack}`);
+    await report(
+      `${error.name}\n\n${error.message}\n\n${error.stack} FROM LOBBY WATCHER CRASHED`
+    );
     log(error);
-    setTimeout(() => lobbyWatcherUpdater(guildID), 5000);
+    await changeBotStatus("🔄 Crashed 😱, reboot 🔄");
+    reloadBot(false);
   }
 };
 

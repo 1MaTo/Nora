@@ -1,5 +1,7 @@
 import { CommandContext, SlashCommand } from "slash-create";
+import { ghostCommand } from "../commandsObjects/ghost";
 import { guildIDs, ownerID, production } from "../utils/globals";
+import { updateSlashCommand } from "../utils/updateSlashCommand";
 
 export default class test extends SlashCommand {
   constructor(creator: any) {
@@ -85,5 +87,7 @@ export default class test extends SlashCommand {
     if (game) {
       pingUsersOnStart(game, ctx.guildID);
     } */
+
+    updateSlashCommand(ctx.guildID, ghostCommand);
   }
 }

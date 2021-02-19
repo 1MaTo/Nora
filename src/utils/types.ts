@@ -133,3 +133,9 @@ type userData = {
 type userDataSettings = {
   ping_on_start: boolean;
 };
+
+type playerWinrateStats = {
+  win: number;
+  lose: number;
+  streak: { type: string; count: number };
+};

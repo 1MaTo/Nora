@@ -48,20 +48,20 @@ export const ghostCommand = {
           required: true,
           choices: [
             {
-              name: "FBT 169.1 FIX (127)",
-              value: "FBT 169.1 FIX (127)",
+              name: "fbt",
+              value: "fbt",
             },
             {
-              name: "Dream of Wings Original Sin",
-              value: "Dream of Wings Original Sin",
+              name: "Dream",
+              value: "Dream",
             },
             {
-              name: "Flower Moon Festival v1.5.80",
-              value: "Flower Moon Festival v1.5.80",
+              name: "Flower",
+              value: "Flower",
             },
             {
-              name: "Dawn Fantasy1.1.021",
-              value: "Dawn Fantasy1.1.021",
+              name: "Dawn",
+              value: "Dawn",
             },
           ],
         },
