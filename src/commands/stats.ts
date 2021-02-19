@@ -26,8 +26,8 @@ export default class stats extends SlashCommand {
         ctx.guildID,
         ctx.member.id,
       ]);
-      const bindedNick = await redis.get(key);
-      const nickName = ctx.options.totalgames["nickname"] || bindedNick;
+      const user = (await redis.get(key)) as userData;
+      const nickName = ctx.options.totalgames["nickname"] || user.nickname;
 
       if (!nickName) {
         await sendResponse(
