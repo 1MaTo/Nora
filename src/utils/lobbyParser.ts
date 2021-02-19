@@ -149,7 +149,6 @@ export const getFullLobbyInfo = async (guildID: string, game: lobbyGame) => {
     config.name
   );
 
-  log(lobbyTable);
   return {
     botid: game.botid,
     gamename: game.gamename,
