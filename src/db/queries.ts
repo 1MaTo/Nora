@@ -45,9 +45,11 @@ export const getPlayerWinrateForLobbyWatcher = async (
 
   const result = await makeQuery(query);
 
-  if (!result.length) return null;
+  if (!result || !result.length) return null;
 
-  const stats = result.reduce(
+  const parsed = result.map((obj: any) => obj.flag);
+
+  const stats = parsed.reduce(
     (stat: playerWinrateStats, result: string) => {
       if (result === "loser") {
         stat.lose++;
@@ -65,7 +67,7 @@ export const getPlayerWinrateForLobbyWatcher = async (
     { win: 0, lose: 0, streak: { type: "winner", count: 0 } }
   ) as playerWinrateStats;
 
-  return `${stats.win / (stats.win + stats.lose)}% | ${
+  return `${Math.round((stats.win / (stats.win + stats.lose)) * 100)}% | ${
     stats.streak.count
   } :small_red_triangle:`;
 };
