@@ -102,7 +102,7 @@ const enum botEvent {
 
 const enum optionLobbyField {
   server = "server",
-  winrate = "stats",
+  winrate = "W | T | S",
 }
 
 type gamestatsInfo = {
