@@ -153,8 +153,9 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
       `${error.name}\n\n${error.message}\n\n${error.stack} FROM LOBBY WATCHER CRASHED`
     );
     log(error);
-    await changeBotStatus("🔄 Crashed 😱, reboot 🔄");
-    reloadBot(false);
+    setTimeout(() => lobbyWatcherUpdater(guildID), 10000);
+    //await changeBotStatus("🔄 Crashed 😱, reboot 🔄");
+    //reloadBot(false);
   }
 };
 
