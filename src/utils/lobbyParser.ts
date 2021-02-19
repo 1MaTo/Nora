@@ -1,4 +1,6 @@
 import { getLobbyList, getPlayerWinrateForLobbyWatcher } from "../db/queries";
+import { optionLobbyFieldToTitle } from "./globals";
+import { log } from "./log";
 import { searchMapConfigByMapName } from "./mapConfig";
 
 export const EMPTY_LOBBY_USER_NAME = "open";
@@ -101,7 +103,7 @@ export const playersLobbyToString = (
         nicks: obj.nicks + player.name + "\n",
         pings: obj.pings + player.ping + "\n",
         option: {
-          fieldName: optionField,
+          fieldName: optionLobbyFieldToTitle[optionField],
           string: obj.option.string + player[optionField] + "\n",
         },
       };
@@ -147,6 +149,7 @@ export const getFullLobbyInfo = async (guildID: string, game: lobbyGame) => {
     config.name
   );
 
+  log(lobbyTable);
   return {
     botid: game.botid,
     gamename: game.gamename,

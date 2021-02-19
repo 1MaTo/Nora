@@ -67,3 +67,8 @@ export const numberToEmoji = (number: number) => {
 };
 
 export const defaultUserData = { ping_on_start: false } as userDataSettings;
+
+export const optionLobbyFieldToTitle = {
+  [optionLobbyField.server]: "server",
+  [optionLobbyField.winrate]: "W | T | S",
+};
