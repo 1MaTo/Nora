@@ -71,8 +71,8 @@ export const getPlayerWinrateForLobbyWatcher = async (
     stats.win + stats.lose
   } | ${stats.streak.count} ${
     stats.streak.type == "winner"
-      ? ":small_red_triangle:"
-      : ":small_red_triangle_down:"
+      ? "<:winstreak:812779155334365184>"
+      : "<:losestreak:812779155418644521>"
   }`;
 };
 
