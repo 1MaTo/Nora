@@ -1,12 +1,12 @@
 import { getGamesDataByIds, saveMapStats } from "../db/queries";
-import { gameStatsPoll } from "../embeds/gameStats";
+import { gameStatsResults } from "../embeds/gameStats";
 import { getMessageById, sendResponse } from "./discordMessage";
 import { botStatusInfo } from "./events";
 import { botStatusVariables, numberToEmoji, palette } from "./globals";
 import { log } from "./log";
 import { searchMapConfigByMapName } from "./mapConfig";
 
-export const startGamestatsPolls = async (
+export const collectGamesData = async (
   gamesID: Array<number>,
   channelID: string,
   guildID: string
@@ -17,12 +17,12 @@ export const startGamestatsPolls = async (
       if (game.players.length < 2) return;
       const config = await searchMapConfigByMapName(game.map, guildID);
       if (!config || config.options.ranking === false) return;
-      startGameCollector(game, channelID);
+      sendGameResult(game, channelID);
     })
   );
 };
 
-const startGameCollector = async (
+const sendGameResult = async (
   gameData: gameDataByIdsGamestats,
   channelID: string
 ) => {
@@ -30,13 +30,11 @@ const startGameCollector = async (
     botStatusVariables.gameCount -= 1;
     botStatusInfo.emit(botEvent.update);
   }
-
-  const deleteDelay = 1000 * 60 * 10;
-  const message = await sendResponse(channelID, {
-    embed: gameStatsPoll(gameData),
+  await sendResponse(channelID, {
+    embed: gameStatsResults(gameData),
   });
-  const currReaction = [];
-  try {
+
+  /* try {
     gameData.players.forEach(async (_, index) => {
       currReaction.push(numberToEmoji(index + 1));
       await message.react(numberToEmoji(index + 1));
@@ -48,10 +46,10 @@ const startGameCollector = async (
   } catch (error) {
     log(error);
     endGameCollector(gameData, message.id, channelID, currReaction);
-  }
+  } */
 };
 
-const endGameCollector = async (
+/* const endGameCollector = async (
   gameData: gameDataByIdsGamestats,
   messageID: string,
   channelID: string,
@@ -73,7 +71,7 @@ const endGameCollector = async (
   await saveMapStats(gameData.id, winTeam);
   await message.reactions.removeAll();
   await message.edit({
-    embed: gameStatsPoll(gameData, winTeam, palette.green),
+    embed: gameStatsResults(gameData, winTeam, palette.green),
   });
   return;
-};
+}; */

@@ -140,7 +140,9 @@ export const getGamesCountInfo = async (
 };
 
 export const getFinishedGamesId = async () => {
-  const query = `SELECT id from games`;
+  const query = `SELECT gameid as id from w3mmdplayers 
+                inner join games on games.id = w3mmdplayers.gameid
+                where flag in ("loser", "winner") group by gameid`;
   const result = await makeQuery(query);
   return result ? result.map((game: any) => game.id) : null;
 };
@@ -215,6 +217,7 @@ export const getGamesDataByIds = async (
             datetime: new Date(game.datetime),
             gamename: game.gamename.replace(/#\d+/g, "").trim(),
             duration: game.duration,
+            winnerTeam: await getWinnerTeamNumberFromId(game.id),
             players: parsedTeams.map((teamName, index) => {
               const teamPlayers = gamePlayers.filter(
                 (player) => player.team === index
@@ -242,4 +245,16 @@ export const saveMapStats = async (gameID: number, winTeam: number) => {
     log(error);
     return null;
   }
+};
+
+export const getWinnerTeamNumberFromId = async (
+  gameID: number
+): Promise<number | null> => {
+  const query = `SELECT team from w3mmdplayers 
+                inner join gameplayers on 
+                  gameplayers.colour = w3mmdplayers.pid and 
+                  gameplayers.gameid = w3mmdplayers.gameid
+                where gameplayers.gameid=${gameID} and flag = "winner" group by team`;
+  const result = await makeQuery(query);
+  return result && (result[0].team as number);
 };

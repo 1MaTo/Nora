@@ -5,7 +5,7 @@ import { redis } from "../redis/redis";
 import { changeBotStatus } from "./botStatus";
 import { getMessageById, sendResponse } from "./discordMessage";
 import { botStatusInfo } from "./events";
-import { startGamestatsPolls } from "./gamestatsUtils";
+import { collectGamesData } from "./gamestatsUtils";
 import { botStatusVariables } from "./globals";
 import { getCurrentLobbies, playersLobbyToString } from "./lobbyParser";
 import { log } from "./log";
@@ -181,10 +181,7 @@ export const gamestatsUpdater = async (guildID: string) => {
     settings.prevGamesCount = ids.length;
     await redis.set(key, settings);
     const idToPoll = ids.splice(-newGamesCount);
-    setTimeout(
-      () => startGamestatsPolls(idToPoll, settings.channelID, settings.guildID),
-      15000
-    );
+    collectGamesData(idToPoll, settings.channelID, settings.guildID),
   }
   setTimeout(() => gamestatsUpdater(settings.guildID), settings.delay);
 };

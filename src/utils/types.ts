@@ -118,6 +118,7 @@ type gameDataByIdsGamestats = {
   datetime: Date;
   gamename: string;
   duration: number;
+  winnerTeam: number | null;
   players: Array<{
     teamName: string;
     teamPlayers: Array<{ gameid: number; name: string; team: number }>;
