@@ -181,7 +181,7 @@ export const gamestatsUpdater = async (guildID: string) => {
     settings.prevGamesCount = ids.length;
     await redis.set(key, settings);
     const idToPoll = ids.splice(-newGamesCount);
-    collectGamesData(idToPoll, settings.channelID, settings.guildID),
+    collectGamesData(idToPoll, settings.channelID, settings.guildID);
   }
   setTimeout(() => gamestatsUpdater(settings.guildID), settings.delay);
 };
