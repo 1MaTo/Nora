@@ -168,16 +168,21 @@ export const gamestatsUpdater = async (guildID: string) => {
   const ids = await getFinishedGamesId();
 
   if (!ids)
-    setTimeout(() => gamestatsUpdater(settings.guildID), settings.delay);
+    return setTimeout(() => gamestatsUpdater(settings.guildID), settings.delay);
 
   if (!settings.prevGamesCount) {
     settings.prevGamesCount = ids.length;
     await redis.set(key, settings);
   }
 
+  if (ids.length - settings.prevGamesCount < 0) {
+    settings.prevGamesCount = ids.length;
+    await redis.set(key, settings);
+  }
+
   const newGamesCount = ids.length - settings.prevGamesCount;
 
-  if (newGamesCount) {
+  if (newGamesCount > 0) {
     settings.prevGamesCount = ids.length;
     await redis.set(key, settings);
     const idToPoll = ids.splice(-newGamesCount);

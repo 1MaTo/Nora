@@ -4,7 +4,7 @@ import { getPassedTime } from "../utils/timePassed";
 export const gameStatsResults = (gameData: gameDataByIdsGamestats) => {
   return {
     title: gameData.gamename,
-    color: gameData.winnerTeam ? palette.green : null,
+    color: gameData.winnerTeam !== null ? palette.green : null,
     fields: gameData.players.map((team, index) => {
       return {
         name: team.teamName,
