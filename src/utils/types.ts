@@ -140,3 +140,46 @@ type playerWinrateStats = {
   lose: number;
   streak: { type: string; count: number };
 };
+
+type fullGameInfo = {
+  gameid: number;
+  duration: number;
+  gameScore: {
+    winner?: number;
+    loser?: number;
+  };
+  players: fullPlayerInfo[];
+};
+
+type fullPlayerInfo = {
+  nickname: string;
+  winner: boolean;
+  pid: number;
+  totalDamage: number;
+  kills: number;
+  deaths: number;
+  heroes: fullHeroInfo;
+};
+
+type fullHeroInfo = string;
+
+type playerWinStats = {
+  player: {
+    nickname: string;
+    win: number;
+    lose: number;
+    percent: number;
+  };
+  teammates: {
+    nickname: string;
+    win: number;
+    lose: number;
+    percent: number;
+  }[];
+  enemies: {
+    nickname: string;
+    win: number;
+    lose: number;
+    percent: number;
+  }[];
+};

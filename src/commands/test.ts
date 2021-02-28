@@ -1,8 +1,16 @@
 import { CommandContext, SlashCommand } from "slash-create";
 import { ghostCommand } from "../commandsObjects/ghost";
-import { getPlayerWinrateForLobbyWatcher } from "../db/queries";
+import { statsCommand } from "../commandsObjects/stats";
+import {
+  checkPlayerWin,
+  getGamesIdByPlayerNickname,
+  getGroupedGamesByGameid,
+  getPlayersMMDStats,
+  getPlayerWinrateForLobbyWatcher,
+} from "../db/queries";
 import { guildIDs, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
+import { getParsedGamesStatsByNickname } from "../utils/MMDstats";
 import { updateSlashCommand } from "../utils/updateSlashCommand";
 
 export default class test extends SlashCommand {
@@ -90,6 +98,8 @@ export default class test extends SlashCommand {
       pingUsersOnStart(game, ctx.guildID);
     } */
 
-    //updateSlashCommand(ctx.guildID, ghostCommand);
+    //updateSlashCommand(ctx.guildID, statsCommand);
+
+    //log([...games].map(([gameid, game]) => game));
   }
 }

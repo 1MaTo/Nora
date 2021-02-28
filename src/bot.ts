@@ -48,7 +48,7 @@ client.once("ready", async () => {
   log("------> BOT IN DEVELOPMENT");
 });
 
-creator.on("debug", (message) => log("[DEBUG] ----> ", message));
+//creator.on("debug", (message) => log("[DEBUG] ----> ", message));
 creator.on("warn", (message) => log("[WARNING] ----> ", message));
 creator.on("error", (error) => log("[ERROR] ----> ", error));
 creator.on("synced", () => log("[COMMAND SYNCED]"));

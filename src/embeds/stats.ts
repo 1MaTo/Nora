@@ -1,3 +1,6 @@
+import { getWinrateColor } from "../utils/colorParsers";
+import { log } from "../utils/log";
+
 export const totalGamesForNickname = (
   nickname: string,
   games: gamesCountGroupedInfo
@@ -23,6 +26,55 @@ export const totalGamesForNickname = (
     },
     footer: {
       text: `${games.totalGamesCount} games`,
+    },
+  };
+};
+
+export const playerWinrate = ({
+  stats,
+  playersType,
+  sortFunc,
+  sortDescription,
+  page,
+  maxPage,
+  itemsOnPage,
+}: {
+  stats: playerWinStats;
+  playersType: "teammates" | "enemies" | string;
+  sortFunc: (a: any, b: any) => number;
+  sortDescription: "winrate" | "games" | string;
+  page: number;
+  maxPage: number;
+  itemsOnPage: number;
+}) => {
+  return {
+    title: `${stats.player.nickname} 🔸 ${stats.player.percent}% 🔸 [ <:winstreak:812779155334365184> ${stats.player.win} | <:losestreak:812779155418644521> ${stats.player.lose} ]`,
+    description: `${
+      playersType === "teammates"
+        ? "🤝 __Teammates ranking__ 🤝"
+        : "😈 __Enemies ranking__ 😈"
+    }
+      
+          Most ${sortDescription} ${
+      playersType === "teammates" ? "with you in team" : "against you"
+    }
+
+          ${[...stats[playersType]]
+            .sort(sortFunc)
+            .splice((page - 1) * itemsOnPage, itemsOnPage)
+            .map(
+              ({ nickname, win, lose, percent }) =>
+                `\`${nickname}\` 🔸 **${percent}%** 🔸 [ <:winstreak:812779155334365184>  **${win}** |<:losestreak:812779155418644521>**  ${lose}** ]`
+            )
+            .join("\n\n")} `,
+    color: getWinrateColor(stats.player.percent),
+    author: {
+      name: "📝FBT winrate stats 📝",
+    },
+    footer: {
+      text: `${stats.player.win + stats.player.lose} games ● ${
+        stats[playersType].length
+      } ${playersType} ● page ${page}/${maxPage}`,
     },
   };
 };

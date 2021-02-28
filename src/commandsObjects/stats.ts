@@ -20,9 +20,9 @@ export const statsCommand = {
         },
       ],
     },
-    /* {
+    {
       name: "winrate",
-      description: "Show winrate statistic",
+      description: "Show your winrate statistic",
       type: CommandOptionType.SUB_COMMAND,
       options: [
         {
@@ -33,6 +33,6 @@ export const statsCommand = {
           required: false,
         },
       ],
-    }, */
+    },
   ],
 } as SlashCommandOptions;

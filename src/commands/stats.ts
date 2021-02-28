@@ -1,13 +1,16 @@
+import { Message, User } from "discord.js";
 import { CommandContext, SlashCommand } from "slash-create";
 import { statsCommand } from "../commandsObjects/stats";
 import { getGamesCountInfo } from "../db/queries";
 import { warning } from "../embeds/response";
-import { totalGamesForNickname } from "../embeds/stats";
+import { playerWinrate, totalGamesForNickname } from "../embeds/stats";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
 import { sendResponse } from "../utils/discordMessage";
 import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
+import { log } from "../utils/log";
 import { searchMapConfigByMapName } from "../utils/mapConfig";
+import { getWinStats } from "../utils/MMDstats";
 import { uniqueFromArray } from "../utils/uniqueFromArray";
 
 export default class stats extends SlashCommand {
@@ -59,6 +62,41 @@ export default class stats extends SlashCommand {
       );
       return;
     }
+
+    if (ctx.options.winrate) {
+      const key = redisKey.struct(groupsKey.bindNickname, [
+        ctx.guildID,
+        ctx.member.id,
+      ]);
+      const user = (await redis.get(key)) as userData;
+      const nickname = ctx.options.winrate["nickname"] || user.nickname;
+
+      if (!nickname) {
+        await sendResponse(
+          ctx.channelID,
+          { embed: warning("No nickname") },
+          msgDeleteTimeout.default
+        );
+        return;
+      }
+
+      const stats = await getWinStats(nickname);
+
+      if (!stats) {
+        await sendResponse(
+          ctx.channelID,
+          {
+            embed: warning("No games for this nicknames"),
+          },
+          msgDeleteTimeout.default
+        );
+      }
+
+      sendWinrateInteractiveEmbed(ctx.channelID, ctx.member.id, stats);
+      return;
+    }
+
+    return;
   }
 }
 
@@ -134,3 +172,91 @@ const getGroupedGamesWithConfig = (games: Array<gamesCountInfo>) => {
     groupedGames,
   };
 };
+
+const sendWinrateInteractiveEmbed = async (
+  channelID: string,
+  userID: string,
+  stats: playerWinStats
+) => {
+  const itemsOnPage = 7;
+
+  const emojiCommand = {
+    prevPage: "⬅",
+    nextPage: "➡",
+    sortByGames: "1️⃣",
+    sortByPercent: "2️⃣",
+    switchPlayerType: "🔄",
+    closeEmbed: "❌",
+  };
+
+  const embedSettings = {
+    stats: stats,
+    playersType: "teammates",
+    sortFunc: sortByPercent,
+    sortDescription: "winrate",
+    page: 1,
+    maxPage: Math.ceil(stats.teammates.length / itemsOnPage),
+    itemsOnPage,
+  };
+
+  const embed = await sendResponse(channelID, {
+    embed: playerWinrate(embedSettings),
+  });
+
+  Object.values(emojiCommand).map((emoji) => embed.react(emoji));
+
+  const userFilter = (reaction: string, user: User) => user.id === userID;
+  const collector = embed.createReactionCollector(userFilter, { time: 120000 });
+
+  collector.on("collect", (reaction) => {
+    reaction.users.remove(userID);
+    switch (reaction.emoji.name) {
+      case emojiCommand.prevPage:
+        if (embedSettings.page === 1) return;
+        embedSettings.page--;
+        embed.edit({ embed: playerWinrate(embedSettings) });
+        return;
+
+      case emojiCommand.nextPage:
+        if (embedSettings.page === embedSettings.maxPage) return;
+        embedSettings.page++;
+        embed.edit({ embed: playerWinrate(embedSettings) });
+        return;
+
+      case emojiCommand.sortByGames:
+        if (embedSettings.sortDescription === "games") return;
+        embedSettings.sortDescription = "games";
+        embedSettings.sortFunc = sortByGamesCount;
+        embed.edit({ embed: playerWinrate(embedSettings) });
+        return;
+
+      case emojiCommand.sortByPercent:
+        if (embedSettings.sortDescription === "winrate") return;
+        embedSettings.sortDescription = "winrate";
+        embedSettings.sortFunc = sortByPercent;
+        embed.edit({ embed: playerWinrate(embedSettings) });
+        return;
+
+      case emojiCommand.switchPlayerType:
+        embedSettings.playersType =
+          embedSettings.playersType === "teammates" ? "enemies" : "teammates";
+        embedSettings.page = 1;
+        embedSettings.maxPage = Math.ceil(
+          stats[embedSettings.playersType].length / itemsOnPage
+        );
+        embed.edit({ embed: playerWinrate(embedSettings) });
+        return;
+
+      case emojiCommand.closeEmbed:
+        embed.delete();
+        return;
+    }
+  });
+
+  collector.on("end", (_) => {
+    embed.delete();
+  });
+};
+
+const sortByGamesCount = (a: any, b: any) => b.win + b.lose - (a.win + a.lose);
+const sortByPercent = (a: any, b: any) => b.percent - a.percent;

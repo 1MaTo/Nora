@@ -258,3 +258,89 @@ export const getWinnerTeamNumberFromId = async (
   const result = await makeQuery(query);
   return result && (result[0].team as number);
 };
+
+// ********************* GAME STATISTIC QUERIES *********************
+
+export const getGamesIdByPlayerNickname = async (nickname: string) => {
+  const query = `SELECT w3mmdplayers.gameid
+                FROM gameplayers
+                left join w3mmdplayers on
+                  w3mmdplayers.gameid = gameplayers.gameid 
+                  and w3mmdplayers.pid = gameplayers.colour
+                where gameplayers.name = "${nickname}" 
+                  and gameplayers.team < 2
+                  and w3mmdplayers.id`;
+  const result = await makeQuery(query);
+  return result && result.map((game: any) => game.gameid);
+};
+
+export const getGroupedGamesByGameid = async (games: number[]) => {
+  const idToString = `"${games.join('","')}"`;
+  const query = `select 
+                gameplayers.gameid, 
+                  group_concat(gameplayers.name) as nicknames, 
+                  duration, 
+                  group_concat(team) as team,
+                  group_concat(colour) as colours,
+                  group_concat(flag) as flag
+                from games 
+                inner join gameplayers on gameplayers.gameid = games.id
+                  inner join w3mmdplayers on w3mmdplayers.gameid = games.id and w3mmdplayers.pid = gameplayers.colour
+                where 
+                games.id in (${idToString})
+                and gameplayers.team < 2
+                  and games.duration > 900
+                  and w3mmdplayers.flag in ("loser", "winner")
+                group by gameid, team`;
+  const result = await makeQuery(query);
+  if (!result) return null;
+
+  const parsedResult = result.map((game: any) => {
+    return {
+      ...game,
+      nicknames: game.nicknames.split(","),
+      team: Number(game.team.split(",")[0]),
+      colours: JSON.parse(`[${game.colours}]`),
+      flag: game.flag.split(",")[0],
+    };
+  });
+  return parsedResult;
+};
+
+export const checkPlayerWin = async (gameID: number, pid: number) => {
+  const query = `select flag from w3mmdplayers where gameid = ${gameID} and pid = ${pid}`;
+  const result = await makeQuery(query);
+  if (!result) return null;
+  return result === "winner";
+};
+
+export const getPlayersMMDStats = async (
+  gameID: number,
+  playersPID: number[]
+) => {
+  const pidToString = `"${playersPID.join('","')}"`;
+  const query = `select 
+                  pid, 
+                  group_concat(varname),
+                  group_concat(value_int) as dks,
+                  round(group_concat(value_real)) as damage,
+                  group_concat(value_string) as heroes
+                from w3mmdvars
+                  where gameid = ${gameID} and pid in (${pidToString})
+                group by pid`;
+  const result = await makeQuery(query);
+
+  if (!result) return null;
+
+  return result.map((player: any) => {
+    const [deaths, kills, score] = player.dks.split(",");
+    return {
+      pid: player.pid,
+      kills: Number(kills),
+      deaths: Number(deaths),
+      score: Number(score),
+      damage: player.damage,
+      heroes: player.heroes,
+    };
+  });
+};
