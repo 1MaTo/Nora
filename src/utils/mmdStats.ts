@@ -55,7 +55,13 @@ export const getParsedGamesStatsByNickname = async (nickname: string) => {
     games.set(team.gameid, currGame);
   }
 
-  return [...games].map(([_, game]) => game) as fullGameInfo[];
+  return [...games]
+    .map(([_, game]) => game)
+    .filter(
+      (game) =>
+        game.gameScore.winner !== undefined &&
+        game.gameScore.loser !== undefined
+    ) as fullGameInfo[];
 };
 
 export const getWinStats = async (nickname: string) => {
