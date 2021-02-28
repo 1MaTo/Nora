@@ -8,6 +8,7 @@ import {
   getPlayersMMDStats,
   getPlayerWinrateForLobbyWatcher,
 } from "../db/queries";
+import { getMember } from "../utils/discordUser";
 import { guildIDs, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
 import { getParsedGamesStatsByNickname } from "../utils/MMDstats";
@@ -101,5 +102,6 @@ export default class test extends SlashCommand {
     //updateSlashCommand(ctx.guildID, statsCommand);
 
     //log([...games].map(([gameid, game]) => game));
+    return;
   }
 }

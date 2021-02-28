@@ -1,4 +1,4 @@
-import { Message, User } from "discord.js";
+import { User } from "discord.js";
 import { CommandContext, SlashCommand } from "slash-create";
 import { statsCommand } from "../commandsObjects/stats";
 import { getGamesCountInfo } from "../db/queries";
@@ -8,9 +8,9 @@ import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
 import { sendResponse } from "../utils/discordMessage";
 import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
-import { log } from "../utils/log";
 import { searchMapConfigByMapName } from "../utils/mapConfig";
 import { getWinStats } from "../utils/MMDstats";
+import { getDiscordUsersFromNicknames } from "../utils/nicknameToDiscordUser";
 import { uniqueFromArray } from "../utils/uniqueFromArray";
 
 export default class stats extends SlashCommand {
@@ -30,7 +30,8 @@ export default class stats extends SlashCommand {
         ctx.member.id,
       ]);
       const user = (await redis.get(key)) as userData;
-      const nickName = ctx.options.totalgames["nickname"] || user.nickname;
+      const nickName =
+        ctx.options.totalgames["nickname"] || (user && user.nickname);
 
       if (!nickName) {
         await sendResponse(
@@ -69,7 +70,8 @@ export default class stats extends SlashCommand {
         ctx.member.id,
       ]);
       const user = (await redis.get(key)) as userData;
-      const nickname = ctx.options.winrate["nickname"] || user.nickname;
+      const nickname =
+        ctx.options.winrate["nickname"] || (user && user.nickname);
 
       if (!nickname) {
         await sendResponse(
@@ -92,7 +94,18 @@ export default class stats extends SlashCommand {
         );
       }
 
-      sendWinrateInteractiveEmbed(ctx.channelID, ctx.member.id, stats);
+      const member = await getDiscordUsersFromNicknames(
+        [nickname],
+        ctx.guildID
+      );
+
+      sendWinrateInteractiveEmbed(
+        ctx.channelID,
+        ctx.member.id,
+        stats,
+        member[0] &&
+          member[0].user.avatarURL({ format: "png", dynamic: true, size: 512 })
+      );
       return;
     }
 
@@ -176,7 +189,8 @@ const getGroupedGamesWithConfig = (games: Array<gamesCountInfo>) => {
 const sendWinrateInteractiveEmbed = async (
   channelID: string,
   userID: string,
-  stats: playerWinStats
+  stats: playerWinStats,
+  userAvatar?: string
 ) => {
   const itemsOnPage = 7;
 
@@ -197,6 +211,7 @@ const sendWinrateInteractiveEmbed = async (
     page: 1,
     maxPage: Math.ceil(stats.teammates.length / itemsOnPage),
     itemsOnPage,
+    userAvatar,
   };
 
   const embed = await sendResponse(channelID, {

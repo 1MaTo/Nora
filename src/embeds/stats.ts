@@ -1,4 +1,5 @@
 import { getWinrateColor } from "../utils/colorParsers";
+import { SPACE } from "../utils/lobbyParser";
 import { log } from "../utils/log";
 
 export const totalGamesForNickname = (
@@ -38,6 +39,7 @@ export const playerWinrate = ({
   page,
   maxPage,
   itemsOnPage,
+  userAvatar,
 }: {
   stats: playerWinStats;
   playersType: "teammates" | "enemies" | string;
@@ -46,10 +48,17 @@ export const playerWinrate = ({
   page: number;
   maxPage: number;
   itemsOnPage: number;
+  userAvatar: string;
 }) => {
+  const thumbnail = userAvatar && {
+    thumbnail: {
+      url: userAvatar,
+    },
+  };
+
   return {
-    title: `${stats.player.nickname} 🔸 ${stats.player.percent}% 🔸 [ <:winstreak:812779155334365184> ${stats.player.win} | <:losestreak:812779155418644521> ${stats.player.lose} ]`,
-    description: `${
+    title: `${stats.player.nickname} 🔸 ${stats.player.percent}% 🔸\n\n[ <:winstreak:812779155334365184> ${stats.player.win} | <:losestreak:812779155418644521> ${stats.player.lose} ]`,
+    description: `‎‏‏${SPACE}\n${
       playersType === "teammates"
         ? "🤝 __Teammates ranking__ 🤝"
         : "😈 __Enemies ranking__ 😈"
@@ -64,7 +73,7 @@ export const playerWinrate = ({
             .splice((page - 1) * itemsOnPage, itemsOnPage)
             .map(
               ({ nickname, win, lose, percent }) =>
-                `\`${nickname}\` 🔸 **${percent}%** 🔸 [ <:winstreak:812779155334365184>  **${win}** |<:losestreak:812779155418644521>**  ${lose}** ]`
+                `\`${nickname}\`\n> **${percent}%** 🔸 [ <:winstreak:812779155334365184>  **${win}** |<:losestreak:812779155418644521>**  ${lose}** ]`
             )
             .join("\n\n")} `,
     color: getWinrateColor(stats.player.percent),
@@ -76,5 +85,6 @@ export const playerWinrate = ({
         stats[playersType].length
       } ${playersType} ● page ${page}/${maxPage}`,
     },
+    ...thumbnail,
   };
 };

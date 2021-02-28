@@ -1,5 +1,3 @@
-import { stat } from "fs";
-import { stats } from "../utils/globals";
 import { parseMapName } from "../utils/lobbyParser";
 import { log } from "../utils/log";
 import { searchMapConfigByMapName } from "../utils/mapConfig";
@@ -14,21 +12,6 @@ export const getLobbyList = async (): Promise<Array<lobbyGame>> | null => {
 export const getPlayerWinrateForLobbyWatcher = async (
   nickname: string
 ): Promise<string | null> => {
-  //const gamesPlayed = await getStatsGameCount(nickname, mapName);
-
-  //if (gamesPlayed < stats.gamesToBeRanked) return null;
-
-  /* const fromGamesWithNicknames = `
-    from gameplayers
-    inner join games on games.id = gameplayers.gameid
-    inner join mapstats on mapstats.gameid = games.id
-    where gameplayers.name in ("${nickname}") and map like '%${mapName}%'`;
-
-  const query = `
-    select 
-    round(((select count(*) ${fromGamesWithNicknames} and winteam = team) / count(games.id) * 100)) as winrate
-    ${fromGamesWithNicknames};`; */
-
   const query = `
     select flag
     from w3mmdplayers 

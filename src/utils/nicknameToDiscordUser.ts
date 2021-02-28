@@ -17,9 +17,7 @@ export const getDiscordUsersFromNicknames = async (
         return (await redis.get(key)) as userData;
       })
     )
-  ).filter(
-    (user) => nicknames.includes(user.nickname) && user.settings.ping_on_start
-  );
+  ).filter((user) => nicknames.includes(user.nickname));
   return (
     await Promise.all(
       users.map(async (userData) => {
