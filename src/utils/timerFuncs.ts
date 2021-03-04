@@ -1,4 +1,8 @@
-import { getFinishedGamesId, getLobbyList } from "../db/queries";
+import {
+  clearLobbyGame,
+  getFinishedGamesId,
+  getLobbyList,
+} from "../db/queries";
 import { header, lobbyGame } from "../embeds/lobby";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
@@ -36,6 +40,15 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
 
     // GET FULL INFO FOR LOBBY
     const games = await getCurrentLobbies(guildID);
+
+    // IF FAILED TO GET LOBBIES JUST SKIP AND WAIT NEXT TIME
+    if (!games) {
+      await report(
+        `FAILED TO GET LOBBY GAMES, WAIT FOR NEXT TRY AFTER 10 SECONDS`
+      );
+      setTimeout(() => lobbyWatcherUpdater(settings.guildID), 10000);
+      return;
+    }
 
     // UPDATING HEADER MESSAGE
     try {
@@ -101,6 +114,12 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
             existMsg.messageID,
             settings.channelID
           );
+
+          // IF LOBBY PENDING 5+ HOURS, DELETE THIS LOBBY FROM DB
+          if (Date.now() - existMsg.startTime > 1000 * 60 * 60 * 5) {
+            clearLobbyGame(game.botid);
+          }
+
           try {
             await msg.edit({
               embed: lobbyGame(

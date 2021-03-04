@@ -327,3 +327,19 @@ export const getPlayersMMDStats = async (
     };
   });
 };
+
+export const clearLobbyGame = (botid: number) => {
+  const query = `UPDATE gamelist
+                SET
+                  gamename = "",
+                  ownername = "",
+                  creatorname ="",
+                  map = "",
+                  slotstaken = ${0},
+                  slotstotal = ${0},
+                  usernames = "",
+                  totalgames = ${0},
+                  totalplayers = ${0}
+                WHERE botid = ${botid};`;
+  makeQuery(query);
+};

@@ -164,6 +164,9 @@ export const getFullLobbyInfo = async (guildID: string, game: lobbyGame) => {
 
 export const getCurrentLobbies = async (guildID: string) => {
   const rawGames = await getLobbyList();
+
+  if (!rawGames) return null;
+
   const lobbies = (
     await Promise.all(
       rawGames.map(async (game) => getFullLobbyInfo(guildID, game))
