@@ -11,7 +11,7 @@ import {
 import { getMember } from "../utils/discordUser";
 import { guildIDs, ownerID, production } from "../utils/globals";
 import { log } from "../utils/log";
-import { getParsedGamesStatsByNickname } from "../utils/MMDstats";
+import { getParsedGamesStats } from "../utils/MMDstats";
 import { updateSlashCommand } from "../utils/updateSlashCommand";
 
 export default class test extends SlashCommand {

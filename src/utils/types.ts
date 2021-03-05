@@ -183,3 +183,18 @@ type playerWinStats = {
     percent: number;
   }[];
 };
+
+type damageStatsInfo = {
+  threshold: number;
+  totalDamage: number;
+  totalGames: number;
+  players: damageStatsPlayerInfo[];
+};
+
+type damageStatsPlayerInfo = {
+  nickname: string;
+  dpr: number;
+  totalDmg: number;
+  games: number;
+  rounds: number;
+};

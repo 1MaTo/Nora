@@ -1,29 +1,46 @@
 import {
+  getFinishedGamesId,
   getGamesIdByPlayerNickname,
   getGroupedGamesByGameid,
   getPlayersMMDStats,
 } from "../db/queries";
+import { log } from "./log";
 
-export const getParsedGamesStatsByNickname = async (nickname: string) => {
+export const getParsedGamesStats = async (nickname: string = null) => {
   const games = new Map();
+  let gameIds = null;
 
-  const gameIds = await getGamesIdByPlayerNickname(nickname);
+  if (nickname) {
+    gameIds = await getGamesIdByPlayerNickname(nickname);
+  } else {
+    gameIds = await getFinishedGamesId();
+  }
 
-  if (!gameIds) return null;
+  if (!gameIds || gameIds.length === 0) return null;
 
   const groupedGames = await getGroupedGamesByGameid(gameIds);
 
   for (let index = 0; index < groupedGames.length; index++) {
     const team = groupedGames[index];
     const currGame = games.get(team.gameid);
+    const pidToNickname = team.colours.reduce(
+      (prev: any, colour: any, index: any) => {
+        prev[colour] = team.nicknames[index];
+        return prev;
+      },
+      {}
+    );
+
     const teamMMDstats = await getPlayersMMDStats(team.gameid, team.colours);
     if (!currGame) {
       games.set(team.gameid, {
         gameid: team.gameid,
         duration: team.duration,
         gameScore: { [team.flag]: teamMMDstats[0].score },
-        players: team.nicknames.map((nick: string, index: number) => {
-          const player = teamMMDstats[index];
+        players: team.nicknames.map((nick: string) => {
+          const player = teamMMDstats.find((player: any) => {
+            return pidToNickname[player.pid] === nick;
+          });
           return {
             nickname: nick,
             winner: team.flag === "winner",
@@ -39,8 +56,10 @@ export const getParsedGamesStatsByNickname = async (nickname: string) => {
     }
     currGame.gameScore[team.flag] = teamMMDstats[0].score;
     currGame.players.push(
-      ...team.nicknames.map((nick: string, index: number) => {
-        const player = teamMMDstats[index];
+      ...team.nicknames.map((nick: string) => {
+        const player = teamMMDstats.find((player: any) => {
+          return pidToNickname[player.pid] === nick;
+        });
         return {
           nickname: nick,
           winner: team.flag === "winner",
@@ -65,7 +84,7 @@ export const getParsedGamesStatsByNickname = async (nickname: string) => {
 };
 
 export const getWinStats = async (nickname: string) => {
-  const games = await getParsedGamesStatsByNickname(nickname);
+  const games = await getParsedGamesStats(nickname);
 
   if (!games) return null;
 
@@ -127,4 +146,60 @@ export const getWinStats = async (nickname: string) => {
     teammates: Object.values(winrates.teammates),
     enemies: Object.values(winrates.enemies),
   } as playerWinStats;
+};
+
+export const getLeaderBordByDamage = async (threshold: number = 3) => {
+  const games = await getParsedGamesStats();
+
+  if (!games) return null;
+
+  const damageStats = games.reduce(
+    (prev, game) => {
+      prev.totalGames += 1;
+      game.players.forEach((player) => {
+        const rounds = game.gameScore[player.winner ? "winner" : "loser"];
+        prev.totalDamage += player.totalDamage;
+
+        // New player
+        if (!prev.players[player.nickname]) {
+          prev.players[player.nickname] = {
+            dpr: 0,
+            games: 0,
+            nickname: player.nickname,
+            rounds: 0,
+            totalDmg: 0,
+          } as damageStatsPlayerInfo;
+        }
+
+        // Old player
+        prev.players[player.nickname]["totalDmg"] += player.totalDamage;
+        prev.players[player.nickname]["games"] += 1;
+        prev.players[player.nickname]["rounds"] += rounds;
+        prev.players[player.nickname]["dpr"] = Math.round(
+          prev.players[player.nickname]["totalDmg"] /
+            (prev.players[player.nickname]["rounds"] || 1)
+        );
+      });
+
+      return prev;
+    },
+    {
+      players: [],
+      threshold: 0,
+      totalDamage: 0,
+      totalGames: 0,
+    } as damageStatsInfo
+  );
+
+  damageStats.threshold = Math.floor(
+    damageStats.totalGames * (threshold / 100)
+  );
+
+  damageStats.players = Object.values(damageStats.players)
+    .filter((player) => player.games >= damageStats.threshold)
+    .sort((a, b) => b.dpr - a.dpr);
+
+  if (!damageStats.players || damageStats.players.length === 0) return null;
+
+  return damageStats;
 };

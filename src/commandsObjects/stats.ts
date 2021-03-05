@@ -34,5 +34,10 @@ export const statsCommand = {
         },
       ],
     },
+    {
+      name: "damage",
+      description: "Leaderboard by damage",
+      type: CommandOptionType.SUB_COMMAND,
+    },
   ],
 } as SlashCommandOptions;

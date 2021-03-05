@@ -1,6 +1,7 @@
 import { getWinrateColor } from "../utils/colorParsers";
 import { SPACE } from "../utils/lobbyParser";
 import { log } from "../utils/log";
+import { fillSpaces } from "../utils/stringDecorations";
 
 export const totalGamesForNickname = (
   nickname: string,
@@ -86,5 +87,62 @@ export const playerWinrate = ({
       } ${playersType} ● page ${page}/${maxPage}`,
     },
     ...thumbnail,
+  };
+};
+
+export const leaderboardDamage = (stats: damageStatsInfo) => {
+  const [maxDRPlength, maxTotalDamageLength] = stats.players.reduce(
+    (prev, player) => {
+      return [
+        Math.max(prev[0], player.dpr.toLocaleString().length),
+        Math.max(prev[1], player.totalDmg.toLocaleString().length),
+      ];
+    },
+    [0, 0]
+  );
+
+  return {
+    color: "#cc4949",
+    fields: [
+      {
+        name: "FAQ",
+        value: `🗡️ *Damage per round*\n⚔️ *Total damage*\n\n__Games threshold:__ **${stats.threshold}**`,
+      },
+      {
+        name: "#",
+        value: stats.players
+          .map((_, index: number) => `\`${index + 1}\``)
+          .join("\n"),
+        inline: true,
+      },
+      {
+        name: "Nickname",
+        value: stats.players
+          .map((player) => `\`${player.nickname}\``)
+          .join("\n"),
+        inline: true,
+      },
+      {
+        name:
+          "‎‏‏‎‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ :dagger:     |         :crossed_swords:",
+        value: stats.players
+          .map(
+            (player) =>
+              `\`${player.dpr.toLocaleString()}${fillSpaces(
+                maxDRPlength - player.dpr.toLocaleString().length
+              )} | ${fillSpaces(
+                maxTotalDamageLength - player.totalDmg.toLocaleString().length
+              )}${player.totalDmg.toLocaleString()}\``
+          )
+          .join("\n"),
+        inline: true,
+      },
+    ],
+    author: {
+      name: "Leaderboard • DAMAGE",
+    },
+    footer: {
+      text: `${stats.totalGames} 🎮 • ${stats.totalDamage.toLocaleString()} ⚔️`,
+    },
   };
 };

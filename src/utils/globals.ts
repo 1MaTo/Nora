@@ -18,6 +18,7 @@ export const msgDeleteTimeout = {
   short: 3000,
   default: 5000,
   long: 10000,
+  info: 120000,
 };
 
 export const guildIDs = {

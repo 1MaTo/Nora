@@ -3,13 +3,22 @@ import { CommandContext, SlashCommand } from "slash-create";
 import { statsCommand } from "../commandsObjects/stats";
 import { getGamesCountInfo } from "../db/queries";
 import { warning } from "../embeds/response";
-import { playerWinrate, totalGamesForNickname } from "../embeds/stats";
+import {
+  leaderboardDamage,
+  playerWinrate,
+  totalGamesForNickname,
+} from "../embeds/stats";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
 import { sendResponse } from "../utils/discordMessage";
 import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
+import { log } from "../utils/log";
 import { searchMapConfigByMapName } from "../utils/mapConfig";
-import { getWinStats } from "../utils/MMDstats";
+import {
+  getLeaderBordByDamage,
+  getParsedGamesStats,
+  getWinStats,
+} from "../utils/MMDstats";
 import { getDiscordUsersFromNicknames } from "../utils/nicknameToDiscordUser";
 import { uniqueFromArray } from "../utils/uniqueFromArray";
 
@@ -107,6 +116,25 @@ export default class stats extends SlashCommand {
           member[0].user.avatarURL({ format: "png", dynamic: true, size: 512 })
       );
       return;
+    }
+
+    if (ctx.options.damage) {
+      const damageStats = await getLeaderBordByDamage();
+
+      if (!damageStats) {
+        await sendResponse(
+          ctx.channelID,
+          { embed: warning("No players for stats") },
+          msgDeleteTimeout.default
+        );
+        return;
+      }
+
+      await sendResponse(
+        ctx.channelID,
+        { embed: leaderboardDamage(damageStats) },
+        msgDeleteTimeout.info
+      );
     }
 
     return;
