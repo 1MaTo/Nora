@@ -155,6 +155,9 @@ export const getLeaderBordByDamage = async (threshold: number = 3) => {
 
   const damageStats = games.reduce(
     (prev, game) => {
+      // Only 2x2 and 3x3 games
+      if (game.players.length > 6 || game.players.length < 4) return prev;
+
       prev.totalGames += 1;
       game.players.forEach((player) => {
         const rounds = game.gameScore[player.winner ? "winner" : "loser"];

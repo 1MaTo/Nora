@@ -106,7 +106,7 @@ export const leaderboardDamage = (stats: damageStatsInfo) => {
     fields: [
       {
         name: "FAQ",
-        value: `🗡️ *Damage per round*\n⚔️ *Total damage*\n\n__Games threshold:__ **${stats.threshold}**`,
+        value: `🗡️ *Damage per round*\n⚔️ *Total damage*\n\n\`2x2 and 3x3 only\`\n\n__Games threshold:__ **${stats.threshold}**`,
       },
       {
         name: "#",
