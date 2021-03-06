@@ -67,7 +67,7 @@ export const ghostCommand = {
         },
       ],
     },
-    {
+    /*  {
       name: "map",
       description: "Load map config from map",
       type: 1,
@@ -79,6 +79,6 @@ export const ghostCommand = {
           required: true,
         },
       ],
-    },
+    }, */
   ],
 };
