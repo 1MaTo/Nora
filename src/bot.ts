@@ -1,4 +1,4 @@
-import { Client, WSEventType } from "discord.js";
+import { Client, WSEventType, Intents } from "discord.js";
 import path from "path";
 import { GatewayServer, SlashCreator } from "slash-create";
 import { appId, publicKey, token } from "./auth.json";
@@ -14,7 +14,7 @@ import {
   lobbyStatusUpdater,
 } from "./utils/timerFuncs";
 
-export const client = new Client();
+export const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 export const creator = new SlashCreator({
   applicationID: appId,
@@ -49,7 +49,7 @@ client.once("ready", async () => {
 });
 
 //creator.on("debug", (message) => log("[DEBUG] ----> ", message));
-creator.on("warn", (message) => log("[WARNING] ----> ", message));
+/* creator.on("warn", (message) => log("[WARNING] ----> ", message));
 creator.on("error", (error) => log("[ERROR] ----> ", error));
 creator.on("synced", () => log("[COMMAND SYNCED]"));
 creator.on("commandRegister", (command) =>
@@ -67,5 +67,6 @@ creator
   )
   .registerCommandsIn(path.join(__dirname, "commands"))
   .syncCommands();
+ */
 
 client.login(token);

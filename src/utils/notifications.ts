@@ -12,5 +12,7 @@ export const pingUsersOnStart = async (
   const users = (await getDiscordUsersFromNicknames(nicknames, guildID)).filter(
     (user) => user.settings.ping_on_start
   );
-  users.map((user) => user.user.send({ embed: info("Game started") }));
+  users.map((user) =>
+    user.user.send({ embeds: [info("Game started") as any] })
+  );
 };

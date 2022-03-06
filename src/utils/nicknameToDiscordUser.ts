@@ -22,7 +22,9 @@ export const getDiscordUsersFromNicknames = async (
     await Promise.all(
       users.map(async (userData) => {
         try {
-          const user = await client.users.fetch(userData.discordID, false);
+          const user = await client.users.fetch(userData.discordID, {
+            cache: false,
+          });
           return {
             ...userData,
             user,

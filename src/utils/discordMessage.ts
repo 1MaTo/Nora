@@ -11,7 +11,7 @@ export const sendResponse = async (
   try {
     const channel = await getTextChannel(channelID);
     const message = await channel.send(content);
-    if (deleteTimeOut) message.delete({ timeout: deleteTimeOut });
+    if (deleteTimeOut) setTimeout(() => message.delete(), deleteTimeOut);
 
     return message;
   } catch (error) {
@@ -27,7 +27,7 @@ export const getMessageById = async (
 ) => {
   try {
     const channel = await getTextChannel(channelID);
-    const message = await channel.messages.fetch(messageID, true);
+    const message = await channel.messages.fetch(messageID, { force: true });
     return message;
   } catch (error) {
     log(error);

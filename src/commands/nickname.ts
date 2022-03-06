@@ -62,11 +62,13 @@ export default class nickname extends SlashCommand {
         const nicks = await getNicknames();
         const member = await getMember(ctx.guildID, ctx.member.id);
         await member.send({
-          embed: info(
-            `ALL AVAILABLE NICKNAMES\n----------------------\n${nicks.join(
-              "\n"
-            )}`
-          ),
+          embeds: [
+            info(
+              `ALL AVAILABLE NICKNAMES\n----------------------\n${nicks.join(
+                "\n"
+              )}`
+            ) as any,
+          ],
         });
 
         await sendResponse(
@@ -140,7 +142,7 @@ export default class nickname extends SlashCommand {
     }
 
     const user = await getMember(ctx.guildID, ctx.member.id);
-    if (!user.hasPermission("ADMINISTRATOR")) {
+    if (!user.permissions.has("ADMINISTRATOR")) {
       await sendResponse(
         ctx.channelID,
         {

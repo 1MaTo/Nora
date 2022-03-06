@@ -53,10 +53,12 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
     // UPDATING HEADER MESSAGE
     try {
       await headerMsg.edit({
-        embed: header(
-          games.length,
-          getPassedTime(settings.startTime, Date.now())
-        ),
+        embeds: [
+          header(
+            games.length,
+            getPassedTime(settings.startTime, Date.now())
+          ) as any,
+        ],
       });
     } catch (error) {
       // IF FAILED TO UPDATE  HEADER MESSAGE CRATE NEW ONE
@@ -122,10 +124,12 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
 
           try {
             await msg.edit({
-              embed: lobbyGame(
-                parsedGame,
-                getPassedTime(existMsg.startTime, Date.now())
-              ),
+              embeds: [
+                lobbyGame(
+                  parsedGame,
+                  getPassedTime(existMsg.startTime, Date.now())
+                ),
+              ],
             });
           } catch (error) {
             log(error);

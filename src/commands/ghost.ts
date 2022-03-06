@@ -34,15 +34,17 @@ export default class ghost extends SlashCommand {
       const result = await pubGame(ctx.options.pub["gamename"]);
 
       if (result) {
-        message.edit({ embed: success(`Game ${result} hosted`) });
+        message.edit({ embeds: [success(`Game ${result} hosted`) as any] });
       } else if (result === false) {
         message.edit({
-          embed: warning(`Another lobby already exists | No map loaded`),
+          embeds: [
+            warning(`Another lobby already exists | No map loaded`) as any,
+          ],
         });
       } else {
-        message.edit({ embed: error(`Network error`) });
+        message.edit({ embeds: [error(`Network error`) as any] });
       }
-      message.delete({ timeout: ghostCmd.deleteMessageTimeout });
+      //message.delete({ timeout: ghostCmd.deleteMessageTimeout });
       return;
     }
 
@@ -51,15 +53,15 @@ export default class ghost extends SlashCommand {
       const result = await unhostGame();
 
       if (result) {
-        message.edit({ embed: success(`Game ${result} unhosted`) });
+        message.edit({ embeds: [success(`Game ${result} unhosted`) as any] });
       } else if (result === false) {
         message.edit({
-          embed: warning(`Nothing to unhost`),
+          embeds: [warning(`Nothing to unhost`) as any],
         });
       } else {
-        message.edit({ embed: error(`Network error`) });
+        message.edit({ embeds: [error(`Network error`) as any] });
       }
-      message.delete({ timeout: ghostCmd.deleteMessageTimeout });
+      //message.delete({ timeout: ghostCmd.deleteMessageTimeout });
       return;
     }
 
@@ -84,16 +86,16 @@ export default class ghost extends SlashCommand {
           pingUsersOnStart(game, ctx.guildID);
         }
 
-        message.edit({ embed: success(`Game ${result} started`) });
+        message.edit({ embeds: [success(`Game ${result} started`) as any] });
       } else if (result === false) {
         message.edit({
-          embed: warning(`Nothing to start | Users are not pinged`),
+          embeds: [warning(`Nothing to start | Users are not pinged`) as any],
         });
       } else {
-        message.edit({ embed: error(`Network error`) });
+        message.edit({ embeds: [error(`Network error`) as any] });
       }
 
-      message.delete({ timeout: ghostCmd.deleteMessageTimeout });
+      //message.delete({ timeout: ghostCmd.deleteMessageTimeout });
       return;
     }
 
@@ -104,16 +106,16 @@ export default class ghost extends SlashCommand {
       const result = await loadMapCfg(ctx.options.load["map"]);
 
       if (result) {
-        message.edit({ embed: success(`Map ${result} loaded`) });
+        message.edit({ embeds: [success(`Map ${result} loaded`) as any] });
       } else if (result === false) {
         message.edit({
-          embed: warning(`No maps found for this pattern`),
+          embeds: [warning(`No maps found for this pattern`) as any],
         });
       } else {
-        message.edit({ embed: error(`Network error`) });
+        message.edit({ embeds: [error(`Network error`) as any] });
       }
 
-      message.delete({ timeout: ghostCmd.deleteMessageTimeout });
+      //message.delete({ timeout: ghostCmd.deleteMessageTimeout });
       return;
     }
 
@@ -124,16 +126,16 @@ export default class ghost extends SlashCommand {
       const result = await loadMap(ctx.options.map["name"]);
 
       if (result) {
-        message.edit({ embed: success(`Map ${result} loaded`) });
+        message.edit({ embeds: [success(`Map ${result} loaded`) as any] });
       } else if (result === false) {
         message.edit({
-          embed: warning(`No maps found for this pattern`),
+          embeds: [warning(`No maps found for this pattern`) as any],
         });
       } else {
-        message.edit({ embed: error(`Network error`) });
+        message.edit({ embeds: [error(`Network error`) as any] });
       }
 
-      message.delete({ timeout: ghostCmd.deleteMessageTimeout });
+      //message.delete({ timeout: ghostCmd.deleteMessageTimeout });
       return;
     }
   }

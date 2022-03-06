@@ -1,4 +1,4 @@
-import { User } from "discord.js";
+import { MessageReaction, User } from "discord.js";
 import { CommandContext, SlashCommand } from "slash-create";
 import { statsCommand } from "../commandsObjects/stats";
 import { getGamesCountInfo } from "../db/queries";
@@ -248,8 +248,12 @@ const sendWinrateInteractiveEmbed = async (
 
   Object.values(emojiCommand).map((emoji) => embed.react(emoji));
 
-  const userFilter = (reaction: string, user: User) => user.id === userID;
-  const collector = embed.createReactionCollector(userFilter, { time: 120000 });
+  const userFilter = (reaction: MessageReaction, user: User) =>
+    user.id === userID;
+  const collector = embed.createReactionCollector({
+    filter: userFilter,
+    time: 120000,
+  });
 
   collector.on("collect", (reaction) => {
     reaction.users.remove(userID);
@@ -257,27 +261,27 @@ const sendWinrateInteractiveEmbed = async (
       case emojiCommand.prevPage:
         if (embedSettings.page === 1) return;
         embedSettings.page--;
-        embed.edit({ embed: playerWinrate(embedSettings) });
+        embed.edit({ embeds: [playerWinrate(embedSettings) as any] });
         return;
 
       case emojiCommand.nextPage:
         if (embedSettings.page === embedSettings.maxPage) return;
         embedSettings.page++;
-        embed.edit({ embed: playerWinrate(embedSettings) });
+        embed.edit({ embeds: [playerWinrate(embedSettings) as any] });
         return;
 
       case emojiCommand.sortByGames:
         if (embedSettings.sortDescription === "games") return;
         embedSettings.sortDescription = "games";
         embedSettings.sortFunc = sortByGamesCount;
-        embed.edit({ embed: playerWinrate(embedSettings) });
+        embed.edit({ embeds: [playerWinrate(embedSettings) as any] });
         return;
 
       case emojiCommand.sortByPercent:
         if (embedSettings.sortDescription === "winrate") return;
         embedSettings.sortDescription = "winrate";
         embedSettings.sortFunc = sortByPercent;
-        embed.edit({ embed: playerWinrate(embedSettings) });
+        embed.edit({ embeds: [playerWinrate(embedSettings) as any] });
         return;
 
       case emojiCommand.switchPlayerType:
@@ -287,7 +291,7 @@ const sendWinrateInteractiveEmbed = async (
         embedSettings.maxPage = Math.ceil(
           stats[embedSettings.playersType].length / itemsOnPage
         );
-        embed.edit({ embed: playerWinrate(embedSettings) });
+        embed.edit({ embeds: [playerWinrate(embedSettings) as any] });
         return;
 
       case emojiCommand.closeEmbed:

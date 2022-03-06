@@ -5,7 +5,7 @@ import { log } from "./log";
 export const getMember = async (guildID: Snowflake, userID: Snowflake) => {
   try {
     const guild = await getGuild(guildID);
-    const user = guild.member(userID);
+    const user = guild.members.fetch({ user: userID });
 
     return user;
   } catch (error) {
