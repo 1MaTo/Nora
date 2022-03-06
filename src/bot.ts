@@ -1,11 +1,18 @@
-import { Client, WSEventType, Intents } from "discord.js";
-import path from "path";
-import { GatewayServer, SlashCreator } from "slash-create";
-import { appId, publicKey, token } from "./auth.json";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import {
+  CacheType,
+  Client,
+  Collection,
+  CommandInteraction,
+  Intents,
+} from "discord.js";
+import fs from "node:fs";
+import { token } from "./auth.json";
 import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
 import { production } from "./utils/globals";
 import { log } from "./utils/log";
 import { reloadBot } from "./utils/reloadBot";
+import { report } from "./utils/reportToOwner";
 import { restartGamestats, restartLobbyWatcher } from "./utils/restartTimers";
 import { sleep } from "./utils/sleep";
 import {
@@ -14,13 +21,24 @@ import {
   lobbyStatusUpdater,
 } from "./utils/timerFuncs";
 
-export const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+export type CustomSlashCommand = {
+  data: SlashCommandBuilder;
+  execute: (interaction: CommandInteraction<CacheType>) => Promise<void>;
+};
 
-export const creator = new SlashCreator({
-  applicationID: appId,
-  publicKey: publicKey,
-  token: token,
-});
+export const client = new Client({
+  intents: [Intents.FLAGS.GUILDS],
+}) as Client & { commands: Collection<string, CustomSlashCommand> };
+client.commands = new Collection();
+
+const commandFiles = fs
+  .readdirSync("./commands")
+  .filter((file) => file.endsWith(".js"));
+
+for (const file of commandFiles) {
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.data.name, command);
+}
 
 client.once("ready", async () => {
   log("------> SETTING UP");
@@ -48,25 +66,23 @@ client.once("ready", async () => {
   log("------> BOT IN DEVELOPMENT");
 });
 
-//creator.on("debug", (message) => log("[DEBUG] ----> ", message));
-/* creator.on("warn", (message) => log("[WARNING] ----> ", message));
-creator.on("error", (error) => log("[ERROR] ----> ", error));
-creator.on("synced", () => log("[COMMAND SYNCED]"));
-creator.on("commandRegister", (command) =>
-  log(`[REGISTERED COMMAND] ----> ${command.commandName}`)
-);
-creator.on("commandError", (command, error) =>
-  log(`[COMMAND ERROR] [${command.commandName}] ----> `, error)
-);
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
 
-creator
-  .withServer(
-    new GatewayServer((handler) =>
-      client.ws.on("INTERACTION_CREATE" as WSEventType, handler)
-    )
-  )
-  .registerCommandsIn(path.join(__dirname, "commands"))
-  .syncCommands();
- */
+  const command = client.commands.get(interaction.commandName);
+
+  if (!command) return;
+
+  try {
+    await command.execute(interaction);
+  } catch (error) {
+    log(error);
+    report(error);
+    await interaction.reply({
+      content: ">_< Bakaaa!!! ",
+      ephemeral: true,
+    });
+  }
+});
 
 client.login(token);
