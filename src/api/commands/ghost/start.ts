@@ -7,7 +7,7 @@ import { pingUsersOnStart } from "../../../utils/notifications";
 import { startGame } from "../../ghost/startGame";
 
 export const start = async (interaction: CommandInteraction<CacheType>) => {
-  interaction.reply({
+  await interaction.reply({
     embeds: [loading() as any],
   });
 

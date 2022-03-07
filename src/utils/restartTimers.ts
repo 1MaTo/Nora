@@ -1,6 +1,7 @@
+import { lobbyWatcherUpdater } from "../api/lobbyWatcher/lobbyWatcherUpdater";
 import { groupsKey, keyDivider, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
-import { gamestatsUpdater, lobbyWatcherUpdater } from "./timerFuncs";
+import { gamestatsUpdater } from "./timerFuncs";
 
 export const restartLobbyWatcher = async () => {
   const lobbyWatcherKeys = await redis.scanForPattern(

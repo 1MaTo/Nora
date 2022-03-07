@@ -1,5 +1,9 @@
-import { Snowflake, TextChannel } from "discord.js";
-import { client } from "../bot";
+import {
+  CacheType,
+  CommandInteraction,
+  InteractionReplyOptions,
+  Snowflake,
+} from "discord.js";
 import { getTextChannel } from "./discordChannel";
 import { log } from "./log";
 
@@ -32,4 +36,22 @@ export const getMessageById = async (
     log(error);
     return null;
   }
+};
+
+export const sendReply = async (
+  interaction: CommandInteraction<CacheType>,
+  content: InteractionReplyOptions,
+  delay?: number
+) => {
+  await interaction.reply(content);
+  delay && setTimeout(() => interaction.deleteReply(), delay);
+};
+
+export const editReply = async (
+  interaction: CommandInteraction<CacheType>,
+  content: InteractionReplyOptions,
+  delay?: number
+) => {
+  await interaction.editReply(content);
+  delay && setTimeout(() => interaction.deleteReply(), delay);
 };

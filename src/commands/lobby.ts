@@ -1,28 +1,20 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { load } from "../api/commands/ghost/load";
-import { pub } from "../api/commands/ghost/pub";
-import { start } from "../api/commands/ghost/start";
-import { unhost } from "../api/commands/ghost/unhost";
-import ghostCommand from "../commandData/ghost";
+import { start } from "../api/commands/lobby/start";
+import { stop } from "../api/commands/lobby/stop";
+import lobbyCommand from "../commandData/lobby";
 import { ownerID, production } from "../utils/globals";
 
 module.exports = {
-  data: ghostCommand,
+  data: lobbyCommand,
   async execute(interaction: CommandInteraction<CacheType>) {
     if (!production && interaction.member.user.id !== ownerID) return;
 
     switch (interaction.options.getSubcommand()) {
-      case "pub":
-        await pub(interaction);
-        return;
       case "start":
         await start(interaction);
         return;
-      case "unhost":
-        await unhost(interaction);
-        return;
-      case "load":
-        await load(interaction);
+      case "stop":
+        await stop(interaction);
         return;
       default:
         return await interaction.reply("...");

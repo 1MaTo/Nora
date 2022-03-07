@@ -4,7 +4,7 @@ import { ghostCmd } from "../../../utils/globals";
 import { unhostGame } from "../../ghost/unhostGame";
 
 export const unhost = async (interaction: CommandInteraction<CacheType>) => {
-  interaction.reply({
+  await interaction.reply({
     embeds: [loading() as any],
   });
 

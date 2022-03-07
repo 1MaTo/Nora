@@ -34,4 +34,5 @@ export const ghostCommand = new SlashCommandBuilder()
       )
   );
 
+export default ghostCommand;
 module.exports = ghostCommand;

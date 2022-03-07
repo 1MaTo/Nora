@@ -4,7 +4,7 @@ import { ghostCmd } from "../../../utils/globals";
 import { pubGame } from "../../ghost/pubGame";
 
 export const pub = async (interaction: CommandInteraction<CacheType>) => {
-  interaction.reply({
+  await interaction.reply({
     embeds: [loading() as any],
   });
 

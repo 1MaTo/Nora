@@ -4,7 +4,7 @@ import { ghostCmd } from "../../../utils/globals";
 import { loadMapCfg } from "../../ghost/loadMapCfg";
 
 export const load = async (interaction: CommandInteraction<CacheType>) => {
-  interaction.reply({
+  await interaction.reply({
     embeds: [loading() as any],
   });
 
