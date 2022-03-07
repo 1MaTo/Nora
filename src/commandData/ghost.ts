@@ -33,3 +33,5 @@ export const ghostCommand = new SlashCommandBuilder()
         option.setName("name").setDescription("Map name").setRequired(true)
       )
   );
+
+module.exports = ghostCommand;

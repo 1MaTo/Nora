@@ -16,7 +16,6 @@ export const sendResponse = async (
     return message;
   } catch (error) {
     log(error);
-
     return null;
   }
 };

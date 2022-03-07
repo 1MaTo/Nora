@@ -32,7 +32,7 @@ export const client = new Client({
 client.commands = new Collection();
 
 const commandFiles = fs
-  .readdirSync("./commands")
+  .readdirSync(__dirname + "/commands")
   .filter((file) => file.endsWith(".js"));
 
 for (const file of commandFiles) {
@@ -78,10 +78,14 @@ client.on("interactionCreate", async (interaction) => {
   } catch (error) {
     log(error);
     report(error);
-    await interaction.reply({
-      content: ">_< Bakaaa!!! ",
-      ephemeral: true,
-    });
+    try {
+      await interaction.reply({
+        content: ">_< Bakaaa!!! ",
+        ephemeral: true,
+      });
+    } catch (err) {
+      log(error);
+    }
   }
 });
 

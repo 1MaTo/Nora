@@ -1,20 +1,23 @@
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
+import fs from "node:fs";
 import { appId, token } from "./auth.json";
 import { guildIDs } from "./utils/globals";
-import { log } from "./utils/log";
-import { report } from "./utils/reportToOwner";
-import fs from "node:fs";
 
 const commands = [];
 const commandFiles = fs
-  .readdirSync("./commands")
+  .readdirSync(__dirname + "/commandData")
   .filter((file) => file.endsWith(".js"));
 
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  commands.push(command.data.toJSON());
+  const command = require(`./commandData/${file}`);
+  commands.push(command.toJSON());
 }
+
+/* for (const command of client.commands) {
+  commands.push(command[1].data.toJSON());
+}
+ */
 
 const rest = new REST({ version: "9" }).setToken(token);
 
@@ -22,8 +25,7 @@ rest
   .put(Routes.applicationGuildCommands(appId, guildIDs.debugGuild), {
     body: commands,
   })
-  .then(() => log("------> Commands registered"))
+  .then(() => console.log("------> Commands registered"))
   .catch((err) => {
-    log(err);
-    report(err);
+    console.log(err);
   });
