@@ -15,7 +15,7 @@ export const lobbyCommand = new SlashCommandBuilder()
           .setDescription("channel to send messages")
           .setRequired(false)
       )
-      .addNumberOption((option) =>
+      .addIntegerOption((option) =>
         option
           .setName("delay")
           .setDescription("updatind interval")

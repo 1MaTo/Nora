@@ -53,10 +53,12 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
       // IF FAILED TO UPDATE  HEADER MESSAGE CRATE NEW ONE
       log(error);
       const newHeaderMsg = await sendResponse(settings.channelID, {
-        embed: header(
-          games.length,
-          getPassedTime(settings.startTime, Date.now())
-        ),
+        embeds: [
+          header(
+            games.length,
+            getPassedTime(settings.startTime, Date.now())
+          ) as any,
+        ],
       });
       settings.headerID = newHeaderMsg.id;
     }
@@ -126,10 +128,12 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
             if (msg) return;
             // ELSE CREATE NEW ONE
             const newMsg = await sendResponse(settings.channelID, {
-              embed: lobbyGame(
-                parsedGame,
-                getPassedTime(existMsg.startTime, Date.now())
-              ),
+              embeds: [
+                lobbyGame(
+                  parsedGame,
+                  getPassedTime(existMsg.startTime, Date.now())
+                ) as any,
+              ],
             });
             const msgIndex = settings.lobbysID.findIndex(
               (lobbyMsg) => lobbyMsg.botID === existMsg.botID
@@ -143,7 +147,12 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
         } else {
           const startTime = Date.now();
           const newLobbyMsg = await sendResponse(settings.channelID, {
-            embed: lobbyGame(parsedGame, getPassedTime(startTime, Date.now())),
+            embeds: [
+              lobbyGame(
+                parsedGame,
+                getPassedTime(startTime, Date.now())
+              ) as any,
+            ],
           });
           if (newLobbyMsg) {
             settings.lobbysID.push({

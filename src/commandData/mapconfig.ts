@@ -15,7 +15,7 @@ export const mapconfigCommand = new SlashCommandBuilder()
           )
           .setRequired(true)
       )
-      .addNumberOption((option) =>
+      .addIntegerOption((option) =>
         option
           .setName("slots")
           .setDescription("Max slots in map (comp slots not included)")
