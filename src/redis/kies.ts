@@ -3,6 +3,7 @@ export const groupsKey = {
   lobbyWatcher: "GUILD_LOBBY_WATCHER",
   gameStats: "GUILD_GAME_STATS",
   mapConfig: "GUILD_MAP_CONFIG",
+  commandLog: "GUILD_COMMAND_LOG",
 };
 
 export const keyDivider = "#@$@#$@#";

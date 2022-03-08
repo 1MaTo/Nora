@@ -10,9 +10,9 @@ import fs from "node:fs";
 import { reloadBot } from "./api/reload/reload";
 import { token } from "./auth.json";
 import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
-import { production } from "./utils/globals";
+import { guildIDs, production } from "./utils/globals";
 import { log } from "./utils/log";
-import { report } from "./utils/reportToOwner";
+import { logCommand } from "./utils/logCmd";
 import { restartGamestats, restartLobbyWatcher } from "./utils/restartTimers";
 import { sleep } from "./utils/sleep";
 import {
@@ -72,11 +72,15 @@ client.once("ready", async () => {
 });
 
 client.on("interactionCreate", async (interaction) => {
+  if (production && interaction.guildId !== guildIDs.ghostGuild) return;
+
   if (!interaction.isCommand()) return;
 
   const command = client.commands.get(interaction.commandName);
 
   if (!command) return;
+
+  logCommand(interaction);
 
   try {
     await command.execute(interaction);

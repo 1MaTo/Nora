@@ -40,7 +40,9 @@
     "production_bot_stop": "pm2 stop nora",
     "production_bot_restart": "pm2 restart nora",
     "production_bot_restart_with_updates": "npm run get_build && pm2 restart nora",
-    "test": "shx sed -i /build /src .gitignore"
+    "test": "shx sed -i /build /src .gitignore",
+    "deploy_cmd_prod": "cross-env NODE_ENV=production node ./build/deploy-commands.js",
+    "deploy_cmd_dev": "cross-env NODE_ENV=development node ./build/deploy-commands.js"
   },
   "repository": {
     "type": "git",

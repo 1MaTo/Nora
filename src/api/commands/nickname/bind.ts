@@ -17,7 +17,7 @@ export const bind = async (interaction: CommandInteraction<CacheType>) => {
       .filter((item: string) => new RegExp(nick, "i").test(item))
       .join("\n");
 
-    if (findNicknames.length <= 4096) {
+    if (findNicknames && findNicknames.length <= 4096) {
       return await editReply(
         interaction,
         {

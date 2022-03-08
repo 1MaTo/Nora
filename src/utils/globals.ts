@@ -75,3 +75,5 @@ export const optionLobbyFieldToTitle = {
   [optionLobbyField.server]: "server",
   [optionLobbyField.winrate]: "W | T | S",
 };
+
+export const commandLogsMaxCount = 50;

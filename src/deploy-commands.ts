@@ -17,9 +17,17 @@ for (const file of commandFiles) {
 const rest = new REST({ version: "9" }).setToken(token);
 
 rest
-  .put(Routes.applicationGuildCommands(appId, guildIDs.debugGuild), {
-    body: commands,
-  })
+  .put(
+    Routes.applicationGuildCommands(
+      appId,
+      process.env.NODE_ENV === "production"
+        ? guildIDs.ghostGuild
+        : guildIDs.debugGuild
+    ),
+    {
+      body: commands,
+    }
+  )
   .then(() => console.log("------> Commands registered"))
   .catch((err) => {
     console.log(err);
