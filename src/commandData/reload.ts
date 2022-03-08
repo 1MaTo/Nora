@@ -6,7 +6,7 @@ export const reloadCommand = new SlashCommandBuilder()
   .addBooleanOption((option) =>
     option
       .setName("update")
-      .setDescription("update before restart?")
+      .setDescription("Update before restart?")
       .setRequired(true)
   );
 
