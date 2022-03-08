@@ -1,5 +1,5 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { loading, warning } from "../../../embeds/response";
+import { warning } from "../../../embeds/response";
 import { totalGamesForNickname } from "../../../embeds/stats";
 import { groupsKey, redisKey } from "../../../redis/kies";
 import { redis } from "../../../redis/redis";

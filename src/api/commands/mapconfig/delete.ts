@@ -1,5 +1,5 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { loading, success, warning } from "../../../embeds/response";
+import { success, warning } from "../../../embeds/response";
 import { ghostCmd } from "../../../utils/globals";
 import { deleteMapConfig } from "../../../utils/mapConfig";
 

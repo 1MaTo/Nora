@@ -1,5 +1,6 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { error, loading, success } from "../../../embeds/response";
+import { error, success } from "../../../embeds/response";
+import { editReply } from "../../../utils/discordMessage";
 import { ghostCmd } from "../../../utils/globals";
 import { createOrUpdateMapConfig } from "../../../utils/mapConfig";
 
@@ -12,8 +13,11 @@ export const create = async (interaction: CommandInteraction<CacheType>) => {
     !slotMap ||
     maxSlotsInSlotMap !== interaction.options.getInteger("slots")
   ) {
-    await interaction.editReply({ embeds: error("Bad team values") as any });
-    setTimeout(() => interaction.deleteReply(), ghostCmd.deleteMessageTimeout);
+    await editReply(
+      interaction,
+      { embeds: [error("Bad team values")] as any },
+      ghostCmd.deleteMessageTimeout
+    );
     return;
   }
 
@@ -25,17 +29,23 @@ export const create = async (interaction: CommandInteraction<CacheType>) => {
   } as mapConfig);
 
   if (isNew) {
-    await interaction.editReply({
-      embeds: [success("New config created") as any],
-    });
-    setTimeout(() => interaction.deleteReply(), ghostCmd.deleteMessageTimeout);
+    await editReply(
+      interaction,
+      {
+        embeds: [success("New config created") as any],
+      },
+      ghostCmd.deleteMessageTimeout
+    );
     return;
   }
 
-  await interaction.editReply({
-    embeds: [success("Config was updated") as any],
-  });
-  setTimeout(() => interaction.deleteReply(), ghostCmd.deleteMessageTimeout);
+  await editReply(
+    interaction,
+    {
+      embeds: [success("Config was updated") as any],
+    },
+    ghostCmd.deleteMessageTimeout
+  );
   return;
 };
 

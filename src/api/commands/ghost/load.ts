@@ -1,5 +1,5 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { error, loading, success } from "../../../embeds/response";
+import { error, success } from "../../../embeds/response";
 import { ghostCmd } from "../../../utils/globals";
 import { loadMap } from "../../ghost/loadMap";
 

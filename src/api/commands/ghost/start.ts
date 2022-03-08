@@ -1,5 +1,5 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { error, loading, success } from "../../../embeds/response";
+import { error, success } from "../../../embeds/response";
 import { botStatusInfo } from "../../../utils/events";
 import { botStatusVariables, ghostCmd } from "../../../utils/globals";
 import { getCurrentLobbies } from "../../../utils/lobbyParser";

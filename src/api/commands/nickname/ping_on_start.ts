@@ -1,5 +1,5 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { loading, success, warning } from "../../../embeds/response";
+import { success, warning } from "../../../embeds/response";
 import { groupsKey, redisKey } from "../../../redis/kies";
 import { redis } from "../../../redis/redis";
 import { editReply } from "../../../utils/discordMessage";

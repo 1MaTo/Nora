@@ -1,9 +1,8 @@
 import { CacheType, CommandInteraction } from "discord.js";
 import { mapConfigInfo, mapConfigList } from "../../../embeds/mapconfig";
-import { loading, warning } from "../../../embeds/response";
+import { warning } from "../../../embeds/response";
 import { editReply } from "../../../utils/discordMessage";
 import { ghostCmd, msgDeleteTimeout } from "../../../utils/globals";
-import { log } from "../../../utils/log";
 import {
   getGuildMapConfigs,
   searchMapConfigByName,

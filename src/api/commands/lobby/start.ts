@@ -1,5 +1,5 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { error, loading, success, warning } from "../../../embeds/response";
+import { error, success, warning } from "../../../embeds/response";
 import { ghostCmd } from "../../../utils/globals";
 import { isRunning } from "../../lobbyWatcher/isRunning";
 import { startLobbyWatcher } from "../../lobbyWatcher/startLobbyWatcher";

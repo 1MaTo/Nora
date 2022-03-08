@@ -3,6 +3,8 @@ import { CacheType, CommandInteraction } from "discord.js";
 import { getCommandLogs } from "../api/logs/getCommandLogs";
 import logsCommand from "../commandData/logs";
 import { warning } from "../embeds/response";
+import { editReply } from "../utils/discordMessage";
+import { msgDeleteTimeout } from "../utils/globals";
 
 module.exports = {
   data: logsCommand,
@@ -20,19 +22,24 @@ module.exports = {
       interaction.options.getString("query")
     );
 
-    await interaction.editReply({
-      embeds: [
-        new Embed()
-          .setTitle(
-            `Commands log${
-              interaction.options.getString("query") &&
-              ` | ${interaction.options.getString("query")}`
-            }`
-          )
-          .setDescription(
-            logs.length !== 0 ? logs.join("\n") : "no logs found..."
-          ),
-      ],
-    });
+    await editReply(
+      interaction,
+      {
+        embeds: [
+          new Embed()
+            .setTitle(
+              `Commands log${
+                interaction.options.getString("query")
+                  ? ` | ${interaction.options.getString("query")}`
+                  : ""
+              }`
+            )
+            .setDescription(
+              logs.length !== 0 ? logs.join("\n") : "no logs found..."
+            ),
+        ],
+      },
+      msgDeleteTimeout.long
+    );
   },
 };

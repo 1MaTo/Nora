@@ -1,8 +1,8 @@
-import { CacheType, CommandInteraction, Message } from "discord.js";
-import { loading, warning } from "../../../embeds/response";
+import { CacheType, CommandInteraction } from "discord.js";
+import { warning } from "../../../embeds/response";
 import { groupsKey, redisKey } from "../../../redis/kies";
 import { redis } from "../../../redis/redis";
-import { editReply, sendReply } from "../../../utils/discordMessage";
+import { editReply } from "../../../utils/discordMessage";
 import { msgDeleteTimeout } from "../../../utils/globals";
 import { log } from "../../../utils/log";
 import { getWinStats } from "../../../utils/MMDstats";

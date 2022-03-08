@@ -1,5 +1,5 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { loading, warning } from "../../../embeds/response";
+import { warning } from "../../../embeds/response";
 import { leaderboardDamage } from "../../../embeds/stats";
 import { editReply } from "../../../utils/discordMessage";
 import { msgDeleteTimeout } from "../../../utils/globals";

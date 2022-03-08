@@ -1,11 +1,5 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import {
-  error,
-  info,
-  loading,
-  success,
-  warning,
-} from "../../../embeds/response";
+import { error, info, success, warning } from "../../../embeds/response";
 import { editReply } from "../../../utils/discordMessage";
 import { getMember } from "../../../utils/discordUser";
 import { msgDeleteTimeout } from "../../../utils/globals";

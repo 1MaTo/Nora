@@ -1,7 +1,7 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { loading, success, warning } from "../../../embeds/response";
+import { success, warning } from "../../../embeds/response";
 import { editReply } from "../../../utils/discordMessage";
-import { ghostCmd, msgDeleteTimeout } from "../../../utils/globals";
+import { msgDeleteTimeout } from "../../../utils/globals";
 import { isRunning } from "../../gamestats/isRunning";
 import { stopGamestats } from "../../gamestats/stopGamestats";
 
