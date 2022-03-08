@@ -10,7 +10,7 @@ module.exports = {
   async execute(interaction: CommandInteraction<CacheType>) {
     if (!production && interaction.member.user.id !== ownerID) return;
 
-    interaction.deferReply();
+    await interaction.deferReply();
 
     switch (interaction.options.getSubcommand()) {
       case "totalgames":
@@ -23,7 +23,7 @@ module.exports = {
         await damage(interaction);
         return;
       default:
-        return await interaction.reply("...");
+        return await interaction.editReply("...");
     }
   },
 };

@@ -23,7 +23,7 @@ module.exports = {
         await deleteCofnig(interaction);
         return;
       default:
-        return await interaction.reply("...");
+        return await interaction.editReply("...");
     }
   },
 };

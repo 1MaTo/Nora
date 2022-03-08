@@ -31,7 +31,7 @@ module.exports = {
         await ping_on_start(interaction);
         return;
       default:
-        return await interaction.reply("...");
+        return await interaction.editReply("...");
     }
   },
 };

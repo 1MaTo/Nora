@@ -19,7 +19,7 @@ module.exports = {
         await stop(interaction);
         return;
       default:
-        return await interaction.reply("...");
+        return await interaction.editReply("...");
     }
   },
 };
