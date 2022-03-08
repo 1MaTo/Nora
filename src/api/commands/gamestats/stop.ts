@@ -6,10 +6,6 @@ import { isRunning } from "../../gamestats/isRunning";
 import { stopGamestats } from "../../gamestats/stopGamestats";
 
 export const stop = async (interaction: CommandInteraction<CacheType>) => {
-  await interaction.reply({
-    embeds: [loading() as any],
-  });
-
   const gamestatsSetting = await isRunning(interaction.guildId);
 
   if (!gamestatsSetting) {

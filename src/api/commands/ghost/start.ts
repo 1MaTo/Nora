@@ -7,10 +7,6 @@ import { pingUsersOnStart } from "../../../utils/notifications";
 import { startGame } from "../../ghost/startGame";
 
 export const start = async (interaction: CommandInteraction<CacheType>) => {
-  await interaction.reply({
-    embeds: [loading() as any],
-  });
-
   const result = await startGame(interaction.options.getBoolean("force"));
 
   const games = await getCurrentLobbies(interaction.guildId);

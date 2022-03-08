@@ -1,14 +1,10 @@
 import { CacheType, CommandInteraction } from "discord.js";
 import { error, loading, success } from "../../../embeds/response";
 import { ghostCmd } from "../../../utils/globals";
-import { loadMapCfg } from "../../ghost/loadMapCfg";
+import { loadMap } from "../../ghost/loadMap";
 
 export const load = async (interaction: CommandInteraction<CacheType>) => {
-  await interaction.reply({
-    embeds: [loading() as any],
-  });
-
-  const result = await loadMapCfg(interaction.options.getString("map"));
+  const result = await loadMap(interaction.options.getString("map"));
 
   if (result === null) {
     await interaction.editReply({

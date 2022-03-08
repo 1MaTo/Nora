@@ -7,11 +7,11 @@ import {
   Intents,
 } from "discord.js";
 import fs from "node:fs";
+import { reloadBot } from "./api/reload/reload";
 import { token } from "./auth.json";
 import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
 import { production } from "./utils/globals";
 import { log } from "./utils/log";
-import { reloadBot } from "./utils/reloadBot";
 import { report } from "./utils/reportToOwner";
 import { restartGamestats, restartLobbyWatcher } from "./utils/restartTimers";
 import { sleep } from "./utils/sleep";
@@ -27,7 +27,12 @@ export type CustomSlashCommand = {
 };
 
 export const client = new Client({
-  intents: [Intents.FLAGS.GUILDS],
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    Intents.FLAGS.GUILD_PRESENCES,
+  ],
 }) as Client & { commands: Collection<string, CustomSlashCommand> };
 client.commands = new Collection();
 
@@ -77,7 +82,6 @@ client.on("interactionCreate", async (interaction) => {
     await command.execute(interaction);
   } catch (error) {
     log(error);
-    report(error);
     try {
       await interaction.reply({
         content: ">_< Bakaaa!!! ",
@@ -87,6 +91,10 @@ client.on("interactionCreate", async (interaction) => {
       log(error);
     }
   }
+});
+
+process.on("unhandledRejection", (error) => {
+  log("[bot]", error);
 });
 
 client.login(token);

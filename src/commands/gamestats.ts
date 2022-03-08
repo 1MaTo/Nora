@@ -16,6 +16,8 @@ module.exports = {
         ephemeral: true,
       });
 
+    await interaction.deferReply();
+
     switch (interaction.options.getSubcommand()) {
       case "start":
         await start(interaction);

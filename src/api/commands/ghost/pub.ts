@@ -4,10 +4,6 @@ import { ghostCmd } from "../../../utils/globals";
 import { pubGame } from "../../ghost/pubGame";
 
 export const pub = async (interaction: CommandInteraction<CacheType>) => {
-  await interaction.reply({
-    embeds: [loading() as any],
-  });
-
   const result = await pubGame(interaction.options.getString("gamename"));
 
   if (result === null) {

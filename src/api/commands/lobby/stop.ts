@@ -5,10 +5,6 @@ import { isRunning } from "../../lobbyWatcher/isRunning";
 import { stopLobbyWatcher } from "../../lobbyWatcher/stopLobbyWatcher";
 
 export const stop = async (interaction: CommandInteraction<CacheType>) => {
-  await interaction.reply({
-    embeds: [loading() as any],
-  });
-
   const lobbyInfo = await isRunning(interaction.guildId);
 
   if (lobbyInfo) {

@@ -7,7 +7,7 @@ import {
 
 export const pubGame = async (gamename: string | undefined) => {
   const rows = await getChatRows();
-  const commandSent = await sendCommand(`pub ${gamename ? gamename : ""}`);
+  const commandSent = sendCommand(`pub ${gamename ? gamename : ""}`);
   if (!commandSent) return null;
   const result = await checkLogsForKeyWords(
     /creating game \[.*\]/,

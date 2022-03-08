@@ -6,10 +6,6 @@ import { deleteMapConfig } from "../../../utils/mapConfig";
 export const deleteCofnig = async (
   interaction: CommandInteraction<CacheType>
 ) => {
-  await interaction.reply({
-    embeds: [loading() as any],
-  });
-
   const cfgName = interaction.options.getString("name");
   const deleted = await deleteMapConfig(interaction.guildId, cfgName);
 

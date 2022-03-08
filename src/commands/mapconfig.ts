@@ -10,6 +10,8 @@ module.exports = {
   async execute(interaction: CommandInteraction<CacheType>) {
     if (!production && interaction.member.user.id !== ownerID) return;
 
+    await interaction.deferReply();
+
     switch (interaction.options.getSubcommand()) {
       case "create":
         await create(interaction);

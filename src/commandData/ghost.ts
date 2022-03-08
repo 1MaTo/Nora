@@ -30,7 +30,7 @@ export const ghostCommand = new SlashCommandBuilder()
       .setName("load")
       .setDescription("Load map config from map")
       .addStringOption((option) =>
-        option.setName("name").setDescription("Map name").setRequired(true)
+        option.setName("map").setDescription("Map name").setRequired(true)
       )
   );
 

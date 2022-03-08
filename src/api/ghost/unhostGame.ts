@@ -7,7 +7,7 @@ import {
 
 export const unhostGame = async () => {
   const rows = await getChatRows();
-  const commandSent = await sendCommand("unhost");
+  const commandSent = sendCommand("unhost");
   if (!commandSent) return null;
   const result = await checkLogsForKeyWords(
     /deleting current game \[.*\]/,

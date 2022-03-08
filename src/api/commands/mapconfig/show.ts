@@ -10,10 +10,6 @@ import {
 } from "../../../utils/mapConfig";
 
 export const show = async (interaction: CommandInteraction<CacheType>) => {
-  await interaction.reply({
-    embeds: [loading() as any],
-  });
-
   const cfgName = interaction.options.getString("name");
 
   if (cfgName) {

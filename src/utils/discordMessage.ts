@@ -43,8 +43,16 @@ export const sendReply = async (
   content: InteractionReplyOptions,
   delay?: number
 ) => {
-  await interaction.reply(content);
-  delay && setTimeout(() => interaction.deleteReply(), delay);
+  const message = await interaction.reply(content);
+  delay &&
+    setTimeout(async () => {
+      try {
+        await interaction.deleteReply();
+      } catch (err) {
+        log("[editReply] cant send message");
+      }
+    }, delay);
+  return message;
 };
 
 export const editReply = async (
@@ -52,6 +60,14 @@ export const editReply = async (
   content: InteractionReplyOptions,
   delay?: number
 ) => {
-  await interaction.editReply(content);
-  delay && setTimeout(() => interaction.deleteReply(), delay);
+  const message = await interaction.editReply(content);
+  delay &&
+    setTimeout(async () => {
+      try {
+        await interaction.deleteReply();
+      } catch (err) {
+        log("[editReply] cant delete message");
+      }
+    }, delay);
+  return message;
 };

@@ -21,6 +21,8 @@ export const msgDeleteTimeout = {
   info: 120000,
 };
 
+export const ghostApiTimeout = 10000;
+
 export const guildIDs = {
   ghostGuild: "408947483763277825",
   debugGuild: "556150178147467265",

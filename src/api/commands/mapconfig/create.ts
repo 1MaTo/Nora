@@ -4,17 +4,13 @@ import { ghostCmd } from "../../../utils/globals";
 import { createOrUpdateMapConfig } from "../../../utils/mapConfig";
 
 export const create = async (interaction: CommandInteraction<CacheType>) => {
-  await interaction.reply({
-    embeds: [loading() as any],
-  });
-
   const slotMap = parseToSlotMap(interaction.options.getString("teams"));
   const maxSlotsInSlotMap =
     slotMap && slotMap.reduce((summ, curr) => (summ += curr.slots), 0);
 
   if (
     !slotMap ||
-    maxSlotsInSlotMap !== interaction.options.getNumber("slots")
+    maxSlotsInSlotMap !== interaction.options.getInteger("slots")
   ) {
     await interaction.editReply({ embeds: error("Bad team values") as any });
     setTimeout(() => interaction.deleteReply(), ghostCmd.deleteMessageTimeout);

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ghost } from "../auth.json";
+import { ghostApiTimeout } from "./globals";
 import { log } from "./log";
 import { sleep } from "./sleep";
 
@@ -37,7 +38,9 @@ export const getChatLogs = async (): Promise<Array<string | null>> => {
 
 export const sendCommand = async (command: string) => {
   try {
-    const result = await axios.get(commandUrl(command));
+    const result = await axios.get(commandUrl(command), {
+      timeout: ghostApiTimeout,
+    });
     return true;
   } catch (error) {
     return null;

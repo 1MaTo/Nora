@@ -7,7 +7,7 @@ import {
 
 export const startGame = async (force: boolean) => {
   const rows = await getChatRows();
-  const commandSent = await sendCommand(`start ${force ? "force" : ""}`);
+  const commandSent = sendCommand(`start ${force ? "force" : ""}`);
   if (!commandSent) return null;
   const result = await checkLogsForKeyWords(
     /GAME:.*started loading with \d+ players/,
