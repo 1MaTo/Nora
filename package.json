@@ -27,7 +27,7 @@
     "clear_build": "shx rm -rf build/",
     "get_build": "git fetch origin && git reset --hard origin/build && npm run copy_auth",
     "copy_auth": "shx touch build/auth.json && shx cp ../auth.json build/auth.json",
-    "back_auth": "shx touch src/auth.json && shx cp auth.json src/auth.json",
+    "back_auth": "shx touch src/auth.json && shx cp ../auth.json src/auth.json",
     "delete_branch": "git push origin --delete build && git branch -D build",
     "create_branch": "git checkout -b build",
     "change_gitignore": "shx sed -i /build /src .gitignore",
