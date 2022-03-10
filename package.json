@@ -11,11 +11,14 @@
     "discord-api-types": "^0.27.3",
     "discord.js": "^13.6.0",
     "express": "^4.17.1",
+    "form-data": "^4.0.0",
+    "fs-extra": "^10.0.1",
     "mysql": "^2.18.1",
     "redis": "^3.0.2",
     "shx": "^0.3.3"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
     "@types/mysql": "^2.15.17",
     "@types/node": "^14.14.22",
     "@types/redis": "^2.8.28",

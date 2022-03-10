@@ -3,6 +3,9 @@ import { ghost } from "../auth.json";
 import { ghostApiTimeout } from "./globals";
 import { log } from "./log";
 import { sleep } from "./sleep";
+import FormData from "form-data";
+import fsExtra from "fs-extra";
+import { uploadsMapFolder } from "./downloadFile";
 
 const botUrl = `http://${ghost.host}:${ghost.port}`;
 const chatLogs = `${botUrl}/chat?pass=${ghost.password}`;
@@ -73,4 +76,30 @@ export const checkLogsForKeyWords = async (
     log(error);
     return null;
   }
+};
+
+export const uploadMapToGhost = async (configName: string, mapName: string) => {
+  const form = new FormData();
+
+  form.append("textline", configName);
+  form.append(
+    "datafile",
+    fsExtra.createReadStream(`${uploadsMapFolder}/${mapName}`),
+    mapName
+  );
+
+  try {
+    await axios.post(`${botUrl}/UPLOAD`, form, {
+      headers: form.getHeaders(),
+      maxBodyLength: Infinity,
+      maxContentLength: Infinity,
+    });
+    return true;
+  } catch (err) {
+    log("[upload map to bot] error when uploading map", err);
+    return false;
+  }
+  /* form.submit({ method: "post", host: ghost.host, path: "/UPLOAD" }, (err, res) => {
+    if (err)
+  }); */
 };
