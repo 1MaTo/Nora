@@ -21,7 +21,7 @@ export const msgDeleteTimeout = {
   info: 120000,
 };
 
-export const ghostApiTimeout = 10000;
+export const ghostApiTimeout = 5000;
 
 export const guildIDs = {
   ghostGuild: "408947483763277825",
@@ -77,3 +77,10 @@ export const optionLobbyFieldToTitle = {
 };
 
 export const commandLogsMaxCount = 50;
+
+export const buttonId = {
+  hostGame: "lobby-watcher_button_host-game",
+  unhostGame: "lobby-watcher_button_unhost-game",
+};
+
+export const ghostGuildBotId = 2;

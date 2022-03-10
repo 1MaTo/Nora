@@ -1,8 +1,15 @@
+import { MessageActionRow, MessageButton } from "discord.js";
+import {
+  hostGameButton,
+  successGameButton,
+  unhostGameButton,
+} from "../../components/buttons/hostGame";
 import { clearLobbyGame } from "../../db/queries";
 import { header, lobbyGame } from "../../embeds/lobby";
-import { redisKey, groupsKey } from "../../redis/kies";
+import { groupsKey, redisKey } from "../../redis/kies";
 import { redis } from "../../redis/redis";
 import { getMessageById, sendResponse } from "../../utils/discordMessage";
+import { buttonId, ghostGuildBotId } from "../../utils/globals";
 import {
   getCurrentLobbies,
   playersLobbyToString,
@@ -39,27 +46,43 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
       return;
     }
 
-    // UPDATING HEADER MESSAGE
+    // UPDATING HEADER MESSAGE;
+
+    const isGameExist = games.some((game) => game.botid === ghostGuildBotId);
+    const button = headerMsg.resolveComponent(
+      buttonId.hostGame
+    ) as MessageButton;
+
+    const headerComponents = new MessageActionRow().addComponents(
+      !isGameExist && button && button.label === "Loading..."
+        ? button
+        : isGameExist
+        ? successGameButton
+        : hostGameButton
+    );
+
+    const headerMsgContent = {
+      embeds: [
+        header(
+          games.length,
+          getPassedTime(settings.startTime, Date.now())
+        ) as any,
+      ],
+      components: [headerComponents],
+    };
+
     try {
-      await headerMsg.edit({
-        embeds: [
-          header(
-            games.length,
-            getPassedTime(settings.startTime, Date.now())
-          ) as any,
-        ],
-      });
+      await headerMsg.edit(headerMsgContent);
     } catch (error) {
-      // IF FAILED TO UPDATE  HEADER MESSAGE CRATE NEW ONE
+      // IF FAILED TO UPDATE HEADER MESSAGE CRATE NEW ONE
       log(error);
-      const newHeaderMsg = await sendResponse(settings.channelID, {
-        embeds: [
-          header(
-            games.length,
-            getPassedTime(settings.startTime, Date.now())
-          ) as any,
-        ],
-      });
+      // IF FAILED TO UPDATE HEADER MESSAGE BUT ITS EXIST SKIP TO NEXT TIME
+      if (headerMsg) return;
+      // ELSE CREATE NEW ONE
+      const newHeaderMsg = await sendResponse(
+        settings.channelID,
+        headerMsgContent
+      );
       settings.headerID = newHeaderMsg.id;
     }
 
@@ -102,39 +125,49 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
         const existMsg = settings.lobbysID.find(
           (msg) => msg.botID === game.botid
         );
+
         if (existMsg) {
           const msg = await getMessageById(
             existMsg.messageID,
             settings.channelID
           );
 
+          const button = msg.resolveComponent(
+            buttonId.unhostGame
+          ) as MessageButton;
+
           // IF LOBBY PENDING 5+ HOURS, DELETE THIS LOBBY FROM DB
           if (Date.now() - existMsg.startTime > 1000 * 60 * 60 * 5) {
             clearLobbyGame(game.botid);
           }
 
+          const lobbyMsgContent = {
+            embeds: [
+              lobbyGame(
+                parsedGame,
+                getPassedTime(existMsg.startTime, Date.now())
+              ),
+            ],
+            components: [
+              new MessageActionRow().addComponents(
+                button && button.label === "Loading..."
+                  ? button
+                  : unhostGameButton
+              ),
+            ],
+          };
+
           try {
-            await msg.edit({
-              embeds: [
-                lobbyGame(
-                  parsedGame,
-                  getPassedTime(existMsg.startTime, Date.now())
-                ),
-              ],
-            });
+            await msg.edit(lobbyMsgContent);
           } catch (error) {
             log(error);
             // IF FAILED TO UPDATE MESSAGE BUT ITS EXIST SKIP TO NEXT TIME
             if (msg) return;
             // ELSE CREATE NEW ONE
-            const newMsg = await sendResponse(settings.channelID, {
-              embeds: [
-                lobbyGame(
-                  parsedGame,
-                  getPassedTime(existMsg.startTime, Date.now())
-                ) as any,
-              ],
-            });
+            const newMsg = await sendResponse(
+              settings.channelID,
+              lobbyMsgContent
+            );
             const msgIndex = settings.lobbysID.findIndex(
               (lobbyMsg) => lobbyMsg.botID === existMsg.botID
             );
@@ -152,6 +185,9 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
                 parsedGame,
                 getPassedTime(startTime, Date.now())
               ) as any,
+            ],
+            components: [
+              new MessageActionRow().addComponents(unhostGameButton),
             ],
           });
           if (newLobbyMsg) {
@@ -175,7 +211,5 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
     );
     log(error);
     setTimeout(() => lobbyWatcherUpdater(guildID), 10000);
-    //await changeBotStatus("🔄 Crashed 😱, reboot 🔄");
-    //reloadBot(false);
   }
 };

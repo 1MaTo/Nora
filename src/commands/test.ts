@@ -1,11 +1,21 @@
-import { CacheType, CommandInteraction } from "discord.js";
+import { CacheType, CommandInteraction, MessageActionRow } from "discord.js";
 import testCommand from "../commandData/test";
+import { unhostGameButton } from "../components/buttons/hostGame";
+import { ownerID } from "../utils/globals";
 
 module.exports = {
   data: testCommand,
   async execute(interaction: CommandInteraction<CacheType>) {
-    await interaction.deferReply();
-    setTimeout(() => interaction.editReply("Pong"), 3000);
+    if (interaction.user.id !== ownerID)
+      return interaction.reply({
+        ephemeral: true,
+        content: "You cant user this command",
+      });
+
+    interaction.reply({
+      content: "...",
+      components: [new MessageActionRow().addComponents(unhostGameButton)],
+    });
     return;
   },
 };

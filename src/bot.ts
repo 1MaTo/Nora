@@ -1,16 +1,19 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import {
+  ButtonInteraction,
   CacheType,
   Client,
   Collection,
   CommandInteraction,
   Intents,
 } from "discord.js";
-import fs from "node:fs";
 import { reloadBot } from "./api/reload/reload";
 import { token } from "./auth.json";
 import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
 import { guildIDs, production } from "./utils/globals";
+import { listenButtons } from "./utils/listenButtons";
+import { listenCommands } from "./utils/listenCommands";
+import { loadCommands } from "./utils/loadCommands";
 import { log } from "./utils/log";
 import { logCommand } from "./utils/logCmd";
 import { restartGamestats, restartLobbyWatcher } from "./utils/restartTimers";
@@ -26,6 +29,11 @@ export type CustomSlashCommand = {
   execute: (interaction: CommandInteraction<CacheType>) => Promise<void>;
 };
 
+export type CustomButtonCommand = {
+  id: string;
+  execute: (interaction: ButtonInteraction) => Promise<void>;
+};
+
 export const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
@@ -33,17 +41,12 @@ export const client = new Client({
     Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
     Intents.FLAGS.GUILD_PRESENCES,
   ],
-}) as Client & { commands: Collection<string, CustomSlashCommand> };
-client.commands = new Collection();
+}) as Client & {
+  commands: Collection<string, CustomSlashCommand>;
+  buttons: Collection<string, CustomButtonCommand>;
+};
 
-const commandFiles = fs
-  .readdirSync(__dirname + "/commands")
-  .filter((file) => file.endsWith(".js"));
-
-for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  client.commands.set(command.data.name, command);
-}
+loadCommands();
 
 client.once("ready", async () => {
   log("------> SETTING UP");
@@ -71,7 +74,10 @@ client.once("ready", async () => {
   log("------> BOT IN DEVELOPMENT");
 });
 
-client.on("interactionCreate", async (interaction) => {
+listenCommands();
+listenButtons();
+
+/* client.on("interactionCreate", async (interaction) => {
   if (production && interaction.guildId !== guildIDs.ghostGuild) return;
 
   if (!interaction.isCommand()) return;
@@ -95,7 +101,7 @@ client.on("interactionCreate", async (interaction) => {
       log(error);
     }
   }
-});
+}); */
 
 process.on("unhandledRejection", (error) => {
   log("[bot]", error);

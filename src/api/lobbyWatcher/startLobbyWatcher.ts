@@ -13,6 +13,7 @@ export const startLobbyWatcher = async (
 ) => {
   try {
     const startTime = Date.now();
+
     const headerMsg = await sendResponse(channelID, {
       embeds: [header(0, getPassedTime(startTime, Date.now()))],
     });

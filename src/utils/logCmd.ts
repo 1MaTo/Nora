@@ -1,5 +1,6 @@
 import { bold, inlineCode, time } from "@discordjs/builders";
 import {
+  ButtonInteraction,
   CacheType,
   CommandInteraction,
   CommandInteractionOption,
@@ -43,6 +44,26 @@ export const logCommand = async (
         ...getOptionsNames(interaction.options.data),
       ].join(" -> ")
     )}`;
+
+    await redis.set(key, [...logs, log]);
+  } catch (err) {
+    log("[logCmd] error when logging", err);
+  }
+};
+
+export const logButtonCommand = async (interaction: ButtonInteraction) => {
+  try {
+    const key = redisKey.struct(groupsKey.commandLog, [interaction.guildId]);
+
+    const logs = (await redis.get(key)) || [];
+
+    if (logs.length > commandLogsMaxCount) {
+      logs.shift();
+    }
+
+    const log = `${time(new Date())} ${bold(
+      interaction.user.tag
+    )}\n${inlineCode(`button ${interaction.customId}`)}`;
 
     await redis.set(key, [...logs, log]);
   } catch (err) {

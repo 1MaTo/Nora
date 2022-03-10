@@ -12,8 +12,7 @@ const commandUrl = (command: string) =>
 
 export const getChatRows = async () => {
   try {
-    const result = await axios.get(chatRowsCount);
-
+    const result = await axios.get(chatRowsCount, { timeout: 1000 });
     return result.data;
   } catch (error) {
     return null;
@@ -22,7 +21,7 @@ export const getChatRows = async () => {
 
 export const getChatLogs = async (): Promise<Array<string | null>> => {
   try {
-    const result = await axios.get(chatLogs);
+    const result = await axios.get(chatLogs, { timeout: ghostApiTimeout });
 
     const logs = result.data
       .toString()
