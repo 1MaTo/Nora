@@ -32,12 +32,12 @@ export const ghostCommand = new SlashCommandBuilder()
       .addStringOption((option) =>
         option.setName("map").setDescription("Map name").setRequired(true)
       )
-  )
-  .addSubcommand((subcommand) =>
+  );
+/* .addSubcommand((subcommand) =>
     subcommand
       .setName("select-map")
       .setDescription("Select config from list and load it")
-  );
+  ); */
 
 export default ghostCommand;
 module.exports = ghostCommand;
