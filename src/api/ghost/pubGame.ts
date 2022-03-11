@@ -16,7 +16,8 @@ export const pubGame = async (gamename: string | undefined) => {
     ghostCmd.pendingTimeout
   );
   if (result) {
-    return result.match(/ \[.*\]/)[0];
+    const matched = result.match(/ \[.*\]/)[0];
+    return matched ? matched.slice(0, -5) : true;
   }
   return result;
 };

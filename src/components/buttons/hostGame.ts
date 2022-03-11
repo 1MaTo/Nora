@@ -33,4 +33,9 @@ export const unhostSuccessGameButton = new MessageButton()
   .setCustomId(buttonId.unhostGame)
   .setLabel("Game unhosted")
   .setStyle("SUCCESS")
-  .setDisabled(false);
+  .setDisabled(true);
+
+export const hostGameAnywhereButton = new MessageButton()
+  .setCustomId(buttonId.hostGameAnywhere)
+  .setLabel("Host game")
+  .setStyle("PRIMARY");

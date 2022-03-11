@@ -6,6 +6,7 @@ import {
   Collection,
   CommandInteraction,
   Intents,
+  SelectMenuInteraction,
 } from "discord.js";
 import { reloadBot } from "./api/reload/reload";
 import { token } from "./auth.json";
@@ -13,6 +14,7 @@ import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
 import { guildIDs, production } from "./utils/globals";
 import { listenButtons } from "./utils/listenButtons";
 import { listenCommands } from "./utils/listenCommands";
+import { listenSelectMenus } from "./utils/listenSelectMenus";
 import { loadCommands } from "./utils/loadCommands";
 import { log } from "./utils/log";
 import { logCommand } from "./utils/logCmd";
@@ -34,6 +36,11 @@ export type CustomButtonCommand = {
   execute: (interaction: ButtonInteraction) => Promise<void>;
 };
 
+export type CustomSelectMenuCommand = {
+  id: string;
+  execute: (interaction: SelectMenuInteraction) => Promise<void>;
+};
+
 export const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
@@ -44,6 +51,7 @@ export const client = new Client({
 }) as Client & {
   commands: Collection<string, CustomSlashCommand>;
   buttons: Collection<string, CustomButtonCommand>;
+  selectMenus: Collection<string, CustomSelectMenuCommand>;
 };
 
 loadCommands();
@@ -76,32 +84,7 @@ client.once("ready", async () => {
 
 listenCommands();
 listenButtons();
-
-/* client.on("interactionCreate", async (interaction) => {
-  if (production && interaction.guildId !== guildIDs.ghostGuild) return;
-
-  if (!interaction.isCommand()) return;
-
-  const command = client.commands.get(interaction.commandName);
-
-  if (!command) return;
-
-  logCommand(interaction);
-
-  try {
-    await command.execute(interaction);
-  } catch (error) {
-    log(error);
-    try {
-      await interaction.reply({
-        content: ">_< Bakaaa!!! ",
-        ephemeral: true,
-      });
-    } catch (err) {
-      log(error);
-    }
-  }
-}); */
+listenSelectMenus();
 
 process.on("unhandledRejection", (error) => {
   log("[bot]", error);

@@ -2,9 +2,13 @@ import {
   CacheType,
   CommandInteraction,
   InteractionReplyOptions,
+  Message,
+  MessageEditOptions,
+  MessagePayload,
   Snowflake,
 } from "discord.js";
 import { getTextChannel } from "./discordChannel";
+import { msgDeleteTimeout, msgEditTimeout } from "./globals";
 import { log } from "./log";
 
 export const sendResponse = async (
@@ -70,4 +74,31 @@ export const editReply = async (
       }
     }, delay);
   return message;
+};
+
+export const deleteMessageWithDelay = async (
+  message: Message,
+  delay: number = msgDeleteTimeout.short
+) => {
+  setTimeout(async () => {
+    try {
+      await message.delete();
+    } catch (error) {
+      log("[deleting message] cant delete message");
+    }
+  }, delay);
+};
+
+export const editMessageWithDelay = async (
+  message: Message,
+  content: string | MessagePayload | MessageEditOptions,
+  delay: number = msgEditTimeout.short
+) => {
+  setTimeout(async () => {
+    try {
+      await message.edit(content);
+    } catch (error) {
+      log("[editing message] cant edit message");
+    }
+  }, delay);
 };

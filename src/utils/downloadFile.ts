@@ -16,7 +16,7 @@ const checkSize = async (link: string) => {
     url: link,
   });
   const length = parseInt(result.headers["content-length"]);
-  log("[check file size] " + length);
+  log("[check file size] " + length, result.data);
   return length < max_size;
 };
 

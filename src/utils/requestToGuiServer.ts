@@ -1,13 +1,15 @@
 import axios from "axios";
+import FormData from "form-data";
+import fsExtra from "fs-extra";
 import { ghost } from "../auth.json";
+import { clearMapUploadsFolder, uploadsMapFolder } from "./downloadFile";
 import { ghostApiTimeout } from "./globals";
 import { log } from "./log";
 import { sleep } from "./sleep";
-import FormData from "form-data";
-import fsExtra from "fs-extra";
-import { uploadsMapFolder } from "./downloadFile";
 
-const botUrl = `http://${ghost.host}:${ghost.port}`;
+const botUrl = `http://${ghost.host}:${ghost.port}`; /* production
+  ? `http://${ghost.host}:${ghost.port}`
+  : `http://${ghost.debugHost}:${ghost.debugPort}`; */
 const chatLogs = `${botUrl}/chat?pass=${ghost.password}`;
 const chatRowsCount = `${botUrl}/checkchat`;
 const commandUrl = (command: string) =>
@@ -60,7 +62,13 @@ export const checkLogsForKeyWords = async (
     while (timeout > 0) {
       const currRows = await getChatRows();
       if (currRows !== rows) {
-        const logs = (await getChatLogs()).slice(-Math.abs(rows - currRows));
+        const rawLogs = await getChatLogs();
+        if (!rawLogs) {
+          timeout -= interval;
+          await sleep(interval);
+          return;
+        }
+        const logs = rawLogs.slice(-Math.abs(rows - currRows));
         const patternSuccess = logs.reduce((arr, row) => {
           if (row.match(pattern)) return [...arr, row];
           return [...arr];
@@ -93,13 +101,37 @@ export const uploadMapToGhost = async (configName: string, mapName: string) => {
       headers: form.getHeaders(),
       maxBodyLength: Infinity,
       maxContentLength: Infinity,
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        log(`[upload map] ${percentCompleted}`);
+      },
+      timeout: 1000 * 60 * 2,
     });
+
+    await clearMapUploadsFolder(uploadsMapFolder);
     return true;
   } catch (err) {
     log("[upload map to bot] error when uploading map", err);
+    await clearMapUploadsFolder(uploadsMapFolder);
     return false;
   }
-  /* form.submit({ method: "post", host: ghost.host, path: "/UPLOAD" }, (err, res) => {
-    if (err)
-  }); */
+};
+
+export const getConfigListFromGhost = async () => {
+  try {
+    const result = await axios.get(`${botUrl}/CFGS`, {
+      timeout: ghostApiTimeout,
+    });
+    const configs = result.data.match(/<th>(.*?)<\/th>/g);
+    return configs
+      ? configs
+          .map((item: string) => item.replace(/<th>|<\/th>/g, ""))
+          .slice(configs.length - 25)
+      : [];
+  } catch (error) {
+    log("[getting config from ghost]", error);
+    return false;
+  }
 };

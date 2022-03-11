@@ -21,6 +21,10 @@ export const msgDeleteTimeout = {
   info: 120000,
 };
 
+export const msgEditTimeout = {
+  short: 2000,
+};
+
 export const ghostApiTimeout = 5000;
 
 export const guildIDs = {
@@ -81,6 +85,11 @@ export const commandLogsMaxCount = 50;
 export const buttonId = {
   hostGame: "lobby-watcher_button_host-game",
   unhostGame: "lobby-watcher_button_unhost-game",
+  hostGameAnywhere: "nora_button_host-game",
+};
+
+export const selectMenuId = {
+  selectMapConfig: "ghost_select_load-map-config",
 };
 
 export const ghostGuildBotId = 2;
