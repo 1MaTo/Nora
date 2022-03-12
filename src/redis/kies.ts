@@ -4,6 +4,7 @@ export const groupsKey = {
   gameStats: "GUILD_GAME_STATS",
   mapConfig: "GUILD_MAP_CONFIG",
   commandLog: "GUILD_COMMAND_LOG",
+  uploadingMap: "GUILD_UPLOADING_MAP",
 };
 
 export const keyDivider = "#@$@#$@#";

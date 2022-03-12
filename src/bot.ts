@@ -11,6 +11,7 @@ import {
 import { reloadBot } from "./api/reload/reload";
 import { token } from "./auth.json";
 import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
+import { clearRedisOnStart } from "./utils/clearRedisOnStart";
 import { production } from "./utils/globals";
 import { listenButtons } from "./utils/listenButtons";
 import { listenCommands } from "./utils/listenCommands";
@@ -57,6 +58,8 @@ loadCommands();
 
 client.once("ready", async () => {
   log("------> SETTING UP");
+
+  await clearRedisOnStart();
 
   if (production) {
     // Restart lobby watchers

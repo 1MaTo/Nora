@@ -7,7 +7,7 @@ import { ghostApiTimeout } from "./globals";
 import { log } from "./log";
 import { sleep } from "./sleep";
 
-const botUrl = `http://${ghost.host}:${ghost.port}`; /* `http://127.0.0.1:3000` */
+const botUrl = `http://${ghost.host}:${ghost.port}`; /* `http://127.0.0.1:3000`; */
 const chatLogs = `${botUrl}/chat?pass=${ghost.password}`;
 const chatRowsCount = `${botUrl}/checkchat`;
 const commandUrl = (command: string) =>

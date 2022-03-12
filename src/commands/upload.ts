@@ -3,6 +3,8 @@ import { CacheType, CommandInteraction } from "discord.js";
 import { googleDriveApiKey } from "../auth.json";
 import uploadCommand from "../commandData/upload";
 import { error, success, warning } from "../embeds/response";
+import { groupsKey, redisKey } from "../redis/kies";
+import { redis } from "../redis/redis";
 import { editReply } from "../utils/discordMessage";
 import { downloadFile } from "../utils/downloadFile";
 import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
@@ -14,6 +16,23 @@ module.exports = {
   async execute(interaction: CommandInteraction<CacheType>) {
     if (!production && interaction.member.user.id !== ownerID) return;
     await interaction.deferReply();
+
+    const key = redisKey.struct(groupsKey.uploadingMap, [interaction.guildId]);
+    const userUploading = await redis.get(key);
+
+    if (userUploading) {
+      return await editReply(
+        interaction,
+        {
+          embeds: [
+            warning(
+              `${userUploading} already uploading map, wait until it's done`
+            ) as any,
+          ],
+        },
+        msgDeleteTimeout.short
+      );
+    }
 
     let mapLink = interaction.options.getString("link");
     let fileName = interaction.options.getString("file_name");
@@ -73,12 +92,15 @@ module.exports = {
 
     configName = configName || fileName.replace(/\.w3x$/g, "");
 
+    await redis.set(key, interaction.user.tag);
+
     const fileDownloaded = await downloadFile(
       mapLink,
       fileName.replace(/\.w3x$/g, "")
     );
 
     if (!fileDownloaded) {
+      await redis.del(key);
       return await editReply(
         interaction,
         {
@@ -94,6 +116,7 @@ module.exports = {
     );
 
     if (!fileUploaded) {
+      await redis.del(key);
       return await editReply(
         interaction,
         {
@@ -103,6 +126,7 @@ module.exports = {
       );
     }
 
+    await redis.del(key);
     return await editReply(
       interaction,
       {
