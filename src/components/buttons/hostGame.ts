@@ -7,6 +7,13 @@ export const errorGameButton = new MessageButton()
   .setStyle("DANGER")
   .setDisabled(true);
 
+export const customErrorGameButton = (text: string) =>
+  new MessageButton()
+    .setCustomId(buttonId.hostGame)
+    .setLabel(text)
+    .setStyle("DANGER")
+    .setDisabled(true);
+
 export const loadingGameButton = new MessageButton()
   .setCustomId(buttonId.hostGame)
   .setLabel("Loading...")
