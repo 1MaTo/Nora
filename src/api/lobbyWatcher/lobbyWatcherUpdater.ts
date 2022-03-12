@@ -186,9 +186,10 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
                 getPassedTime(startTime, Date.now())
               ) as any,
             ],
-            components: [
-              new MessageActionRow().addComponents(unhostGameButton),
-            ],
+            components:
+              game.botid === ghostGuildBotId
+                ? [new MessageActionRow().addComponents(unhostGameButton)]
+                : [],
           });
           if (newLobbyMsg) {
             settings.lobbysID.push({
