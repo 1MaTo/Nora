@@ -4,6 +4,7 @@ import * as stream from "stream";
 import { promisify } from "util";
 import { log } from "./log";
 import fsExtra from "fs-extra";
+import { formatBytes } from "./formatBytes";
 
 const finished = promisify(stream.finished);
 
@@ -16,7 +17,7 @@ const checkSize = async (link: string) => {
     url: link,
   });
   const length = parseInt(result.headers["content-length"]);
-  log("[check file size] " + length, result.data);
+  log("[check file size] " + formatBytes(length));
   return length < max_size;
 };
 

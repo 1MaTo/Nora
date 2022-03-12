@@ -1,5 +1,5 @@
-import { production } from "./globals";
+import { production, withLogs } from "./globals";
 
 export const log = (...message: any) => {
-  if (!production) console.log(...message);
+  if (!production || withLogs) console.log(...message);
 };

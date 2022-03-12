@@ -1,4 +1,5 @@
 export const production: boolean = process.env.NODE_ENV === "production";
+export const withLogs: boolean = process.env.LOGS === "true";
 
 export const palette = {
   green: "#23911e",

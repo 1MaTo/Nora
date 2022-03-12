@@ -11,13 +11,12 @@ import {
 import { reloadBot } from "./api/reload/reload";
 import { token } from "./auth.json";
 import { changeBotStatus, updateStatusInfo } from "./utils/botStatus";
-import { guildIDs, production } from "./utils/globals";
+import { production } from "./utils/globals";
 import { listenButtons } from "./utils/listenButtons";
 import { listenCommands } from "./utils/listenCommands";
 import { listenSelectMenus } from "./utils/listenSelectMenus";
 import { loadCommands } from "./utils/loadCommands";
 import { log } from "./utils/log";
-import { logCommand } from "./utils/logCmd";
 import { restartGamestats, restartLobbyWatcher } from "./utils/restartTimers";
 import { sleep } from "./utils/sleep";
 import {
@@ -63,7 +62,7 @@ client.once("ready", async () => {
     // Restart lobby watchers
     await changeBotStatus("☀ Just woke up");
 
-    sleep(2000);
+    await sleep(2000);
 
     const lwCount = await restartLobbyWatcher();
     const gsCount = await restartGamestats();
@@ -71,7 +70,7 @@ client.once("ready", async () => {
     // Check for ghost status (available or no)
     setTimeout(() => ghostStatusUpdater(), 5000);
     setTimeout(() => lobbyStatusUpdater(), 10000);
-    setTimeout(() => gamesStatusUpdater(1000 * 60 * 5), 15000);
+    setTimeout(() => gamesStatusUpdater(1000 * 10), 15000);
     setTimeout(async () => {
       await changeBotStatus("🔄 Planned reboot 🔄");
       await reloadBot(false);
@@ -79,7 +78,7 @@ client.once("ready", async () => {
     await updateStatusInfo();
   }
 
-  log("------> BOT IN DEVELOPMENT");
+  log("------> BOT IN DEVELOPMENT OR LOGS ENABLED");
 });
 
 listenCommands();

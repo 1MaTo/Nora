@@ -4,11 +4,7 @@ import { redis } from "../redis/redis";
 import { botStatusInfo } from "./events";
 import { collectGamesData } from "./gamestatsUtils";
 import { botStatusVariables } from "./globals";
-import {
-  checkLogsForKeyWords,
-  getChatRows,
-  sendCommand,
-} from "./requestToGuiServer";
+import { getChatRows, getCurrentGamesCount } from "./requestToGuiServer";
 
 export const gamestatsUpdater = async (guildID: string) => {
   const key = redisKey.struct(groupsKey.gameStats, [guildID]);
@@ -72,34 +68,12 @@ export const lobbyStatusUpdater = async () => {
 };
 
 export const gamesStatusUpdater = async (delay: number) => {
-  const rows = await getChatRows();
-  const sent = await sendCommand("ggs");
+  const gameCount = await getCurrentGamesCount();
 
-  if (!sent) return setTimeout(() => gamesStatusUpdater(delay), delay);
+  botStatusVariables.gameCount = gameCount;
 
-  const result = await checkLogsForKeyWords(
-    /\(\d+ today+\).*/g,
-    rows,
-    500,
-    5000
-  );
-
-  if (!result) return setTimeout(() => gamesStatusUpdater(delay), delay);
-
-  const gameCount = (result as string).match(/\#\d+:/g);
-
-  if (!gameCount) {
-    botStatusVariables.gameCount = 0;
+  if (gameCount !== botStatusVariables.gameCount)
     botStatusInfo.emit(botEvent.update);
-    return setTimeout(() => gamesStatusUpdater(delay), delay);
-  }
-
-  const changedState = botStatusVariables.gameCount !== gameCount.length;
-
-  if (changedState) {
-    botStatusVariables.gameCount = gameCount.length;
-    botStatusInfo.emit(botEvent.update);
-  }
 
   setTimeout(() => gamesStatusUpdater(delay), delay);
 };

@@ -11,10 +11,10 @@ module.exports = {
         content: "You cant user this command",
       });
 
-    interaction.deferReply();
+    await interaction.deferReply();
 
-    interaction.editReply({
-      content: "...",
+    await interaction.editReply({
+      content: "Games:",
     });
     return;
   },

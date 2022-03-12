@@ -1,15 +1,13 @@
 import axios from "axios";
 import FormData from "form-data";
-import fsExtra from "fs-extra";
+import fs from "node:fs";
 import { ghost } from "../auth.json";
 import { clearMapUploadsFolder, uploadsMapFolder } from "./downloadFile";
 import { ghostApiTimeout } from "./globals";
 import { log } from "./log";
 import { sleep } from "./sleep";
 
-const botUrl = `http://${ghost.host}:${ghost.port}`; /* production
-  ? `http://${ghost.host}:${ghost.port}`
-  : `http://${ghost.debugHost}:${ghost.debugPort}`; */
+const botUrl = `http://${ghost.host}:${ghost.port}`; /* `http://127.0.0.1:3000`; */
 const chatLogs = `${botUrl}/chat?pass=${ghost.password}`;
 const chatRowsCount = `${botUrl}/checkchat`;
 const commandUrl = (command: string) =>
@@ -48,6 +46,25 @@ export const sendCommand = async (command: string) => {
     return true;
   } catch (error) {
     return null;
+  }
+};
+
+export const getCurrentGamesCount = async () => {
+  try {
+    const result = await axios.get(`${botUrl}/INFO`, {
+      timeout: ghostApiTimeout,
+    });
+    const matched = result.data.match(/current Games: \d{1,}/gi);
+
+    if (!matched) return 0;
+
+    const number = parseInt(matched[0].replace(/[^\d]/g, ""));
+
+    if (isNaN(number)) return 0;
+
+    return number;
+  } catch (error) {
+    return 0;
   }
 };
 
@@ -92,12 +109,11 @@ export const uploadMapToGhost = async (configName: string, mapName: string) => {
   form.append("textline", configName);
   form.append(
     "datafile",
-    fsExtra.createReadStream(`${uploadsMapFolder}/${mapName}`),
-    mapName
+    fs.createReadStream(`${uploadsMapFolder}/${mapName}`)
   );
 
   try {
-    await axios.post(`${botUrl}/UPLOAD`, form, {
+    /* const result = await axios.post(`${botUrl}/UPLOAD`, form, {
       headers: form.getHeaders(),
       maxBodyLength: Infinity,
       maxContentLength: Infinity,
@@ -108,8 +124,19 @@ export const uploadMapToGhost = async (configName: string, mapName: string) => {
         log(`[upload map] ${percentCompleted}`);
       },
       timeout: 1000 * 60 * 2,
-    });
+    }); */
 
+    const submitForm = (form: FormData) => {
+      return new Promise((resolve, reject) => {
+        form.submit(`${botUrl}/UPLOAD`, async (err, res) => {
+          res.resume();
+          if (res.statusCode === 200) resolve(res);
+          reject(err);
+        });
+      });
+    };
+
+    await submitForm(form);
     await clearMapUploadsFolder(uploadsMapFolder);
     return true;
   } catch (err) {
@@ -125,11 +152,12 @@ export const getConfigListFromGhost = async () => {
       timeout: ghostApiTimeout,
     });
     const configs = result.data.match(/<th>(.*?)<\/th>/g);
-    return configs
-      ? configs
-          .map((item: string) => item.replace(/<th>|<\/th>/g, ""))
-          .slice(configs.length - 25)
+    const cleanStrings = configs
+      ? configs.map((item: string) => item.replace(/<th>|<\/th>/g, ""))
       : [];
+    return cleanStrings.length > 25
+      ? cleanStrings.slice(configs.length - 25)
+      : cleanStrings;
   } catch (error) {
     log("[getting config from ghost]", error);
     return false;

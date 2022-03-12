@@ -5,7 +5,7 @@ import fs from "node:fs";
 import { appId, token } from "./auth.json";
 import { guildIDs } from "./utils/globals";
 
-const disabledCommands = ["upload"];
+const disabledCommands = [];
 const commands = [];
 const commandFiles = fs
   .readdirSync(__dirname + "/commandData")
