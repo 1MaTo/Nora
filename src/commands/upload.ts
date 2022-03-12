@@ -89,7 +89,7 @@ module.exports = {
     }
 
     const fileUploaded = await uploadMapToGhost(
-      fileName.replace(/\.w3x$/g, ""),
+      configName.replace(/\.w3x$/g, ""),
       fileName
     );
 

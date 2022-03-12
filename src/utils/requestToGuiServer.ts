@@ -125,8 +125,6 @@ export const whaitForCommandResult = async ({
 
   logs = Array.from(new Set(logs));
 
-  console.log(util.inspect(logs, { maxArrayLength: null }));
-
   if (logs.some((row: string) => successMark.test(row))) {
     return "success";
   }
