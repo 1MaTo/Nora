@@ -1,12 +1,6 @@
-import {
-  Message,
-  MessageActionRow,
-  MessageSelectMenu,
-  SelectMenuInteraction,
-} from "discord.js";
+import { Message, MessageSelectMenu, SelectMenuInteraction } from "discord.js";
 import { loadMapFromFile } from "../../api/ghost/loadMapFromFile";
-import { hostGameAnywhereButton } from "../../components/buttons/hostGame";
-import { error } from "../../embeds/response";
+import { error, success, warning } from "../../embeds/response";
 import { deleteMessageWithDelay } from "../../utils/discordMessage";
 import { msgDeleteTimeout, selectMenuId } from "../../utils/globals";
 
@@ -38,22 +32,29 @@ module.exports = {
 
     const result = await loadMapFromFile(interaction.values[0]);
 
-    if (result === null) {
-      message.components[rowIndex].components[compIndex] = selectMenu
-        .setDisabled(true)
-        .setPlaceholder(`Network error`);
-      await message.edit({ components: message.components });
-      deleteMessageWithDelay(message);
-      return;
+    switch (result) {
+      case "success":
+      case "timeout":
+        await message.edit({
+          embeds: [success(`${interaction.values[0]} loaded`) as any],
+          components: [],
+        });
+        deleteMessageWithDelay(message, msgDeleteTimeout.default);
+        return;
+      case "uknown":
+      case "error":
+        await message.edit({
+          embeds: [warning(`Can not load this config`) as any],
+          components: [],
+        });
+        deleteMessageWithDelay(message, msgDeleteTimeout.default);
+        return;
+      case null:
+        await message.edit({
+          embeds: [error(`Network error`) as any],
+          components: [],
+        });
+        deleteMessageWithDelay(message, msgDeleteTimeout.default);
     }
-
-    await message.edit({
-      components: [
-        new MessageActionRow().addComponents(
-          selectMenu.setDisabled(true).setPlaceholder("Map loaded")
-        ),
-      ],
-    });
-    deleteMessageWithDelay(message, msgDeleteTimeout.default);
   },
 };

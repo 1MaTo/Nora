@@ -1,21 +1,20 @@
+import { ghostCommandsMarks } from "../../utils/globals";
 import {
-  checkLogsForKeyWords,
-  getChatRows,
   sendCommand,
+  whaitForCommandResult,
 } from "../../utils/requestToGuiServer";
 
 export const loadMap = async (map: string) => {
-  const rows = await getChatRows();
-  const commandSend = sendCommand(`map ${map ? map : ""}`);
-  if (!commandSend) return null;
-  const result = await checkLogsForKeyWords(
-    /MAP] loading MPQ file/,
-    rows,
-    500,
-    3000
-  );
-  if (result) {
-    return result.match(/[^\\]+$/)[0].slice(0, -5);
-  }
-  return result;
+  const marks = await sendCommand(`map ${map ? map : ""}`);
+
+  if (!marks) return null;
+
+  const commandResult = await whaitForCommandResult({
+    startMark: marks[0],
+    endMark: marks[1],
+    successMark: ghostCommandsMarks.map.success,
+    errorMark: ghostCommandsMarks.map.error,
+  });
+
+  return commandResult;
 };

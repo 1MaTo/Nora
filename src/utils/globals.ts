@@ -16,8 +16,8 @@ export const ghostCmd = {
 };
 
 export const msgDeleteTimeout = {
-  short: 3000,
-  default: 5000,
+  short: 4000,
+  default: 6000,
   long: 10000,
   info: 120000,
 };
@@ -106,5 +106,5 @@ export const ghostCommandsMarks = {
   },
   pub: { success: /creating game/i, error: null },
   unhost: { success: /deleting current game/i, error: null },
-  start: { success: null, error: null },
+  start: { success: /started loading/g, error: null },
 };

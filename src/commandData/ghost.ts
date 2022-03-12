@@ -15,15 +15,7 @@ export const ghostCommand = new SlashCommandBuilder()
     subcommand.setName("unhost").setDescription("Unhost game in lobby")
   )
   .addSubcommand((subcommand) =>
-    subcommand
-      .setName("start")
-      .setDescription("Start game in lobby")
-      .addBooleanOption((option) =>
-        option
-          .setName("force")
-          .setDescription("Skip checks or not")
-          .setRequired(false)
-      )
+    subcommand.setName("start").setDescription("Start game in lobby")
   )
   .addSubcommand((subcommand) =>
     subcommand

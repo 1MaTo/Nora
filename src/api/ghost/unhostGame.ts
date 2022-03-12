@@ -1,22 +1,19 @@
-import { ghostCmd } from "../../utils/globals";
+import { ghostCommandsMarks } from "../../utils/globals";
 import {
-  checkLogsForKeyWords,
-  getChatRows,
   sendCommand,
+  whaitForCommandResult,
 } from "../../utils/requestToGuiServer";
 
 export const unhostGame = async () => {
-  const rows = await getChatRows();
-  const commandSent = sendCommand("unhost");
-  if (!commandSent) return null;
-  const result = await checkLogsForKeyWords(
-    /deleting current game \[.*\]/,
-    rows,
-    ghostCmd.requestInterval,
-    ghostCmd.pendingTimeout
-  );
-  if (result) {
-    return result.match(/ \[.*\]/)[0];
-  }
-  return result;
+  const marks = await sendCommand("unhost");
+
+  if (!marks) return null;
+
+  const commandResult = await whaitForCommandResult({
+    startMark: marks[0],
+    endMark: marks[1],
+    successMark: ghostCommandsMarks.unhost.success,
+  });
+
+  return commandResult;
 };

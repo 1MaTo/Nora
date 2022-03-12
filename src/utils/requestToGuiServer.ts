@@ -6,8 +6,9 @@ import { clearMapUploadsFolder, uploadsMapFolder } from "./downloadFile";
 import { ghostApiTimeout } from "./globals";
 import { log } from "./log";
 import { sleep } from "./sleep";
+import util from "node:util";
 
-const botUrl = /* `http://${ghost.host}:${ghost.port}`; */ `http://127.0.0.1:3000`;
+const botUrl = `http://${ghost.host}:${ghost.port}`; /* `http://127.0.0.1:3000` */
 const chatLogs = `${botUrl}/chat?pass=${ghost.password}`;
 const chatRowsCount = `${botUrl}/checkchat`;
 const commandUrl = (command: string) =>
@@ -76,7 +77,7 @@ export const getCurrentGamesCount = async () => {
   }
 };
 
-const whaitForCommandResult = async ({
+export const whaitForCommandResult = async ({
   startMark,
   endMark,
   successMark,
@@ -86,9 +87,10 @@ const whaitForCommandResult = async ({
   endMark: string;
   successMark: RegExp;
   errorMark?: RegExp;
-}): Promise<null | "error" | "success" | "uknown"> => {
+}): Promise<null | "error" | "success" | "uknown" | "timeout"> => {
   let commandStartMarkExist = false;
   let commandEndMarkExist = false;
+  let commandSuccessMarkExist = false;
   let timeOut = false;
   let requestError = false;
   let logs = [];
@@ -100,22 +102,30 @@ const whaitForCommandResult = async ({
     }
 
     try {
-      logs = [...logs, ...(await getChatLogs())];
+      const newLogs = (await getChatLogs()) || [];
+      logs = [...logs, ...newLogs];
     } catch (err) {
       requestError = true;
       log("[getting ghost command logs] error when getting", err);
       break;
     }
 
+    commandSuccessMarkExist = logs.some((log: string) => successMark.test(log));
     commandStartMarkExist = logs.some((log: string) => log.includes(startMark));
     commandEndMarkExist = logs.some((log: string) => log.includes(endMark));
 
-    await sleep(100);
+    await sleep(200);
   }
 
-  if (timeOut || requestError) return null;
+  if (timeOut && commandSuccessMarkExist) return "success";
+
+  if (timeOut) return "timeout";
+
+  if (requestError) return null;
 
   logs = Array.from(new Set(logs));
+
+  console.log(util.inspect(logs, { maxArrayLength: null }));
 
   if (logs.some((row: string) => successMark.test(row))) {
     return "success";

@@ -5,7 +5,7 @@ import { log } from "./log";
 export const changeBotStatus = async (message: string) => {
   try {
     if (!production) return;
-    await client.user.setActivity(message);
+    client.user.setPresence({ activities: [{ name: message }] });
     return;
   } catch (error) {
     log(error);
