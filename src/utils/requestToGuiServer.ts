@@ -7,7 +7,7 @@ import { ghostApiTimeout } from "./globals";
 import { log } from "./log";
 import { sleep } from "./sleep";
 
-const botUrl = `http://${ghost.host}:${ghost.port}`; /* `http://127.0.0.1:3000`; */
+const botUrl = /* `http://${ghost.host}:${ghost.port}`; */ `http://127.0.0.1:3000`;
 const chatLogs = `${botUrl}/chat?pass=${ghost.password}`;
 const chatRowsCount = `${botUrl}/checkchat`;
 const commandUrl = (command: string) =>
@@ -40,10 +40,18 @@ export const getChatLogs = async (): Promise<Array<string | null>> => {
 
 export const sendCommand = async (command: string) => {
   try {
-    const result = await axios.get(commandUrl(command), {
+    const startMark = `nora start command mark ${Date.now()}`;
+    const endMark = `nora end command mark ${Date.now()}`;
+    await axios.get(commandUrl(startMark), {
       timeout: ghostApiTimeout,
     });
-    return true;
+    await axios.get(commandUrl(command), {
+      timeout: ghostApiTimeout,
+    });
+    await axios.get(commandUrl(endMark), {
+      timeout: ghostApiTimeout,
+    });
+    return [startMark, endMark];
   } catch (error) {
     return null;
   }
@@ -66,6 +74,58 @@ export const getCurrentGamesCount = async () => {
   } catch (error) {
     return 0;
   }
+};
+
+const whaitForCommandResult = async ({
+  startMark,
+  endMark,
+  successMark,
+  errorMark,
+}: {
+  startMark: string;
+  endMark: string;
+  successMark: RegExp;
+  errorMark?: RegExp;
+}): Promise<null | "error" | "success" | "uknown"> => {
+  let commandStartMarkExist = false;
+  let commandEndMarkExist = false;
+  let timeOut = false;
+  let requestError = false;
+  let logs = [];
+  const timeStart = Date.now();
+  while (!commandStartMarkExist || !commandEndMarkExist) {
+    if (Date.now() - timeStart > 1000 * 5) {
+      timeOut = true;
+      break;
+    }
+
+    try {
+      logs = [...logs, ...(await getChatLogs())];
+    } catch (err) {
+      requestError = true;
+      log("[getting ghost command logs] error when getting", err);
+      break;
+    }
+
+    commandStartMarkExist = logs.some((log: string) => log.includes(startMark));
+    commandEndMarkExist = logs.some((log: string) => log.includes(endMark));
+
+    await sleep(100);
+  }
+
+  if (timeOut || requestError) return null;
+
+  logs = Array.from(new Set(logs));
+
+  if (logs.some((row: string) => successMark.test(row))) {
+    return "success";
+  }
+
+  if (errorMark && logs.some((row: string) => errorMark.test(row))) {
+    return "error";
+  }
+
+  return "uknown";
 };
 
 export const checkLogsForKeyWords = async (
@@ -113,19 +173,6 @@ export const uploadMapToGhost = async (configName: string, mapName: string) => {
   );
 
   try {
-    /* const result = await axios.post(`${botUrl}/UPLOAD`, form, {
-      headers: form.getHeaders(),
-      maxBodyLength: Infinity,
-      maxContentLength: Infinity,
-      onUploadProgress: (progressEvent) => {
-        const percentCompleted = Math.round(
-          (progressEvent.loaded * 100) / progressEvent.total
-        );
-        log(`[upload map] ${percentCompleted}`);
-      },
-      timeout: 1000 * 60 * 2,
-    }); */
-
     const submitForm = (form: FormData) => {
       return new Promise((resolve, reject) => {
         form.submit(`${botUrl}/UPLOAD`, async (err, res) => {

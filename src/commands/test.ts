@@ -1,6 +1,11 @@
 import { CacheType, CommandInteraction } from "discord.js";
+import { pubGame } from "../api/ghost/pubGame";
 import testCommand from "../commandData/test";
-import { ownerID } from "../utils/globals";
+import { ghostCommandsMarks, ownerID } from "../utils/globals";
+import { log } from "../utils/log";
+import { getChatLogs, sendCommand } from "../utils/requestToGuiServer";
+import { sleep } from "../utils/sleep";
+import util from "node:util";
 
 module.exports = {
   data: testCommand,
@@ -13,8 +18,12 @@ module.exports = {
 
     await interaction.deferReply();
 
+    const [startMark, endMark] = await sendCommand(`unhost`);
+
+    const logs = await getChatLogs();
+
     await interaction.editReply({
-      content: "Games:",
+      content: "",
     });
     return;
   },

@@ -94,3 +94,17 @@ export const selectMenuId = {
 };
 
 export const ghostGuildBotId = 2;
+
+export const ghostCommandsMarks = {
+  load: {
+    success: /loading MPQ file/i,
+    error: /warning - unable to load MPQ file/i,
+  },
+  map: {
+    success: /loading MPQ file/i,
+    error: /warning - unable to load MPQ file/i,
+  },
+  pub: { success: /creating game/i, error: null },
+  unhost: { success: /deleting current game/i, error: null },
+  start: { success: null, error: null },
+};
