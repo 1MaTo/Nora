@@ -6,7 +6,6 @@ import { clearMapUploadsFolder, uploadsMapFolder } from "./downloadFile";
 import { ghostApiTimeout } from "./globals";
 import { log } from "./log";
 import { sleep } from "./sleep";
-import util from "node:util";
 
 const botUrl = `http://${ghost.host}:${ghost.port}`; /* `http://127.0.0.1:3000` */
 const chatLogs = `${botUrl}/chat?pass=${ghost.password}`;
