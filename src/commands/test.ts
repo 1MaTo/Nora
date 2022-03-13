@@ -1,7 +1,7 @@
 import { CacheType, CommandInteraction } from "discord.js";
+import { pauseLobbyWatcher } from "../api/lobbyWatcher/pauseLobbyWatcher";
 import testCommand from "../commandData/test";
 import { ownerID } from "../utils/globals";
-import { getChatLogs } from "../utils/requestToGuiServer";
 
 module.exports = {
   data: testCommand,
@@ -13,13 +13,11 @@ module.exports = {
       });
 
     await interaction.deferReply();
-    /* 
-    const [startMark, endMark] = await sendCommand(`unhost`); */
 
-    const logs = await getChatLogs();
+    await pauseLobbyWatcher(interaction.guildId, 5000);
 
     await interaction.editReply({
-      content: "",
+      content: "sda",
     });
     return;
   },

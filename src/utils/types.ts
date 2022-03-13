@@ -60,6 +60,7 @@ type lobbyStrings = {
 };
 
 type lobbyWatcherInfo = {
+  paused: boolean;
   startTime: number;
   delay: number;
   guildID: string;
@@ -72,6 +73,7 @@ type lobbyWatcherLobyMessageInfo = {
   messageID: string;
   startTime: number;
   botID: number;
+  lobbyHash: string;
 };
 
 type gamesCountInfo = {

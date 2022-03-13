@@ -15,8 +15,3 @@ export const selectMapConfig = (options: string[], defaultOption?: string) => {
       })
     );
 };
-
-export const loadingMapConfig = new MessageSelectMenu()
-  .setCustomId(selectMenuId.selectMapConfig)
-  .setPlaceholder("Loading config...")
-  .setDisabled(true);

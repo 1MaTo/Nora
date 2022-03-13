@@ -86,7 +86,8 @@ export const commandLogsMaxCount = 50;
 export const buttonId = {
   hostGame: "lobby-watcher_button_host-game",
   unhostGame: "lobby-watcher_button_unhost-game",
-  hostGameAnywhere: "nora_button_host-game",
+  showConfigSelector: "lobby-watcher_button_show-config-selector",
+  startGame: "lobby-watcher_button_start-game",
 };
 
 export const selectMenuId = {

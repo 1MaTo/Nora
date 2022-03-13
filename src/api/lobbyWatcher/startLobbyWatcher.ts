@@ -1,3 +1,6 @@
+import { MessageActionRow } from "discord.js";
+import { hostGameButtonDefault } from "../../components/buttons/hostGame";
+import { showConfigSelectorButtonDefault } from "../../components/buttons/showConfigSelector";
 import { header } from "../../embeds/lobby";
 import { groupsKey, redisKey } from "../../redis/kies";
 import { redis } from "../../redis/redis";
@@ -15,7 +18,13 @@ export const startLobbyWatcher = async (
     const startTime = Date.now();
 
     const headerMsg = await sendResponse(channelID, {
-      embeds: [header(0, getPassedTime(startTime, Date.now()))],
+      embeds: [header(0)],
+      components: [
+        new MessageActionRow().addComponents(
+          hostGameButtonDefault(),
+          showConfigSelectorButtonDefault()
+        ),
+      ],
     });
     const key = redisKey.struct(groupsKey.lobbyWatcher, [guildID]);
 

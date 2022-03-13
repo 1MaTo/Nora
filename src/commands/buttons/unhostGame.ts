@@ -1,12 +1,14 @@
 import { ButtonInteraction, Message, MessageActionRow } from "discord.js";
 import { unhostGame } from "../../api/ghost/unhostGame";
+import { pauseLobbyWatcher } from "../../api/lobbyWatcher/pauseLobbyWatcher";
+import { resumeLobbyWatcher } from "../../api/lobbyWatcher/resumeLobbyWatcher";
 import {
   customErrorGameButton,
   errorGameButton,
   loadingGameButton,
-  unhostSuccessGameButton,
 } from "../../components/buttons/hostGame";
-import { buttonId } from "../../utils/globals";
+import { clearLobbyGame } from "../../db/queries";
+import { buttonId, ghostGuildBotId } from "../../utils/globals";
 
 module.exports = {
   id: buttonId.unhostGame,
@@ -15,17 +17,21 @@ module.exports = {
       components: [new MessageActionRow().addComponents(loadingGameButton)],
     });
 
+    const resumeLobbyKey = await pauseLobbyWatcher(interaction.guildId, 10000);
+
     const result = await unhostGame();
 
     switch (result) {
       case "success":
       case "timeout":
-        await (interaction.message as Message).edit({
+        await clearLobbyGame(ghostGuildBotId);
+        await (interaction.message as Message).delete();
+        /* await (interaction.message as Message).edit({
           components: [
             new MessageActionRow().addComponents(unhostSuccessGameButton),
           ],
-        });
-        return;
+        }); */
+        break;
       case "error":
       case "uknown":
         await (interaction.message as Message).edit({
@@ -35,12 +41,15 @@ module.exports = {
             ),
           ],
         });
-        return;
+        break;
       case null:
         await (interaction.message as Message).edit({
           components: [new MessageActionRow().addComponents(errorGameButton)],
         });
-        return;
+        break;
     }
+
+    await resumeLobbyWatcher(interaction.guildId);
+    clearTimeout(resumeLobbyKey);
   },
 };

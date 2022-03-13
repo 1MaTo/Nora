@@ -328,7 +328,7 @@ export const getPlayersMMDStats = async (
   });
 };
 
-export const clearLobbyGame = (botid: number) => {
+export const clearLobbyGame = async (botid: number) => {
   const query = `UPDATE gamelist
                 SET
                   gamename = "",
@@ -341,5 +341,21 @@ export const clearLobbyGame = (botid: number) => {
                   totalgames = ${0},
                   totalplayers = ${0}
                 WHERE botid = ${botid};`;
-  makeQuery(query);
+  await makeQuery(query);
+};
+
+export const createLobbyGame = async (botid: number) => {
+  const query = `UPDATE gamelist
+                SET
+                  gamename = "res publica game",
+                  ownername = "replica",
+                  creatorname ="replica",
+                  map = "temp_map_name.w3x",
+                  slotstaken = ${0},
+                  slotstotal = ${1},
+                  usernames = "",
+                  totalgames = ${1},
+                  totalplayers = ${0}
+                WHERE botid = ${botid};`;
+  await makeQuery(query);
 };
