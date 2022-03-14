@@ -6,7 +6,16 @@ import { makeQuery } from "./mysql";
 
 export const getLobbyList = async (): Promise<Array<lobbyGame>> | null => {
   const query = `SELECT * from gamelist`;
-  return await makeQuery(query);
+  const result = await makeQuery(query);
+
+  if (!result) return null;
+
+  const lobbyList = result.filter(
+    (game: lobbyGame) =>
+      game.gamename !== "" || game.ownername !== "" || game.creatorname !== ""
+  );
+
+  return lobbyList.length === 0 ? null : lobbyList;
 };
 
 export const getPlayerWinrateForLobbyWatcher = async (
