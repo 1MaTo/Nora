@@ -6,6 +6,7 @@ import { logButtonCommand } from "./logCmd";
 export const listenButtons = () =>
   client.on("interactionCreate", async (interaction) => {
     if (production && interaction.guildId !== guildIDs.ghostGuild) return;
+    if (!production && interaction.guildId !== guildIDs.debugGuild) return;
 
     if (!interaction.isButton()) return;
 
