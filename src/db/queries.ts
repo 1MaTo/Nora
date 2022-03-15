@@ -15,7 +15,7 @@ export const getLobbyList = async (): Promise<Array<lobbyGame>> | null => {
       game.gamename !== "" || game.ownername !== "" || game.creatorname !== ""
   );
 
-  return lobbyList.length === 0 ? null : lobbyList;
+  return lobbyList;
 };
 
 export const getPlayerWinrateForLobbyWatcher = async (
