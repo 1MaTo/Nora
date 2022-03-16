@@ -21,8 +21,6 @@ import { log } from "../../utils/log";
 module.exports = {
   id: selectMenuId.selectMapConfigWatcherHub,
   async execute(interaction: SelectMenuInteraction) {
-    const resumeLobbyKey = await pauseLobbyWatcher(interaction.guildId, 10000);
-
     const message = interaction.message as Message;
     const selectMenu = message.resolveComponent(
       selectMenuId.selectMapConfigWatcherHub
@@ -46,6 +44,8 @@ module.exports = {
         ),
       ],
     });
+
+    const resumeLobbyKey = await pauseLobbyWatcher(interaction.guildId, 10000);
 
     const result = await loadMapFromFile(interaction.values[0]);
 
