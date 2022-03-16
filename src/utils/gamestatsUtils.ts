@@ -1,7 +1,7 @@
 import { getGamesDataByIds } from "../db/queries";
 import { gameStatsResults } from "../embeds/gameStats";
 import { sendResponse } from "./discordMessage";
-import { botStatusInfo } from "./events";
+import { botEvents } from "./events";
 import { botStatusVariables } from "./globals";
 import { searchMapConfigByMapName } from "./mapConfig";
 
@@ -27,9 +27,9 @@ const sendGameResult = async (
 ) => {
   if (botStatusVariables.gameCount > 0) {
     botStatusVariables.gameCount -= 1;
-    botStatusInfo.emit(botEvent.update);
+    botEvents.emit(botEvent.update);
   }
   await sendResponse(channelID, {
-    embed: gameStatsResults(gameData),
+    embeds: [gameStatsResults(gameData) as any],
   });
 };

@@ -39,9 +39,11 @@ export const lobbyGame = (data: lobbyInfo<lobbyStrings>) => {
   };
 };
 
-export const header = (gameCount: number) => {
+export const header = (gameCount: number, lastLoadedMap?: string) => {
   return {
-    description: `※ **${gameCount}** *active lobby*`,
+    description: `※ Lobby: **${gameCount}**\n※ Current map: **${
+      lastLoadedMap || "..."
+    }**`,
     color: null,
   };
 };

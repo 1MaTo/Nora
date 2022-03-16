@@ -5,7 +5,7 @@ import {
 } from "../../utils/requestToGuiServer";
 
 export const startGame = async (force: boolean) => {
-  const marks = await sendCommand(`start ${force ? "force" : ""}`);
+  const marks = await sendCommand(`start ${force ? "force" : ""}`, 1000);
 
   if (!marks) return null;
 

@@ -1,7 +1,7 @@
 import { getFinishedGamesId, getLobbyList } from "../db/queries";
 import { groupsKey, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
-import { botStatusInfo } from "./events";
+import { botEvents } from "./events";
 import { collectGamesData } from "./gamestatsUtils";
 import { botStatusVariables } from "./globals";
 import { getChatRows, getCurrentGamesCount } from "./requestToGuiServer";
@@ -43,7 +43,7 @@ export const ghostStatusUpdater = async () => {
   const changedState = botStatusVariables.ghost !== Boolean(rows);
   if (changedState) {
     botStatusVariables.ghost = Boolean(rows);
-    botStatusInfo.emit(botEvent.update);
+    botEvents.emit(botEvent.update);
   }
   setTimeout(() => ghostStatusUpdater(), 5000);
 };
@@ -62,7 +62,7 @@ export const lobbyStatusUpdater = async () => {
 
   if (changedState) {
     botStatusVariables.lobbyCount = games.length;
-    botStatusInfo.emit(botEvent.update);
+    botEvents.emit(botEvent.update);
   }
   setTimeout(() => lobbyStatusUpdater(), 5000);
 };
@@ -73,7 +73,7 @@ export const gamesStatusUpdater = async (delay: number) => {
   botStatusVariables.gameCount = gameCount;
 
   if (gameCount !== botStatusVariables.gameCount)
-    botStatusInfo.emit(botEvent.update);
+    botEvents.emit(botEvent.update);
 
   setTimeout(() => gamesStatusUpdater(delay), delay);
 };

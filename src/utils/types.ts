@@ -59,14 +59,44 @@ type lobbyStrings = {
   };
 };
 
+type lobbyWatcherUpdateInfo = {
+  forceUpdate?: boolean;
+  lastLoadedMap?: string;
+  nextExecuteKey?: number;
+  pauseKey?: number;
+  paused?: boolean;
+  botid?: number;
+  delay?: number;
+  guildID?: string;
+  channelID?: string;
+  headerID?: string | undefined;
+  activeLobbyCount?: number;
+
+  lobbysID?: lobbyWatcherLobyMessageInfo[];
+  startTime?: number;
+};
+
 type lobbyWatcherInfo = {
+  forceUpdate?: boolean;
+  lastLoadedMap?: string;
   paused: boolean;
-  startTime: number;
+  botid: number;
   delay: number;
   guildID: string;
   channelID: string;
   headerID: string | undefined;
-  lobbysID: Array<lobbyWatcherLobyMessageInfo>;
+  activeLobbyCount: number;
+
+  lobbysID: lobbyWatcherLobyMessageInfo[];
+  startTime: number;
+};
+
+type lobbyGameWatcherInfo = {
+  paused: boolean;
+  msgId: string;
+  botid: number;
+  delay: number;
+  lobbyHash: string;
 };
 
 type lobbyWatcherLobyMessageInfo = {
@@ -100,6 +130,8 @@ type gamesCountVersions = {
 
 const enum botEvent {
   update = "update",
+  lobbyWatcherConfigLoaded = "lobby-watcher-config-loaded",
+  lobbyWatcherConfigError = "lobby-watcher-config-error",
 }
 
 const enum optionLobbyField {

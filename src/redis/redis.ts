@@ -15,6 +15,7 @@ const getObj = promisify(client.get).bind(client);
 const setObj = promisify(client.set).bind(client);
 const mgetObj = promisify(client.mget).bind(client);
 const scan = promisify(client.scan).bind(client);
+const delObj = promisify(client.del).bind(client);
 
 export const redis = {
   get: async (key: string) => {
@@ -35,7 +36,14 @@ export const redis = {
   },
   mget: async (kies: string) =>
     (await mgetObj(kies)).map((object: any) => JSON.parse(object)),
-  del: promisify(client.del).bind(client),
+  del: async (key: string | string[]) => {
+    try {
+      return await delObj(key);
+    } catch (error) {
+      log("[redis] cant delete item");
+      return undefined;
+    }
+  },
   exist: promisify(client.exists).bind(client),
   scanForPattern: async (pattern: string): Promise<Array<string> | null> => {
     let cursor = "0";

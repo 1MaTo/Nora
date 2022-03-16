@@ -61,33 +61,29 @@ export const getPlayersTableFromRawString = async (
     });
   });
 
-  const lobby = playersArray.map(
-    (player): lobbyTable => {
-      //  If title, just return w/o editing
-      if (player.ping === SPACE) {
-        return player;
-      }
-
-      //  Change ping
-      const ping =
-        player.ping === EMPTY_LOBBY_DEFAULT
-          ? EMPTY_LOBBY_DEFAULT
-          : player.ping + "ms";
-
-      //  Change username
-      const name =
-        player.name === EMPTY_LOBBY_DEFAULT
-          ? EMPTY_LOBBY_USER_NAME
-          : player.name;
-
-      const winrate =
-        player.winrate === EMPTY_LOBBY_DEFAULT
-          ? EMPTY_LOBBY_DEFAULT
-          : `${player.winrate}`;
-
-      return { ...player, ping, name, winrate };
+  const lobby = playersArray.map((player): lobbyTable => {
+    //  If title, just return w/o editing
+    if (player.ping === SPACE) {
+      return player;
     }
-  );
+
+    //  Change ping
+    const ping =
+      player.ping === EMPTY_LOBBY_DEFAULT
+        ? EMPTY_LOBBY_DEFAULT
+        : player.ping + "ms";
+
+    //  Change username
+    const name =
+      player.name === EMPTY_LOBBY_DEFAULT ? EMPTY_LOBBY_USER_NAME : player.name;
+
+    const winrate =
+      player.winrate === EMPTY_LOBBY_DEFAULT
+        ? EMPTY_LOBBY_DEFAULT
+        : `${player.winrate}`;
+
+    return { ...player, ping, name, winrate };
+  });
 
   return lobby;
 };
@@ -173,4 +169,18 @@ export const getCurrentLobbies = async (guildID: string) => {
     )
   ).filter((lobby) => lobby !== null);
   return lobbies;
+};
+
+export const getCurrentLobby = async (guildID: string, botid: number) => {
+  const rawGames = await getLobbyList(botid);
+
+  if (!rawGames) return undefined;
+
+  const rawGame = rawGames.find((game) => game.botid === botid);
+
+  if (!rawGame) return null;
+
+  const lobby = await getFullLobbyInfo(guildID, rawGame);
+
+  return lobby;
 };

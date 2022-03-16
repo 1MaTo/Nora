@@ -26,6 +26,12 @@ export const lobbyCommand = new SlashCommandBuilder()
           .addChoice("4 seconds", 4000)
           .addChoice("5 seconds", 5000)
       )
+      .addBooleanOption((option) =>
+        option
+          .setName("check")
+          .setDescription("check all bots in database")
+          .setRequired(false)
+      )
   )
   .addSubcommand((command) =>
     command.setName("stop").setDescription("stop lobby watcher")

@@ -1,55 +1,55 @@
 import { MessageButton, MessageButtonStyleResolvable } from "discord.js";
 import { buttonId } from "../../utils/globals";
 
-export type ShowConfigSelectorButtonProps = {
+export type UnhostGameButtonProps = {
   label?: string;
   style?: MessageButtonStyleResolvable;
   disabled?: boolean;
 };
 
-export const showConfigSelectorButtonDefault = ({
+export const unhostGameButtonDefault = ({
   label,
   style,
   disabled,
-}: ShowConfigSelectorButtonProps = {}) => {
+}: UnhostGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.showConfigSelector)
-    .setLabel(label || "Show config loader")
-    .setStyle(style || "PRIMARY")
+    .setCustomId(buttonId.unhostGame)
+    .setLabel(label || "Unhost game")
+    .setStyle(style || "DANGER")
     .setDisabled(disabled || false);
 };
 
-export const showConfigSelectorButtonLoading = ({
+export const unhostGameButtonLoading = ({
   label,
   style,
   disabled,
-}: ShowConfigSelectorButtonProps = {}) => {
+}: UnhostGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.showConfigSelector)
+    .setCustomId(buttonId.unhostGame)
     .setLabel(label || "Loading...")
     .setStyle(style || "SECONDARY")
     .setDisabled(disabled || true);
 };
 
-export const showConfigSelectorButtonSuccess = ({
+export const unhostGameButtonSuccess = ({
   label,
   style,
   disabled,
-}: ShowConfigSelectorButtonProps = {}) => {
+}: UnhostGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.showConfigSelector)
-    .setLabel(label || "Config loaded")
+    .setCustomId(buttonId.unhostGame)
+    .setLabel(label || "Game unhosted")
     .setStyle(style || "SUCCESS")
     .setDisabled(disabled || true);
 };
 
-export const showConfigSelectorButtonError = ({
+export const unhostGameButtonError = ({
   label,
   style,
   disabled,
-}: ShowConfigSelectorButtonProps = {}) => {
+}: UnhostGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.showConfigSelector)
+    .setCustomId(buttonId.unhostGame)
     .setLabel(label || "Network error")
     .setStyle(style || "DANGER")
     .setDisabled(disabled || true);

@@ -1,7 +1,7 @@
 import { CacheType, CommandInteraction } from "discord.js";
 import { error, success, warning } from "../../../embeds/response";
 import { editReply } from "../../../utils/discordMessage";
-import { botStatusInfo } from "../../../utils/events";
+import { botEvents } from "../../../utils/events";
 import { botStatusVariables, msgDeleteTimeout } from "../../../utils/globals";
 import { getCurrentLobbies } from "../../../utils/lobbyParser";
 import { pingUsersOnStart } from "../../../utils/notifications";
@@ -29,7 +29,7 @@ export const start = async (interaction: CommandInteraction<CacheType>) => {
     case "error":
     case "uknown":
       botStatusVariables.gameCount = botStatusVariables.gameCount + 1;
-      botStatusInfo.emit(botEvent.update);
+      botEvents.emit(botEvent.update);
 
       const game = games.find(
         (game) => game.gamename == result.replace(/[\[\]]/g, "")

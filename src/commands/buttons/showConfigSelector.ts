@@ -15,16 +15,24 @@ import { getConfigListFromGhost } from "../../utils/requestToGuiServer";
 module.exports = {
   id: buttonId.showConfigSelector,
   async execute(interaction: ButtonInteraction) {
+    const hostButtonPrev = (interaction.message as Message).resolveComponent(
+      buttonId.hostGame
+    );
+
+    const currentHostButton = hostButtonPrev
+      ? hostButtonPrev.setDisabled(true)
+      : hostGameButtonDefault({ disabled: true });
+
     await interaction.update({
       components: [
         new MessageActionRow().addComponents(
-          hostGameButtonDefault({ disabled: true }),
+          currentHostButton,
           showConfigSelectorButtonLoading()
         ),
       ],
     });
 
-    const resumeLobbyKey = await pauseLobbyWatcher(interaction.guildId, 10000);
+    const resumeLobbyKey = await pauseLobbyWatcher(interaction.guildId, 5000);
 
     const games = await getCurrentLobbies(interaction.guildId);
 
@@ -33,7 +41,7 @@ module.exports = {
       await (interaction.message as Message).edit({
         components: [
           new MessageActionRow().addComponents(
-            hostGameButtonDefault({ disabled: true }),
+            currentHostButton,
             showConfigSelectorButtonError({
               label: "Cant load config when lobby exist",
               disabled: true,
@@ -54,7 +62,7 @@ module.exports = {
       (interaction.message as Message).edit({
         components: [
           new MessageActionRow().addComponents(
-            hostGameButtonDefault({ disabled: true }),
+            currentHostButton,
             showConfigSelectorButtonError({
               label: "Network error",
               disabled: true,
@@ -73,7 +81,7 @@ module.exports = {
       (interaction.message as Message).edit({
         components: [
           new MessageActionRow().addComponents(
-            hostGameButtonDefault({ disabled: true }),
+            currentHostButton,
             showConfigSelectorButtonError({
               label: "No configs found",
               disabled: true,
@@ -91,7 +99,7 @@ module.exports = {
     (interaction.message as Message).edit({
       components: [
         new MessageActionRow().addComponents(
-          hostGameButtonDefault({ disabled: true }),
+          currentHostButton,
           showConfigSelectorButtonLoading({
             disabled: true,
             label: "Selecting map...",

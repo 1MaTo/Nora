@@ -15,7 +15,7 @@ export const mapConfigSelectorDefault = ({
   disabled,
 }: MapConfigSelectorProps) => {
   return new MessageSelectMenu()
-    .setCustomId(selectMenuId.selectMapConfig)
+    .setCustomId(selectMenuId.selectMapConfigWatcherHub)
     .setPlaceholder(placeholder || "Select map config")
     .setDisabled(disabled || false)
     .addOptions(
@@ -36,7 +36,7 @@ export const mapConfigSelectorLoading = ({
   disabled,
 }: MapConfigSelectorProps) => {
   return new MessageSelectMenu()
-    .setCustomId(selectMenuId.selectMapConfig)
+    .setCustomId(selectMenuId.selectMapConfigWatcherHub)
     .setPlaceholder(placeholder || "Loading map...")
     .setDisabled(disabled || true)
     .addOptions(
@@ -57,7 +57,7 @@ export const mapConfigSelectorSuccess = ({
   disabled,
 }: MapConfigSelectorProps) => {
   return new MessageSelectMenu()
-    .setCustomId(selectMenuId.selectMapConfig)
+    .setCustomId(selectMenuId.selectMapConfigWatcherHub)
     .setPlaceholder(placeholder || "Map loaded")
     .setDisabled(disabled || true)
     .addOptions(
@@ -78,7 +78,7 @@ export const mapConfigSelectorError = ({
   disabled,
 }: MapConfigSelectorProps) => {
   return new MessageSelectMenu()
-    .setCustomId(selectMenuId.selectMapConfig)
+    .setCustomId(selectMenuId.selectMapConfigWatcherHub)
     .setPlaceholder(placeholder || "Network error")
     .setDisabled(disabled || true)
     .addOptions(

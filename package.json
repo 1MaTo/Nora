@@ -28,6 +28,7 @@
   },
   "scripts": {
     "start": "npm run build && cross-env NODE_ENV=development node build/bot.js",
+    "start_debug-ghost": "npm run build && cross-env NODE_ENV=development BOT_ID=228 node build/bot.js",
     "start_prod": "npm run build && cross-env NODE_ENV=production node build/bot.js",
     "start_prod_logs": "npm run build && cross-env NODE_ENV=production LOGS=true node build/bot.js",
     "build": "npm run clear_build && tsc",

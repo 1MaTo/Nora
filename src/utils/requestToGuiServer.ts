@@ -7,7 +7,7 @@ import { ghostApiTimeout } from "./globals";
 import { log } from "./log";
 import { sleep } from "./sleep";
 
-const botUrl = `http://${ghost.host}:${ghost.port}`; /* `http://127.0.0.1:3000`; */
+const botUrl = /* `http://${ghost.host}:${ghost.port}`; */ `http://127.0.0.1:3000`;
 const chatLogs = `${botUrl}/chat?pass=${ghost.password}`;
 const chatRowsCount = `${botUrl}/checkchat`;
 const commandUrl = (command: string) =>
@@ -38,7 +38,7 @@ export const getChatLogs = async (): Promise<Array<string | null>> => {
   }
 };
 
-export const sendCommand = async (command: string) => {
+export const sendCommand = async (command: string, delayEndMark?: number) => {
   try {
     const startMark = `nora start command mark ${Date.now()}`;
     const endMark = `nora end command mark ${Date.now()}`;
@@ -48,6 +48,9 @@ export const sendCommand = async (command: string) => {
     await axios.get(commandUrl(command), {
       timeout: ghostApiTimeout,
     });
+
+    delayEndMark && (await sleep(delayEndMark));
+
     await axios.get(commandUrl(endMark), {
       timeout: ghostApiTimeout,
     });

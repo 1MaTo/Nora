@@ -27,6 +27,7 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
 
     // EXIT FROM LOOP, LOBBY WATCHER STOPED
     if (!settings) {
+      log("[lobby watcher] deleted");
       return;
     }
 
@@ -140,7 +141,7 @@ export const lobbyWatcherUpdater = async (guildID: string) => {
 
           // IF LOBBY PENDING 5+ HOURS, DELETE THIS LOBBY FROM DB
           if (Date.now() - existMsg.startTime > 1000 * 60 * 60 * 5) {
-            await clearLobbyGame(game.botid);
+            await clearLobbyGame(ghostGuildBotId);
           }
 
           const lobbyMsgContent = {

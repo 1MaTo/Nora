@@ -1,3 +1,5 @@
+import { Collection } from "discord.js";
+
 export const production: boolean = process.env.NODE_ENV === "production";
 export const withLogs: boolean = process.env.LOGS === "true";
 
@@ -92,9 +94,10 @@ export const buttonId = {
 
 export const selectMenuId = {
   selectMapConfig: "ghost_select_load-map-config",
+  selectMapConfigWatcherHub: "lobby-watcher_select_load-map-config",
 };
 
-export const ghostGuildBotId = 2;
+export const ghostGuildBotId = parseInt(process.env.BOT_ID) || 2;
 
 export const ghostCommandsMarks = {
   load: {
@@ -109,3 +112,8 @@ export const ghostCommandsMarks = {
   unhost: { success: /deleting current game/i, error: null },
   start: { success: /started loading/g, error: null },
 };
+
+export const timeOutKeys = new Collection<
+  "lobby-watcher-pause",
+  NodeJS.Timeout
+>();

@@ -1,10 +1,13 @@
+import { production } from "../utils/globals";
 import { parseMapName } from "../utils/lobbyParser";
 import { log } from "../utils/log";
 import { searchMapConfigByMapName } from "../utils/mapConfig";
 import { uniqueFromArray } from "../utils/uniqueFromArray";
 import { makeQuery } from "./mysql";
 
-export const getLobbyList = async (): Promise<Array<lobbyGame>> | null => {
+export const getLobbyList = async (
+  botid?: number
+): Promise<Array<lobbyGame>> | null => {
   const query = `SELECT * from gamelist`;
   const result = await makeQuery(query);
 
@@ -12,7 +15,10 @@ export const getLobbyList = async (): Promise<Array<lobbyGame>> | null => {
 
   const lobbyList = result.filter(
     (game: lobbyGame) =>
-      game.gamename !== "" || game.ownername !== "" || game.creatorname !== ""
+      (game.gamename !== "" ||
+        game.ownername !== "" ||
+        game.creatorname !== "") &&
+      (botid ? botid === game.botid : true)
   );
 
   return lobbyList;
@@ -353,13 +359,14 @@ export const clearLobbyGame = async (botid: number) => {
   await makeQuery(query);
 };
 
-export const createLobbyGame = async (botid: number) => {
+export const createLobbyGame = async (botid: number, mapName?: string) => {
+  const fullMapName = mapName ? mapName + ".w3x" : "Creating game...";
   const query = `UPDATE gamelist
                 SET
-                  gamename = "res publica game",
+                  gamename = "${production ? "res publica game" : "test"}",
                   ownername = "replica",
                   creatorname ="replica",
-                  map = "temp_map_name.w3x",
+                  map = "${fullMapName || "Creating game..."}",
                   slotstaken = ${0},
                   slotstotal = ${1},
                   usernames = "",

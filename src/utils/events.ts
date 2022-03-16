@@ -1,8 +1,24 @@
+import { Message } from "discord.js";
 import EventEmitter from "events";
+import { resetCommandHubState } from "../api/lobbyWatcher/resetCommandHubState";
 import { updateStatusInfo } from "./botStatus";
 
-export const botStatusInfo = new EventEmitter();
+export const botEvents = new EventEmitter();
 
-botStatusInfo.on(botEvent.update, async () => {
+botEvents.on(botEvent.update, async () => {
   await updateStatusInfo();
 });
+
+botEvents.on(
+  botEvent.lobbyWatcherConfigLoaded,
+  async (
+    message: Message,
+    delay: number,
+    config?: {
+      result: "success" | "error";
+      text?: string;
+    }
+  ) => {
+    await resetCommandHubState(message, delay, config);
+  }
+);
