@@ -31,6 +31,7 @@
     "start_debug-ghost": "npm run build && cross-env NODE_ENV=development BOT_ID=228 node build/bot.js",
     "start_prod": "npm run build && cross-env NODE_ENV=production node build/bot.js",
     "start_prod_logs": "npm run build && cross-env NODE_ENV=production LOGS=true node build/bot.js",
+    "remove_unused_import": "tslint --config tslint-imports.json --fix --project .",
     "build": "npm run clear_build && tsc",
     "clear_build": "shx rm -rf build/",
     "get_build": "git fetch origin && git reset --hard origin/build && npm run copy_auth",
