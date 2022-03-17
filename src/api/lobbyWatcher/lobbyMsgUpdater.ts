@@ -1,4 +1,3 @@
-
 import { MessageActionRow, MessageButton } from "discord.js";
 import md5 from "md5";
 import { startGameButtonDefault } from "../../components/buttons/startGame";
@@ -168,6 +167,8 @@ const getGameParams = async (
       : optionLobbyField.server;
 
   const parsedPlayers = playersLobbyToString(game.players, optionField);
+
+  log("[lobby watcher msg updater]", game);
 
   const parsedGame = {
     ...game,
