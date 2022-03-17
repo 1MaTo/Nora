@@ -11,7 +11,6 @@ import { selectMenuId } from "../../utils/globals";
 import { log } from "../../utils/log";
 import { runNewLobbies } from "../../utils/runNewLobbies";
 import { getCommandHubState } from "./getCurrentCommandHub";
-import { updateLobbyWatcherSettings } from "./settingsApi";
 
 export const headerMsgUpdater = async (guildID: string, delay: number) => {
   const key = redisKey.struct(groupsKey.lobbyWatcher, [guildID]);

@@ -1,14 +1,8 @@
-import { MessageActionRow } from "discord.js";
-import { hostGameButtonDefault } from "../../components/buttons/hostGame";
-import { showConfigSelectorButtonDefault } from "../../components/buttons/showConfigSelector";
-import { header } from "../../embeds/lobby";
+
 import { groupsKey, redisKey } from "../../redis/kies";
 import { redis } from "../../redis/redis";
-import { sendResponse } from "../../utils/discordMessage";
 import { log } from "../../utils/log";
-import { getPassedTime } from "../../utils/timePassed";
 import { headerMsgUpdater } from "./headerMsgUpdater";
-import { lobbyWatcherUpdater } from "./lobbyWatcherUpdater";
 
 export const startLobbyWatcher = async (
   guildID: string,

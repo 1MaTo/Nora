@@ -5,7 +5,6 @@ import { groupsKey, redisKey } from "../../../redis/kies";
 import { redis } from "../../../redis/redis";
 import { editReply } from "../../../utils/discordMessage";
 import { msgDeleteTimeout } from "../../../utils/globals";
-import { log } from "../../../utils/log";
 import { getGroupedGamesWithConfig } from "../../stats/getGroupedGamesWithConfig";
 import { getTotalGamesStats } from "../../stats/getTotalGamesStats";
 

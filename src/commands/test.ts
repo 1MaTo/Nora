@@ -1,11 +1,7 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { pauseLobbyWatcher } from "../api/lobbyWatcher/pauseLobbyWatcher";
 import testCommand from "../commandData/test";
 import { clearLobbyGame } from "../db/queries";
-import { groupsKey, redisKey } from "../redis/kies";
-import { redis } from "../redis/redis";
 import { ownerID } from "../utils/globals";
-import { log } from "../utils/log";
 
 module.exports = {
   data: testCommand,

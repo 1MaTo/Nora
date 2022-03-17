@@ -1,7 +1,6 @@
-import { ButtonComponent } from "@discordjs/builders";
-import { Message, MessageActionRow, MessageButton } from "discord.js";
+
+import { MessageActionRow, MessageButton } from "discord.js";
 import md5 from "md5";
-import { unhostGameButton } from "../../components/buttons/hostGame";
 import { startGameButtonDefault } from "../../components/buttons/startGame";
 import { unhostGameButtonDefault } from "../../components/buttons/unhostGame";
 import { lobbyGame } from "../../embeds/lobby";

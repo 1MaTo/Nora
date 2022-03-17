@@ -61,13 +61,13 @@ client.once("ready", async () => {
 
   await clearRedisOnStart();
 
+  const lwCount = await restartLobbyWatcher();
+
   if (production) {
     // Restart lobby watchers
     await changeBotStatus("☀ Just woke up");
 
     await sleep(2000);
-
-    const lwCount = await restartLobbyWatcher();
     const gsCount = await restartGamestats();
 
     // Check for ghost status (available or no)

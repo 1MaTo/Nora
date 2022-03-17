@@ -1,6 +1,5 @@
 import { getWinrateColor } from "../utils/colorParsers";
 import { SPACE } from "../utils/lobbyParser";
-import { log } from "../utils/log";
 import { fillSpaces } from "../utils/stringDecorations";
 
 export const totalGamesForNickname = (

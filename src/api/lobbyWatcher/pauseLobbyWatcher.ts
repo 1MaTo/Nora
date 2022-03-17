@@ -1,5 +1,4 @@
-import { groupsKey, redisKey } from "../../redis/kies";
-import { redis } from "../../redis/redis";
+
 import { timeOutKeys } from "../../utils/globals";
 import { sleep } from "../../utils/sleep";
 import { resumeLobbyWatcher } from "./resumeLobbyWatcher";

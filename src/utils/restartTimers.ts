@@ -1,6 +1,9 @@
-import { lobbyWatcherUpdater } from "../api/lobbyWatcher/lobbyWatcherUpdater";
+import { headerMsgUpdater } from "../api/lobbyWatcher/headerMsgUpdater";
+import { getLobbyWatcherSettings } from "../api/lobbyWatcher/settingsApi";
 import { groupsKey, keyDivider, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
+import { guildIDs, production } from "./globals";
+import { log } from "./log";
 import { gamestatsUpdater } from "./timerFuncs";
 
 export const restartLobbyWatcher = async () => {
@@ -8,10 +11,16 @@ export const restartLobbyWatcher = async () => {
     `${groupsKey.lobbyWatcher}${keyDivider}*`
   );
   lobbyWatcherKeys &&
-    lobbyWatcherKeys.map((key) => {
-      const guildID = redisKey.destruct(key);
-      lobbyWatcherUpdater(guildID[0]);
-    });
+    (await Promise.all(
+      lobbyWatcherKeys.map(async (key) => {
+        const keys = redisKey.destruct(key);
+        const settings = await getLobbyWatcherSettings(keys[0]);
+        if (!settings) return;
+        if (!production && keys[0] !== guildIDs.debugGuild) return;
+        log("[restart lobby watcher] starting lobby watcher");
+        headerMsgUpdater(keys[0], settings.delay);
+      })
+    ));
 
   return lobbyWatcherKeys ? lobbyWatcherKeys.length : 0;
 };

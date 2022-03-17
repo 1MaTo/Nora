@@ -1,6 +1,5 @@
 import { getLobbyList, getPlayerWinrateForLobbyWatcher } from "../db/queries";
 import { optionLobbyFieldToTitle } from "./globals";
-import { log } from "./log";
 import { searchMapConfigByMapName } from "./mapConfig";
 
 export const EMPTY_LOBBY_USER_NAME = "open";

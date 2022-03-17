@@ -9,7 +9,6 @@ import {
   startGameButtonSuccess,
 } from "../../components/buttons/startGame";
 import { unhostGameButtonDefault } from "../../components/buttons/unhostGame";
-import { clearLobbyGame } from "../../db/queries";
 import { botEvents } from "../../utils/events";
 import { botStatusVariables, buttonId } from "../../utils/globals";
 import { getCurrentLobbies } from "../../utils/lobbyParser";

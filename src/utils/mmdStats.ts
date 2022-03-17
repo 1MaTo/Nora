@@ -4,7 +4,6 @@ import {
   getGroupedGamesByGameid,
   getPlayersMMDStats,
 } from "../db/queries";
-import { log } from "./log";
 
 export const getParsedGamesStats = async (nickname: string = null) => {
   const games = new Map();
