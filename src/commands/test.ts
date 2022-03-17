@@ -14,14 +14,6 @@ module.exports = {
 
     await interaction.deferReply();
 
-    /* const key = redisKey.struct(groupsKey.lobbyGameWatcher, [
-      interaction.guildId,
-      interaction.channelId,
-      "2",
-    ]);
-    const lobbyGameWatcher = await redis.get(key);
-    log(lobbyGameWatcher); */
-
     clearLobbyGame(2);
 
     await interaction.editReply({

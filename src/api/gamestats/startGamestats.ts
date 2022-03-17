@@ -20,18 +20,8 @@ export const startGamestats = async (
     await redis.set(key, settings);
     setTimeout(() => gamestatsUpdater(settings.guildID), delay);
     return true;
-    /* await sendResponse(
-        channelID,
-        { embed: success("Gamestats started") },
-        msgDeleteTimeout.default 
-      );*/
   } catch (error) {
     log(error);
-    /* await sendResponse(
-      channelID,
-      { embed: error("Gamestats start error") },
-      msgDeleteTimeout.default
-    ); */
     return false;
   }
 };

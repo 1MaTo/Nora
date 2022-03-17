@@ -98,7 +98,4 @@ export const headerMsgUpdater = async (guildID: string, delay: number) => {
 
 const goToNextUpdate = (guildID: string, delay: number) => {
   setTimeout(() => headerMsgUpdater(guildID, delay), delay);
-  /* updateLobbyWatcherSettings(guildID, {
-    nextExecuteKey: parseInt(execKey as any),
-  }); */
 };

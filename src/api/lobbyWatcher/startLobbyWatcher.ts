@@ -1,4 +1,3 @@
-
 import { groupsKey, redisKey } from "../../redis/kies";
 import { redis } from "../../redis/redis";
 import { log } from "../../utils/log";
@@ -11,18 +10,6 @@ export const startLobbyWatcher = async (
   botid?: number
 ) => {
   try {
-    //const startTime = Date.now();
-
-    /* const headerMsg = await sendResponse(channelID, {
-      embeds: [header(0)],
-      components: [
-        new MessageActionRow().addComponents(
-          hostGameButtonDefault(),
-          showConfigSelectorButtonDefault()
-        ),
-      ],
-    }); */
-
     const key = redisKey.struct(groupsKey.lobbyWatcher, [guildID]);
 
     const result = await redis.set(key, {
