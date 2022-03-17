@@ -1,4 +1,4 @@
-# Nora is discord bot, created to control remote [ghost client](https://w3gh.ru/)
+# Discord bot, created to control remote [ghost client](https://w3gh.ru/)
 
 ### What is [ghost](https://w3gh.ru/)?
 Tool for creating own host-bots in Warcraft 3
