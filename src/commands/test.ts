@@ -1,7 +1,7 @@
 import { CacheType, CommandInteraction } from "discord.js";
 import testCommand from "../commandData/test";
+import { clearLobbyGame } from "../db/queries";
 import { ownerID } from "../utils/globals";
-import { getChatLogs } from "../utils/requestToGuiServer";
 
 module.exports = {
   data: testCommand,
@@ -13,13 +13,11 @@ module.exports = {
       });
 
     await interaction.deferReply();
-    /* 
-    const [startMark, endMark] = await sendCommand(`unhost`); */
 
-    const logs = await getChatLogs();
+    clearLobbyGame(2);
 
     await interaction.editReply({
-      content: "",
+      content: "sda",
     });
     return;
   },

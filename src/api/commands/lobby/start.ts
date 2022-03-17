@@ -1,6 +1,6 @@
 import { CacheType, CommandInteraction } from "discord.js";
 import { error, success, warning } from "../../../embeds/response";
-import { ghostCmd } from "../../../utils/globals";
+import { ghostCmd, ghostGuildBotId } from "../../../utils/globals";
 import { isRunning } from "../../lobbyWatcher/isRunning";
 import { startLobbyWatcher } from "../../lobbyWatcher/startLobbyWatcher";
 
@@ -17,11 +17,15 @@ export const start = async (interaction: CommandInteraction<CacheType>) => {
     const channel =
       interaction.options.getChannel("channel") || interaction.channel;
     const delay = interaction.options.getInteger("delay") || 10000;
+    const botid = interaction.options.getBoolean("check")
+      ? undefined
+      : ghostGuildBotId;
 
     const result = await startLobbyWatcher(
       interaction.guildId,
       channel.id,
-      delay
+      delay,
+      botid
     );
 
     if (result) {

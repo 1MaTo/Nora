@@ -1,55 +1,55 @@
 import { MessageButton, MessageButtonStyleResolvable } from "discord.js";
 import { buttonId } from "../../utils/globals";
 
-export type HostGameButtonProps = {
+export type StartGameButtonProps = {
   label?: string;
   style?: MessageButtonStyleResolvable;
   disabled?: boolean;
 };
 
-export const hostGameButtonDefault = ({
+export const startGameButtonDefault = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: StartGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
-    .setLabel(label || "Host game")
+    .setCustomId(buttonId.startGame)
+    .setLabel(label || "Start game")
     .setStyle(style || "PRIMARY")
     .setDisabled(disabled || false);
 };
 
-export const hostGameButtonLoading = ({
+export const startGameButtonLoading = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: StartGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
+    .setCustomId(buttonId.startGame)
     .setLabel(label || "Loading...")
     .setStyle(style || "SECONDARY")
     .setDisabled(disabled || true);
 };
 
-export const hostGameButtonSuccess = ({
+export const startGameButtonSuccess = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: StartGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
-    .setLabel(label || "Game hosted")
+    .setCustomId(buttonId.startGame)
+    .setLabel(label || "Game started")
     .setStyle(style || "SUCCESS")
     .setDisabled(disabled || true);
 };
 
-export const hostGameButtonError = ({
+export const startGameButtonError = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: StartGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
+    .setCustomId(buttonId.startGame)
     .setLabel(label || "Network error")
     .setStyle(style || "DANGER")
     .setDisabled(disabled || true);

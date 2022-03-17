@@ -6,6 +6,7 @@ import { logCommand } from "./logCmd";
 export const listenCommands = () =>
   client.on("interactionCreate", async (interaction) => {
     if (production && interaction.guildId !== guildIDs.ghostGuild) return;
+    if (!production && interaction.guildId !== guildIDs.debugGuild) return;
 
     if (!interaction.isCommand()) return;
 

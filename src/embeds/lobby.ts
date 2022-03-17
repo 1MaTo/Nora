@@ -1,6 +1,6 @@
 import { SPACE } from "../utils/lobbyParser";
 
-export const lobbyGame = (data: lobbyInfo<lobbyStrings>, uptime: string) => {
+export const lobbyGame = (data: lobbyInfo<lobbyStrings>) => {
   const main = {
     color: null,
     fields: [
@@ -21,7 +21,7 @@ export const lobbyGame = (data: lobbyInfo<lobbyStrings>, uptime: string) => {
       ...playersTable(data.players, data.slotsTaken === 0),
     ],
     footer: {
-      text: `${data.slotsTaken}/${data.slots} [ ${uptime} ]‎‏‏‎`,
+      text: `${data.slotsTaken}/${data.slots}`,
       icon_url:
         "https://images-ext-1.discordapp.net/external/fMfBC85Ij1hFNbsEgcrf40GVrd3iYU-VQpdWUrE97ls/https/www.flaticon.com/premium-icon/icons/svg/668/668709.svg",
     },
@@ -39,13 +39,12 @@ export const lobbyGame = (data: lobbyInfo<lobbyStrings>, uptime: string) => {
   };
 };
 
-export const header = (gameCount: number, time: string) => {
+export const header = (gameCount: number, lastLoadedMap?: string) => {
   return {
-    description: `※ **${gameCount}** *active lobby*`,
+    description: `※ Lobby: **${gameCount}**\n※ Current map: **${
+      lastLoadedMap || "..."
+    }**`,
     color: null,
-    footer: {
-      text: `[ ${time} ]`,
-    },
   };
 };
 

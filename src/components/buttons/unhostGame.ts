@@ -1,55 +1,55 @@
 import { MessageButton, MessageButtonStyleResolvable } from "discord.js";
 import { buttonId } from "../../utils/globals";
 
-export type HostGameButtonProps = {
+export type UnhostGameButtonProps = {
   label?: string;
   style?: MessageButtonStyleResolvable;
   disabled?: boolean;
 };
 
-export const hostGameButtonDefault = ({
+export const unhostGameButtonDefault = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: UnhostGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
-    .setLabel(label || "Host game")
-    .setStyle(style || "PRIMARY")
+    .setCustomId(buttonId.unhostGame)
+    .setLabel(label || "Unhost game")
+    .setStyle(style || "DANGER")
     .setDisabled(disabled || false);
 };
 
-export const hostGameButtonLoading = ({
+export const unhostGameButtonLoading = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: UnhostGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
+    .setCustomId(buttonId.unhostGame)
     .setLabel(label || "Loading...")
     .setStyle(style || "SECONDARY")
     .setDisabled(disabled || true);
 };
 
-export const hostGameButtonSuccess = ({
+export const unhostGameButtonSuccess = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: UnhostGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
-    .setLabel(label || "Game hosted")
+    .setCustomId(buttonId.unhostGame)
+    .setLabel(label || "Game unhosted")
     .setStyle(style || "SUCCESS")
     .setDisabled(disabled || true);
 };
 
-export const hostGameButtonError = ({
+export const unhostGameButtonError = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: UnhostGameButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
+    .setCustomId(buttonId.unhostGame)
     .setLabel(label || "Network error")
     .setStyle(style || "DANGER")
     .setDisabled(disabled || true);

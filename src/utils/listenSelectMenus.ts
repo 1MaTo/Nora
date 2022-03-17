@@ -5,6 +5,7 @@ import { log } from "./log";
 export const listenSelectMenus = () =>
   client.on("interactionCreate", async (interaction) => {
     if (production && interaction.guildId !== guildIDs.ghostGuild) return;
+    if (!production && interaction.guildId !== guildIDs.debugGuild) return;
 
     if (!interaction.isSelectMenu()) return;
 

@@ -1,12 +1,27 @@
+import { production } from "../utils/globals";
 import { parseMapName } from "../utils/lobbyParser";
 import { log } from "../utils/log";
 import { searchMapConfigByMapName } from "../utils/mapConfig";
 import { uniqueFromArray } from "../utils/uniqueFromArray";
 import { makeQuery } from "./mysql";
 
-export const getLobbyList = async (): Promise<Array<lobbyGame>> | null => {
+export const getLobbyList = async (
+  botid?: number
+): Promise<Array<lobbyGame>> | null => {
   const query = `SELECT * from gamelist`;
-  return await makeQuery(query);
+  const result = await makeQuery(query);
+
+  if (!result) return null;
+
+  const lobbyList = result.filter(
+    (game: lobbyGame) =>
+      (game.gamename !== "" ||
+        game.ownername !== "" ||
+        game.creatorname !== "") &&
+      (botid ? botid === game.botid : true)
+  );
+
+  return lobbyList;
 };
 
 export const getPlayerWinrateForLobbyWatcher = async (
@@ -328,7 +343,7 @@ export const getPlayersMMDStats = async (
   });
 };
 
-export const clearLobbyGame = (botid: number) => {
+export const clearLobbyGame = async (botid: number) => {
   const query = `UPDATE gamelist
                 SET
                   gamename = "",
@@ -341,5 +356,22 @@ export const clearLobbyGame = (botid: number) => {
                   totalgames = ${0},
                   totalplayers = ${0}
                 WHERE botid = ${botid};`;
-  makeQuery(query);
+  await makeQuery(query);
+};
+
+export const createLobbyGame = async (botid: number, mapName?: string) => {
+  const fullMapName = mapName ? mapName + ".w3x" : "Creating game...";
+  const query = `UPDATE gamelist
+                SET
+                  gamename = "${production ? "res publica game" : "test"}",
+                  ownername = "replica",
+                  creatorname ="replica",
+                  map = "${fullMapName || "Creating game..."}",
+                  slotstaken = ${0},
+                  slotstotal = ${1},
+                  usernames = "",
+                  totalgames = ${1},
+                  totalplayers = ${0}
+                WHERE botid = ${botid};`;
+  await makeQuery(query);
 };

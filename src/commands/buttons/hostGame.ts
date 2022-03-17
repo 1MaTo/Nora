@@ -1,66 +1,110 @@
 import { ButtonInteraction, Message, MessageActionRow } from "discord.js";
 import { pubGame } from "../../api/ghost/pubGame";
+import { pauseLobbyWatcher } from "../../api/lobbyWatcher/pauseLobbyWatcher";
+import { resetCommandHubState } from "../../api/lobbyWatcher/resetCommandHubState";
+import { resumeLobbyWatcher } from "../../api/lobbyWatcher/resumeLobbyWatcher";
+import { getLobbyWatcherSettings } from "../../api/lobbyWatcher/settingsApi";
 import {
-  customErrorGameButton,
-  errorGameButton,
-  loadingGameButton,
-  successGameButton,
+  hostGameButtonError,
+  hostGameButtonLoading,
+  hostGameButtonSuccess,
 } from "../../components/buttons/hostGame";
-import { botStatusInfo } from "../../utils/events";
+import { showConfigSelectorButtonDefault } from "../../components/buttons/showConfigSelector";
+import { createLobbyGame } from "../../db/queries";
+import { botEvents } from "../../utils/events";
 import {
   botStatusVariables,
   buttonId,
   ghostGuildBotId,
+  production,
 } from "../../utils/globals";
 import { getCurrentLobbies } from "../../utils/lobbyParser";
+import { log } from "../../utils/log";
 
 module.exports = {
   id: buttonId.hostGame,
   async execute(interaction: ButtonInteraction) {
     await interaction.update({
-      components: [new MessageActionRow().addComponents(loadingGameButton)],
+      components: [
+        new MessageActionRow().addComponents(
+          hostGameButtonLoading(),
+          showConfigSelectorButtonDefault({ disabled: true })
+        ),
+      ],
     });
 
     const games = await getCurrentLobbies(interaction.guildId);
 
     if (games.some((game) => game.botid === ghostGuildBotId)) {
+      log("[host game button] lobby exist");
       await (interaction.message as Message).edit({
         components: [
           new MessageActionRow().addComponents(
-            customErrorGameButton("Lobby already exist")
+            hostGameButtonError({ label: "Lobby already exist" }),
+            showConfigSelectorButtonDefault({ disabled: true })
           ),
         ],
       });
+      resetCommandHubState(interaction.message);
       return;
     }
 
-    const result = await pubGame("res publica game");
+    const resumeLobbyKey = await pauseLobbyWatcher(interaction.guildId, 10000);
+
+    const result = await pubGame(production ? "res publica game" : "test");
 
     switch (result) {
       case "success":
-      case "timeout":
-        botStatusVariables.lobbyCount = botStatusVariables.lobbyCount + 1;
-        botStatusInfo.emit(botEvent.update);
+        const settings = await getLobbyWatcherSettings(interaction.guildId);
 
-        await (interaction.message as Message).edit({
-          components: [new MessageActionRow().addComponents(successGameButton)],
-        });
-        return;
-      case "error":
-      case "uknown":
+        await createLobbyGame(
+          ghostGuildBotId,
+          settings && settings.lastLoadedMap
+        );
+
+        log("[host game button] temp lobby created");
+
+        botStatusVariables.lobbyCount = botStatusVariables.lobbyCount + 1;
+        botEvents.emit(botEvent.update);
+
+        log("[host game button] send success");
         await (interaction.message as Message).edit({
           components: [
             new MessageActionRow().addComponents(
-              customErrorGameButton("No config loaded")
+              hostGameButtonSuccess(),
+              showConfigSelectorButtonDefault({ disabled: true })
             ),
           ],
         });
-        return;
-      case null:
+        break;
+      case "timeout":
+      case "error":
+      case "uknown":
+        log("[host game button] send error/uknown");
         await (interaction.message as Message).edit({
-          components: [new MessageActionRow().addComponents(errorGameButton)],
+          components: [
+            new MessageActionRow().addComponents(
+              hostGameButtonError({ label: "No config loaded" }),
+              showConfigSelectorButtonDefault({ disabled: true })
+            ),
+          ],
         });
-        return;
+        break;
+      case null:
+        log("[host game button] send null");
+        await (interaction.message as Message).edit({
+          components: [
+            new MessageActionRow().addComponents(
+              hostGameButtonError(),
+              showConfigSelectorButtonDefault({ disabled: true })
+            ),
+          ],
+        });
+        break;
     }
+
+    await resetCommandHubState(interaction.message);
+    await resumeLobbyWatcher(interaction.guildId);
+    clearTimeout(resumeLobbyKey);
   },
 };

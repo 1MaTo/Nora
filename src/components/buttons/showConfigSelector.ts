@@ -1,55 +1,55 @@
 import { MessageButton, MessageButtonStyleResolvable } from "discord.js";
 import { buttonId } from "../../utils/globals";
 
-export type HostGameButtonProps = {
+export type ShowConfigSelectorButtonProps = {
   label?: string;
   style?: MessageButtonStyleResolvable;
   disabled?: boolean;
 };
 
-export const hostGameButtonDefault = ({
+export const showConfigSelectorButtonDefault = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: ShowConfigSelectorButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
-    .setLabel(label || "Host game")
+    .setCustomId(buttonId.showConfigSelector)
+    .setLabel(label || "Show config loader")
     .setStyle(style || "PRIMARY")
     .setDisabled(disabled || false);
 };
 
-export const hostGameButtonLoading = ({
+export const showConfigSelectorButtonLoading = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: ShowConfigSelectorButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
+    .setCustomId(buttonId.showConfigSelector)
     .setLabel(label || "Loading...")
     .setStyle(style || "SECONDARY")
     .setDisabled(disabled || true);
 };
 
-export const hostGameButtonSuccess = ({
+export const showConfigSelectorButtonSuccess = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: ShowConfigSelectorButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
-    .setLabel(label || "Game hosted")
+    .setCustomId(buttonId.showConfigSelector)
+    .setLabel(label || "Config loaded")
     .setStyle(style || "SUCCESS")
     .setDisabled(disabled || true);
 };
 
-export const hostGameButtonError = ({
+export const showConfigSelectorButtonError = ({
   label,
   style,
   disabled,
-}: HostGameButtonProps = {}) => {
+}: ShowConfigSelectorButtonProps = {}) => {
   return new MessageButton()
-    .setCustomId(buttonId.hostGame)
+    .setCustomId(buttonId.showConfigSelector)
     .setLabel(label || "Network error")
     .setStyle(style || "DANGER")
     .setDisabled(disabled || true);

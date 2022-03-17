@@ -4,6 +4,7 @@ import {
   InteractionReplyOptions,
   Message,
   MessageEditOptions,
+  MessageOptions,
   MessagePayload,
   Snowflake,
 } from "discord.js";
@@ -13,7 +14,7 @@ import { log } from "./log";
 
 export const sendResponse = async (
   channelID: Snowflake,
-  content: any,
+  content: string | MessagePayload | MessageOptions,
   deleteTimeOut: null | number = null
 ) => {
   try {
@@ -37,7 +38,7 @@ export const getMessageById = async (
     const message = await channel.messages.fetch(messageID, { force: true });
     return message;
   } catch (error) {
-    log(error);
+    log("[get message by id] cant find this msg");
     return null;
   }
 };
@@ -101,4 +102,16 @@ export const editMessageWithDelay = async (
       log("[editing message] cant edit message");
     }
   }, delay);
+};
+
+export const editMessage = async (
+  message: Message,
+  content: string | MessagePayload | MessageEditOptions
+) => {
+  try {
+    await message.edit(content);
+  } catch (error) {
+    log("[editing message] cant edit message");
+    return null;
+  }
 };

@@ -1,7 +1,7 @@
 import { CacheType, CommandInteraction } from "discord.js";
 import { error, success, warning } from "../../../embeds/response";
 import { editReply } from "../../../utils/discordMessage";
-import { botStatusInfo } from "../../../utils/events";
+import { botEvents } from "../../../utils/events";
 import {
   botStatusVariables,
   ghostGuildBotId,
@@ -30,7 +30,7 @@ export const pub = async (interaction: CommandInteraction<CacheType>) => {
     case "success":
     case "timeout":
       botStatusVariables.lobbyCount = botStatusVariables.lobbyCount + 1;
-      botStatusInfo.emit(botEvent.update);
+      botEvents.emit(botEvent.update);
 
       await editReply(
         interaction,

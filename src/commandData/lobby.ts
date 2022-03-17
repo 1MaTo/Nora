@@ -20,8 +20,17 @@ export const lobbyCommand = new SlashCommandBuilder()
           .setName("delay")
           .setDescription("updatind interval")
           .setRequired(false)
+          .addChoice("1 second", 1000)
+          .addChoice("2 seconds", 2000)
+          .addChoice("3 seconds", 3000)
+          .addChoice("4 seconds", 4000)
           .addChoice("5 seconds", 5000)
-          .addChoice("10 seconds", 10000)
+      )
+      .addBooleanOption((option) =>
+        option
+          .setName("check")
+          .setDescription("check all bots in database")
+          .setRequired(false)
       )
   )
   .addSubcommand((command) =>
