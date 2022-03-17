@@ -168,8 +168,6 @@ const getGameParams = async (
 
   const parsedPlayers = playersLobbyToString(game.players, optionField);
 
-  log("[lobby watcher msg updater]", game);
-
   const parsedGame = {
     ...game,
     players: parsedPlayers,

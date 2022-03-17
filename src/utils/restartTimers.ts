@@ -16,6 +16,7 @@ export const restartLobbyWatcher = async () => {
         const keys = redisKey.destruct(key);
         const settings = await getLobbyWatcherSettings(keys[0]);
         if (!settings) return;
+        if (production && keys[0] === guildIDs.debugGuild) return;
         if (!production && keys[0] !== guildIDs.debugGuild) return;
         log("[restart lobby watcher] starting lobby watcher");
         headerMsgUpdater(keys[0], settings.delay);
