@@ -1,4 +1,5 @@
 import { headerMsgUpdater } from "../api/lobbyWatcher/headerMsgUpdater";
+import { lobbyMsgUpdater } from "../api/lobbyWatcher/lobbyMsgUpdater";
 import { getLobbyWatcherSettings } from "../api/lobbyWatcher/settingsApi";
 import { groupsKey, keyDivider, redisKey } from "../redis/kies";
 import { redis } from "../redis/redis";
@@ -20,6 +21,17 @@ export const restartLobbyWatcher = async () => {
         if (!production && keys[0] !== guildIDs.debugGuild) return;
         log("[restart lobby watcher] starting lobby watcher");
         headerMsgUpdater(keys[0], settings.delay);
+        const lobbyGameKeys = await redis.scanForPattern(
+          `${groupsKey.lobbyGameWatcher}${keyDivider}${keys[0]}${keyDivider}*`
+        );
+        if (!lobbyGameKeys) return;
+        lobbyGameKeys.forEach((key) => {
+          const [guildId, channelId, botid] = redisKey.destruct(key);
+          if (guildId && botid) {
+            log("[restart lobby watcher] starting game watcher");
+            lobbyMsgUpdater(guildId, parseInt(botid), settings.delay);
+          }
+        });
       })
     ));
 
