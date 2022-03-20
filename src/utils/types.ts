@@ -232,3 +232,21 @@ type damageStatsPlayerInfo = {
   games: number;
   rounds: number;
 };
+
+type DataToTranslate = {
+  str: string;
+  itemList: [key: string, value: string][];
+};
+
+type YandexTranslateRequest = {
+  texts: string[];
+  targetLanguageCode: string;
+  sourceLanguageCode?: string;
+};
+
+type YandexTranslateResponse = {
+  translations: {
+    text: string;
+    detectedLanguageCode: string;
+  }[];
+};

@@ -6,6 +6,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.12.0",
     "@discordjs/rest": "^0.3.0",
+    "@vitalets/google-translate-api": "^8.0.0",
     "axios": "^0.26.0",
     "cross-env": "^7.0.3",
     "discord-api-types": "^0.27.3",

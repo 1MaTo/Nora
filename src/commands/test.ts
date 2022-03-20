@@ -1,6 +1,5 @@
 import { CacheType, CommandInteraction } from "discord.js";
 import testCommand from "../commandData/test";
-import { clearLobbyGame } from "../db/queries";
 import { ownerID } from "../utils/globals";
 
 module.exports = {
@@ -14,7 +13,7 @@ module.exports = {
 
     await interaction.deferReply();
 
-    clearLobbyGame(2);
+    const text = `水银灯  | 黑翼降临 | 学习黑翼降临 | 等级 %d | 立即移动至目标区域中心处 | 并对该区域内的敌方单位造成一定的伤害与2秒眩晕。 | 对不可通行地面施放将无效化。 | 技能类型： | 区域目标 | 伤害数值： | 倍智力）X技能等级 | 伤害类型： | 法术伤害 | 暗属性 | 施法距离： | 冷却时间： | 秒 | 等级 1 | 等级 2 |`;
 
     await interaction.editReply({
       content: "sda",

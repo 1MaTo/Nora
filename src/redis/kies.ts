@@ -6,6 +6,7 @@ export const groupsKey = {
   mapConfig: "GUILD_MAP_CONFIG",
   commandLog: "GUILD_COMMAND_LOG",
   uploadingMap: "GUILD_UPLOADING_MAP",
+  yandexIAMToken: "YANDEX_IAM_TOKEN",
 };
 
 export const keyDivider = "#@$@#$@#";
