@@ -9,7 +9,6 @@ export const replaceStringsInFile = (
   const replacedWithTranslationString = translatedString.reduce(
     (translatedData, str, index) => {
       const formatedString = formatStringSymbols(str);
-      log(formatedString);
       return translatedData.replaceAll(
         getTemporarilyReplacedFileKey(index),
         formatedString
