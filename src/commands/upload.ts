@@ -1,5 +1,6 @@
 import axios from "axios";
 import { CacheType, CommandInteraction } from "discord.js";
+import { getGoogeDriveFileName } from "../api/googleDrive/getGoogeDriveFileName";
 import { googleDriveApiKey } from "../auth.json";
 import uploadCommand from "../commandData/upload";
 import { error, success, warning } from "../embeds/response";
@@ -139,14 +140,4 @@ module.exports = {
       msgDeleteTimeout.short
     );
   },
-};
-
-const getGoogeDriveFileName = async (url: string) => {
-  try {
-    const googleFileResponse = await axios.get(url);
-    return googleFileResponse.data.name as string;
-  } catch (error) {
-    log("[getting google drive file name] cant get name");
-    return false;
-  }
 };

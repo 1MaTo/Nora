@@ -238,15 +238,113 @@ type DataToTranslate = {
   itemList: [key: string, value: string][];
 };
 
+type YandexLanguageCodeList =
+  | "az"
+  | "sq"
+  | "am"
+  | "en"
+  | "ar"
+  | "hy"
+  | "af"
+  | "eu"
+  | "ba"
+  | "be"
+  | "bn"
+  | "my"
+  | "bg"
+  | "bs"
+  | "cy"
+  | "hu"
+  | "vi"
+  | "ht"
+  | "gl"
+  | "nl"
+  | "el"
+  | "ka"
+  | "gu"
+  | "da"
+  | "he"
+  | "yi"
+  | "id"
+  | "ga"
+  | "it"
+  | "is"
+  | "es"
+  | "kk"
+  | "kn"
+  | "ca"
+  | "ky"
+  | "zh"
+  | "ko"
+  | "xh"
+  | "km"
+  | "lo"
+  | "la"
+  | "lv"
+  | "lt"
+  | "lb"
+  | "mg"
+  | "ms"
+  | "ml"
+  | "mt"
+  | "mk"
+  | "mi"
+  | "mr"
+  | "mn"
+  | "de"
+  | "ne"
+  | "no"
+  | "pa"
+  | "fa"
+  | "pl"
+  | "pt"
+  | "ro"
+  | "ru"
+  | "sr"
+  | "si"
+  | "sk"
+  | "sl"
+  | "sw"
+  | "su"
+  | "tg"
+  | "th"
+  | "tl"
+  | "ta"
+  | "tt"
+  | "te"
+  | "tr"
+  | "uz"
+  | "uk"
+  | "ur"
+  | "fi"
+  | "fr"
+  | "hi"
+  | "hr"
+  | "cs"
+  | "sv"
+  | "gd"
+  | "et"
+  | "eo"
+  | "jv"
+  | "ja";
+
 type YandexTranslateRequest = {
   texts: string[];
-  targetLanguageCode: string;
-  sourceLanguageCode?: string;
+  targetLanguageCode: YandexLanguageCodeList;
+  sourceLanguageCode?: YandexLanguageCodeList;
+  speller?: boolean;
 };
 
 type YandexTranslateResponse = {
   translations: {
     text: string;
     detectedLanguageCode: string;
+  }[];
+};
+
+type YandexLanguageListResponse = {
+  languages: {
+    code: string;
+    name: string;
   }[];
 };

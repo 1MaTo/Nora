@@ -4,12 +4,12 @@ import { groupsKey, redisKey } from "../../redis/kies";
 import { redis } from "../../redis/redis";
 import { log } from "../../utils/log";
 
-export const getIAMToken = async (): Promise<string | null> => {
+export const getIAMToken = async (force?: boolean): Promise<string | null> => {
   try {
     const key = redisKey.struct(groupsKey.yandexIAMToken, ["NORA_TOKEN"]);
     const oldKey = await redis.get(key);
 
-    if (oldKey) {
+    if (oldKey && !force) {
       const isExpiredSoon =
         Math.floor((oldKey.expiresAt - Date.now()) / (1000 * 60 * 60)) <= 3;
       if (!isExpiredSoon) {
