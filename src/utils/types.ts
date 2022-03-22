@@ -333,6 +333,14 @@ type YandexTranslateRequest = {
   targetLanguageCode: YandexLanguageCodeList;
   sourceLanguageCode?: YandexLanguageCodeList;
   speller?: boolean;
+  glossaryConfig?: {
+    glossaryData: {
+      glossaryPairs: {
+        sourceText: string;
+        translatedText: string;
+      }[];
+    };
+  };
 };
 
 type YandexTranslateResponse = {

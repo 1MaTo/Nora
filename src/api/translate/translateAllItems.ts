@@ -1,6 +1,7 @@
 import { log } from "../../utils/log";
 import { sleep } from "../../utils/sleep";
 import { translateYandex } from "../yandex/translateYandex";
+import { glossary } from "./glossary";
 
 const maxLengthPerRequest = 10000;
 const maxRequestPerSecond = 20;
@@ -34,6 +35,11 @@ export const translateGroup = async (
     const rawResult = await translateYandex({
       texts: textGroup,
       targetLanguageCode: target,
+      glossaryConfig: {
+        glossaryData: {
+          glossaryPairs: glossary,
+        },
+      },
     });
 
     if (!rawResult) return [];
