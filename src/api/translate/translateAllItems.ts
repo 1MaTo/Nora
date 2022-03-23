@@ -34,6 +34,7 @@ export const translateGroup = async (
   try {
     const rawResult = await translateYandex({
       texts: textGroup,
+      sourceLanguageCode: "zh",
       targetLanguageCode: target,
       glossaryConfig: {
         glossaryData: {

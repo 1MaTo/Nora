@@ -24,6 +24,12 @@ export const translateCommand = new SlashCommandBuilder()
       .setName("one_drive")
       .setDescription("Link to the google one drive file")
       .setRequired(false)
+  )
+  .addBooleanOption((option) =>
+    option
+      .setName("code_file")
+      .setDescription("use code sensitive reg exp")
+      .setRequired(false)
   );
 
 export default translateCommand;

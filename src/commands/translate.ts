@@ -102,7 +102,10 @@ module.exports = {
       return;
     }
 
-    const messageArray = getMessageArray(file);
+    const messageArray = getMessageArray(
+      file,
+      interaction.options.getBoolean("code_file")
+    );
 
     //log(messageArray.itemList, messageArray.str);
 
@@ -131,7 +134,9 @@ module.exports = {
     );
     const translatedFileData = replaceStringsInFile(
       messageArray.str,
-      translatedStrings
+      translatedStrings,
+      false,
+      interaction.options.getBoolean("code_file")
     );
 
     let readyToSendFile = Buffer.from(translatedFileData, "utf-8");

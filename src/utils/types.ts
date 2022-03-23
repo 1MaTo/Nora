@@ -332,6 +332,7 @@ type YandexTranslateRequest = {
   texts: string[];
   targetLanguageCode: YandexLanguageCodeList;
   sourceLanguageCode?: YandexLanguageCodeList;
+  format?: "HTML" | "PLAIN_TEXT";
   speller?: boolean;
   glossaryConfig?: {
     glossaryData: {

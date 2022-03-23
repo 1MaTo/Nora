@@ -7,7 +7,7 @@ export const getTemporarilyReplacedColorMarkKey = (str: any) => {
 };
 
 export const replaceAllColorMarks = (file: string) => {
-  const colorMarkRegExp = /(\|\w[A-Za-z\d]{8})/gimu;
+  const colorMarkRegExp = /(\|\w[A-Za-z\d]{8})/gmu;
   const allMarks = Array.from(new Set(file.match(colorMarkRegExp)));
 
   if (allMarks.length === 0) return { file, marks: [] };
@@ -35,16 +35,23 @@ export const returnAllColorMarks = ({
   }, file);
 };
 
-export const getMessageArray = (file: string): DataToTranslate => {
-  const newRegExp =
-    /((\|\w[A-Za-z\d]{8}){0,}[\d\[\]\\\.，。:【！】%“·（ ）”、〈〉\+"\/\(\)：「」『』…\*~※‘’《》①②③④％-]{0,}[\u4E00-\u9FA5]{1,}[A-Za-z\d\[\]\\=\.，。:【！】%“·（ ）”、〈〉\+"\/\(\)：「」『』…\*~※‘’《》①②③④％-]{0,}){1,}/gimu;
-  const regExp =
-    /(\+\d{1,}%{0,}){0,}(【[\u4E00-\u9FA5一-龠ぁ-ゔァ-ヴー\dX]{1,}】){0,}[\u4E00-\u9FA5一-龠ぁ-ゔァ-ヴー]{1,}([%。\/ \)\(）（\.,+：·【】，~-]{0,}|\d{0,}|[a-zA-Z]{0,}|[\u4E00-\u9FA5一-龠ぁ-ゔァ-ヴー、。]{0,}){0,}/gimu;
+export const getMessageArray = (
+  file: string,
+  isCodeFile: boolean
+): DataToTranslate => {
+  const stringFileRegExp =
+    /([^ =,\|$】：nr]{0,}[\u4E00-\u9FA5]{1,}[^\|,\n\(]{0,}){1,}/gimu;
+  const codeFileRegExp =
+    /[^,\(\)\|=a-zA-Z"0-9]*[\u4E00-\u9FA5]{1,}[^\(\)"\|]*/gimu;
 
-  const { file: fileWithoutMarks, marks } = replaceAllColorMarks(file);
+  const { file: fileWithoutMarks } = replaceAllColorMarks(file);
 
   const matched = Array.from(
-    new Set(fileWithoutMarks?.match(newRegExp)?.map((item) => item.trim()))
+    new Set(
+      fileWithoutMarks
+        ?.match(isCodeFile ? codeFileRegExp : stringFileRegExp)
+        ?.map((item) => item.trim())
+    )
   );
 
   if (matched.length === 0) return null;
