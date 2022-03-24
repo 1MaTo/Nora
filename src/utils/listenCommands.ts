@@ -1,6 +1,7 @@
 import { client } from "../bot";
 import { warning } from "../embeds/response";
-import { guildIDs, ownerID, production } from "./globals";
+import { sendReply } from "./discordMessage";
+import { guildIDs, msgDeleteTimeout, ownerID, production } from "./globals";
 import { log } from "./log";
 import { logCommand } from "./logCmd";
 
@@ -16,9 +17,13 @@ export const listenCommands = () =>
     if (!command) return;
 
     if (command.ownerOnly && interaction.user.id !== ownerID) {
-      interaction.reply({
-        embeds: [warning("This command is only for owner") as any],
-      });
+      sendReply(
+        interaction,
+        {
+          embeds: [warning("This command is only for owner") as any],
+        },
+        msgDeleteTimeout.short
+      );
       return;
     }
 
