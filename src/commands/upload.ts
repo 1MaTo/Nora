@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { CacheType, CommandInteraction } from "discord.js";
 import { getGoogeDriveFileName } from "../api/googleDrive/getGoogeDriveFileName";
 import { googleDriveApiKey } from "../auth.json";
@@ -9,7 +9,6 @@ import { redis } from "../redis/redis";
 import { editReply } from "../utils/discordMessage";
 import { downloadFile } from "../utils/downloadFile";
 import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
-import { log } from "../utils/log";
 import { uploadMapToGhost } from "../utils/requestToGuiServer";
 
 module.exports = {

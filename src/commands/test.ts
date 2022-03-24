@@ -1,5 +1,4 @@
 import { CacheType, CommandInteraction } from "discord.js";
-import { getLanguageList } from "../api/yandex/getLanguageList";
 import { translateYandex } from "../api/yandex/translateYandex";
 import testCommand from "../commandData/test";
 import { ownerID } from "../utils/globals";
