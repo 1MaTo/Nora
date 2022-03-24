@@ -1,5 +1,6 @@
 import { client } from "../bot";
-import { guildIDs, production } from "./globals";
+import { warning } from "../embeds/response";
+import { guildIDs, ownerID, production } from "./globals";
 import { log } from "./log";
 import { logCommand } from "./logCmd";
 
@@ -13,6 +14,13 @@ export const listenCommands = () =>
     const command = client.commands.get(interaction.commandName);
 
     if (!command) return;
+
+    if (command.ownerOnly && interaction.user.id !== ownerID) {
+      interaction.reply({
+        embeds: [warning("This command is only for owner") as any],
+      });
+      return;
+    }
 
     logCommand(interaction);
 

@@ -14,8 +14,15 @@ import { log } from "../utils/log";
 
 module.exports = {
   data: translateCommand,
+  ownerOnly: true,
   async execute(interaction: CommandInteraction<CacheType>) {
     if (!production && interaction.member.user.id !== ownerID) return;
+
+    if (interaction.user.id !== ownerID) {
+      await interaction.reply("Your are not my sempai!");
+      return;
+    }
+
     await interaction.deferReply();
 
     let fileUrl = "";

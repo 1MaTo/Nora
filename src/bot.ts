@@ -27,6 +27,7 @@ import {
 } from "./utils/timerFuncs";
 
 export type CustomSlashCommand = {
+  ownerOnly?: boolean;
   data: SlashCommandBuilder;
   execute: (interaction: CommandInteraction<CacheType>) => Promise<void>;
 };
