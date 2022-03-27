@@ -8,6 +8,7 @@ import { redis } from "../redis/redis";
 import { editReply } from "../utils/discordMessage";
 import { downloadFile } from "../utils/downloadFile";
 import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
+import { log } from "../utils/log";
 import { uploadMapToGhost } from "../utils/requestToGuiServer";
 
 module.exports = {
@@ -64,7 +65,7 @@ module.exports = {
       );
 
     if (isGoogleDriveLink) {
-      const validMatches = mapLink.match(/d\/[^\/]*\/*/g)[0];
+      const validMatches = mapLink.match(/d\/[^\/]*\/*/g);
 
       if (!validMatches) {
         return await editReply(
