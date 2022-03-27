@@ -1,4 +1,3 @@
-
 import { CacheType, CommandInteraction } from "discord.js";
 import { getGoogeDriveFileName } from "../api/googleDrive/getGoogeDriveFileName";
 import { googleDriveApiKey } from "../auth.json";
@@ -65,7 +64,19 @@ module.exports = {
       );
 
     if (isGoogleDriveLink) {
-      const docId = mapLink.match(/d\/[^\/]*\//g)[0].replace(/(d\/|\/)/g, "");
+      const validMatches = mapLink.match(/d\/[^\/]*\/*/g)[0];
+
+      if (!validMatches) {
+        return await editReply(
+          interaction,
+          {
+            embeds: [warning(`Can't read this link`) as any],
+          },
+          msgDeleteTimeout.long
+        );
+      }
+
+      const docId = validMatches[0].replace(/(d\/|\/)/g, "");
       const googleDriveName = await getGoogeDriveFileName(
         `https://www.googleapis.com/drive/v3/files/${docId}?&key=${googleDriveApiKey}`
       );
