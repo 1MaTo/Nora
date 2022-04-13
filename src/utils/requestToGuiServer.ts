@@ -213,7 +213,9 @@ export const getConfigListFromGhost = async () => {
     });
     const configs = result.data.match(/<th>(.*?)<\/th>/g);
     const cleanStrings = configs
-      ? configs.map((item: string) => item.replace(/<th>|<\/th>/g, ""))
+      ? configs
+          .map((item: string) => item.replace(/<th>|<\/th>/g, ""))
+          .filter((item: string) => item)
       : [];
     return cleanStrings.length > 25
       ? cleanStrings.slice(configs.length - 25)

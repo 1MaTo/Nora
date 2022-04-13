@@ -32,7 +32,7 @@ module.exports = {
       ],
     });
 
-    const resumeLobbyKey = await pauseLobbyWatcher(interaction.guildId, 5000);
+    const resumeLobbyKey = await pauseLobbyWatcher(interaction.guildId, 15000);
 
     const games = await getCurrentLobbies(interaction.guildId);
 
