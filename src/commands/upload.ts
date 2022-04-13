@@ -8,7 +8,6 @@ import { redis } from "../redis/redis";
 import { editReply } from "../utils/discordMessage";
 import { downloadFile } from "../utils/downloadFile";
 import { msgDeleteTimeout, ownerID, production } from "../utils/globals";
-import { log } from "../utils/log";
 import { uploadMapToGhost } from "../utils/requestToGuiServer";
 
 module.exports = {

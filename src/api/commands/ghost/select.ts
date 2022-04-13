@@ -3,7 +3,6 @@ import { selectMapConfig } from "../../../components/selectMenus/selectMapConfig
 import { error, info } from "../../../embeds/response";
 import { editReply } from "../../../utils/discordMessage";
 import { msgDeleteTimeout } from "../../../utils/globals";
-import { log } from "../../../utils/log";
 import { getConfigListFromGhost } from "../../../utils/requestToGuiServer";
 
 export const select = async (interaction: CommandInteraction<CacheType>) => {
