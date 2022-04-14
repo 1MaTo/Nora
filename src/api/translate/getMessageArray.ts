@@ -42,7 +42,8 @@ export const getMessageArray = (
   const stringFileRegExp =
     /([^ =,\|$】：nr]{0,}[\u4E00-\u9FA5]{1,}[^\|,\n\(]{0,}){1,}/gimu;
   const codeFileRegExp =
-    /[^,\(\)\|=a-zA-Z"0-9]*[\u4E00-\u9FA5]{1,}[^\(\)"\|]*/gimu;
+    /[^\n,\(\)\|=a-zA-Z"0-9]*[\u4E00-\u9FA5]{1,}[^\(\)"\|\n]*/gimu;
+  const commentBlockRegExp = /^\/\//gim;
 
   const { file: fileWithoutMarks } = replaceAllColorMarks(file);
 
@@ -51,6 +52,7 @@ export const getMessageArray = (
       fileWithoutMarks
         ?.match(isCodeFile ? codeFileRegExp : stringFileRegExp)
         ?.map((item) => item.trim())
+        ?.filter((item) => (isCodeFile ? !commentBlockRegExp.test(item) : true))
     )
   );
 
