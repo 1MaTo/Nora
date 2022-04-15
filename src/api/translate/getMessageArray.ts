@@ -42,7 +42,7 @@ export const getMessageArray = (
   const stringFileRegExp =
     /([^ =,\|$】：nr]{0,}[\u4E00-\u9FA5]{1,}[^\|,\n\(]{0,}){1,}/gimu;
   const codeFileRegExp =
-    /[^\n,\(\)\|=a-zA-Z"0-9]*[\u4E00-\u9FA5]{1,}[^\(\)"\|\n]*/gimu;
+    /(?!丨)[^\n,」，「）：丨|\(\)\|=a-zA-Z"0-9]*[\u4E00-\u9FA5]{1,}[^\(\)丨"\|\n\\a-z：（A-Z]*/gimu;
   const commentBlockRegExp = /^\/\//gim;
 
   const { file: fileWithoutMarks } = replaceAllColorMarks(file);
