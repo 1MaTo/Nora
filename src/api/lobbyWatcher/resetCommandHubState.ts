@@ -3,6 +3,7 @@ import {
   hostGameButtonDefault,
   hostGameButtonSuccess,
 } from "../../components/buttons/hostGame";
+import { refreshWatcherButtonDefault } from "../../components/buttons/refreshWatcher";
 import {
   showConfigSelectorButtonDefault,
   showConfigSelectorButtonError,
@@ -36,7 +37,8 @@ export const resetCommandHubState = async (
             ? config.result === "success"
               ? showConfigSelectorButtonSuccess({ label: config.text })
               : showConfigSelectorButtonError({ label: config.text })
-            : showConfigSelectorButtonDefault({ disabled: isLobbyExist })
+            : showConfigSelectorButtonDefault({ disabled: isLobbyExist }),
+          refreshWatcherButtonDefault()
         ),
       ],
     });

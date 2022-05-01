@@ -90,6 +90,7 @@ export const buttonId = {
   unhostGame: "lobby-watcher_button_unhost-game",
   showConfigSelector: "lobby-watcher_button_show-config-selector",
   startGame: "lobby-watcher_button_start-game",
+  refreshWatcher: "lobby-watcher_button_refresh-watcher",
 };
 
 export const selectMenuId = {

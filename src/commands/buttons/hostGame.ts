@@ -9,6 +9,7 @@ import {
   hostGameButtonLoading,
   hostGameButtonSuccess,
 } from "../../components/buttons/hostGame";
+import { refreshWatcherButtonDefault } from "../../components/buttons/refreshWatcher";
 import { showConfigSelectorButtonDefault } from "../../components/buttons/showConfigSelector";
 import { createLobbyGame } from "../../db/queries";
 import { botEvents } from "../../utils/events";
@@ -28,7 +29,8 @@ module.exports = {
       components: [
         new MessageActionRow().addComponents(
           hostGameButtonLoading(),
-          showConfigSelectorButtonDefault({ disabled: true })
+          showConfigSelectorButtonDefault({ disabled: true }),
+          refreshWatcherButtonDefault()
         ),
       ],
     });
@@ -41,7 +43,8 @@ module.exports = {
         components: [
           new MessageActionRow().addComponents(
             hostGameButtonError({ label: "Lobby already exist" }),
-            showConfigSelectorButtonDefault({ disabled: true })
+            showConfigSelectorButtonDefault({ disabled: true }),
+            refreshWatcherButtonDefault()
           ),
         ],
       });
@@ -72,7 +75,8 @@ module.exports = {
           components: [
             new MessageActionRow().addComponents(
               hostGameButtonSuccess(),
-              showConfigSelectorButtonDefault({ disabled: true })
+              showConfigSelectorButtonDefault({ disabled: true }),
+              refreshWatcherButtonDefault()
             ),
           ],
         });
@@ -85,7 +89,8 @@ module.exports = {
           components: [
             new MessageActionRow().addComponents(
               hostGameButtonError({ label: "No config loaded" }),
-              showConfigSelectorButtonDefault({ disabled: true })
+              showConfigSelectorButtonDefault({ disabled: true }),
+              refreshWatcherButtonDefault()
             ),
           ],
         });
@@ -96,7 +101,8 @@ module.exports = {
           components: [
             new MessageActionRow().addComponents(
               hostGameButtonError(),
-              showConfigSelectorButtonDefault({ disabled: true })
+              showConfigSelectorButtonDefault({ disabled: true }),
+              refreshWatcherButtonDefault()
             ),
           ],
         });

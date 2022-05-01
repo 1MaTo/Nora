@@ -10,6 +10,7 @@ import { resetCommandHubState } from "../../api/lobbyWatcher/resetCommandHubStat
 import { resumeLobbyWatcher } from "../../api/lobbyWatcher/resumeLobbyWatcher";
 import { updateLobbyWatcherSettings } from "../../api/lobbyWatcher/settingsApi";
 import { hostGameButtonDefault } from "../../components/buttons/hostGame";
+import { refreshWatcherButtonDefault } from "../../components/buttons/refreshWatcher";
 import {
   showConfigSelectorButtonError,
   showConfigSelectorButtonLoading,
@@ -36,7 +37,11 @@ module.exports = {
 
     await interaction.update({
       components: [
-        new MessageActionRow().addComponents(hostButton, showConfigButton),
+        new MessageActionRow().addComponents(
+          hostButton,
+          showConfigButton,
+          refreshWatcherButtonDefault()
+        ),
         new MessageActionRow().addComponents(
           selectMenu
             .setDisabled(true)
@@ -62,7 +67,8 @@ module.exports = {
           components: [
             new MessageActionRow().addComponents(
               hostButton,
-              showConfigSelectorButtonSuccess()
+              showConfigSelectorButtonSuccess(),
+              refreshWatcherButtonDefault()
             ),
           ],
         });
@@ -74,7 +80,8 @@ module.exports = {
           components: [
             new MessageActionRow().addComponents(
               hostButton,
-              showConfigSelectorButtonError({ label: "Cant load this config" })
+              showConfigSelectorButtonError({ label: "Cant load this config" }),
+              refreshWatcherButtonDefault()
             ),
           ],
         });
@@ -85,7 +92,8 @@ module.exports = {
           components: [
             new MessageActionRow().addComponents(
               hostButton,
-              showConfigSelectorButtonError()
+              showConfigSelectorButtonError(),
+              refreshWatcherButtonDefault()
             ),
           ],
         });

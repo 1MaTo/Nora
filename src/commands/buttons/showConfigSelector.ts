@@ -3,6 +3,7 @@ import { pauseLobbyWatcher } from "../../api/lobbyWatcher/pauseLobbyWatcher";
 import { resetCommandHubState } from "../../api/lobbyWatcher/resetCommandHubState";
 import { resumeLobbyWatcher } from "../../api/lobbyWatcher/resumeLobbyWatcher";
 import { hostGameButtonDefault } from "../../components/buttons/hostGame";
+import { refreshWatcherButtonDefault } from "../../components/buttons/refreshWatcher";
 import {
   showConfigSelectorButtonError,
   showConfigSelectorButtonLoading,
@@ -27,7 +28,8 @@ module.exports = {
       components: [
         new MessageActionRow().addComponents(
           currentHostButton,
-          showConfigSelectorButtonLoading()
+          showConfigSelectorButtonLoading(),
+          refreshWatcherButtonDefault()
         ),
       ],
     });
@@ -45,7 +47,8 @@ module.exports = {
             showConfigSelectorButtonError({
               label: "Cant load config when lobby exist",
               disabled: true,
-            })
+            }),
+            refreshWatcherButtonDefault()
           ),
         ],
       });
@@ -66,7 +69,8 @@ module.exports = {
             showConfigSelectorButtonError({
               label: "Network error",
               disabled: true,
-            })
+            }),
+            refreshWatcherButtonDefault()
           ),
         ],
       });
@@ -85,7 +89,8 @@ module.exports = {
             showConfigSelectorButtonError({
               label: "No configs found",
               disabled: true,
-            })
+            }),
+            refreshWatcherButtonDefault()
           ),
         ],
       });
@@ -103,7 +108,9 @@ module.exports = {
           showConfigSelectorButtonLoading({
             disabled: true,
             label: "Selecting map...",
-          })
+          }),
+          refreshWatcherButtonDefault(),
+          refreshWatcherButtonDefault()
         ),
         new MessageActionRow().addComponents(
           mapConfigSelectorDefault({ options: configs })
