@@ -7,4 +7,3 @@ client.once(Events.ClientReady, (client) => {
 });
 
 client.login(process.env.TOKEN);
-const t = 1;
