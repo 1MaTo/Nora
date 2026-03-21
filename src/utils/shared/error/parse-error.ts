@@ -4,7 +4,7 @@ export type ErrorInfo = {
 };
 
 export const parseError = (error: unknown): ErrorInfo => {
-  if (error instanceof Error) return { title: "Error", message: error.message };
+  if (error instanceof Error) return { title: error.name, message: error.message };
 
   return { title: "Unknown error", message: String(error) };
 };
