@@ -173,7 +173,9 @@ const htmlToWarcraft = (htmlString: string): string =>
   htmlString
     .replace(/<span color="([0-9a-fA-F]{8})">/g, "|c$1")
     .replace(/<\/span>/g, "|r")
-    .replace(/\n/g, "|n");
+    .replace(/\n/g, "|n")
+    /** Using chinese because cannot use default "," */
+    .replace(/, ?/g, "，");
 
 const languageDetectionRegex: Record<TranslateLanguage, RegExp> = {
   [TranslateLanguage.enum.ko]: /\p{Script=Hangul}/u,
