@@ -2,12 +2,12 @@ import { Client, Events, GatewayIntentBits } from "discord.js";
 
 import { commandList } from "./commands/shared/command-list.ts";
 import { replyWithError } from "./utils/discord/reply-with-error.ts";
-import { TOKEN } from "./utils/shared/env.ts";
+import { OWNER_ID, TOKEN } from "./utils/shared/env.ts";
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 client.once(Events.ClientReady, (client) => {
-  console.log(`Ready! Logged in as ${client.user.tag}`);
+  console.log(`Logged in as ${client.user.tag}`);
 });
 
 client.login(TOKEN);
@@ -19,6 +19,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (!commandList) {
     console.error("Command not found");
     return;
+  }
+
+  if (command.isAdminCommand && interaction.user.id !== OWNER_ID) {
+    replyWithError(interaction, new Error("Admin command"));
   }
 
   try {

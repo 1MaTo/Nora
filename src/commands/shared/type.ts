@@ -8,5 +8,6 @@ export type CommandCall = (interaction: ChatInputCommandInteraction) => Promise<
 
 export type Command = {
   info: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
+  isAdminCommand?: boolean;
   call: CommandCall;
 };
