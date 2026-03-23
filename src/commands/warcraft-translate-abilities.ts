@@ -4,6 +4,7 @@ import {
   SlashCommandBuilder,
   type APIApplicationCommandOptionChoice,
 } from "discord.js";
+import { writeFile } from "node:fs/promises";
 
 import type { Command } from "./shared/type.ts";
 
@@ -91,13 +92,17 @@ export default {
     const file: string[] = [];
     const translateList: string[] = [];
     const translationLineInfo: { id: string; fileIndex: number; translateIndex: number }[] = [];
+    const log: string[] = [];
 
     let fileLineIndex = 0;
     let translateIndex = 0;
     let totalTranslationCharCount = 0;
     for await (const line of readLinesFromStream(response.body)) {
-      const lineToTranslatePattern = /^(?:Name|Tip|Ubertip|Researchtip|Researchubertip)=(.+)/;
+      const lineToTranslatePattern =
+        /* /^(?:Name|Tip|Ubertip|Researchtip|Researchubertip|Untip|Unubertip)=(.+)/; */
+        /^(?:Name|Tip|Ubertip|Researchtip|Researchubertip|Untip|Unubertip)=(.+)/;
       const matchResult = line.trim().match(lineToTranslatePattern);
+      log.push(`${!!matchResult}, ${isLanguageExists(line, sourceLanguage)}, ${line}`);
       if (!matchResult || !isLanguageExists(line, sourceLanguage)) {
         file.push(line);
         fileLineIndex++;
@@ -106,22 +111,35 @@ export default {
 
       const lineId = crypto.randomUUID();
       file.push(line.replace(matchResult[1], lineId));
+
       translateList.push(warcraftToHtml(matchResult[1]));
       translationLineInfo.push({
         id: lineId,
         fileIndex: fileLineIndex,
         translateIndex: translateIndex,
       });
-      totalTranslationCharCount += translateList[translateIndex].length;
 
+      totalTranslationCharCount += translateList[translateIndex].length;
       translateIndex++;
       fileLineIndex++;
     }
 
+    await writeFile("./log.txt", log.join("\n"), {
+      encoding: "utf8",
+    });
+    await writeFile("./pre.txt", translateList.join("\n"), {
+      encoding: "utf8",
+    });
+    await writeFile("./temp.txt", file.join("\n"), {
+      encoding: "utf8",
+    });
     const translationResult = await translator.translateHTMLStringList({
       list: translateList,
       source: sourceLanguage,
       target: targetLanguage,
+    });
+    await writeFile("./after.txt", translationResult.join("\n"), {
+      encoding: "utf8",
     });
 
     for (const { id, fileIndex, translateIndex } of translationLineInfo) {
@@ -164,18 +182,24 @@ async function* readLinesFromStream(stream: ReadableStream) {
 /** Convert all warcraft formation elements to html (color, new line)*/
 const warcraftToHtml = (warcraftString: string): string =>
   warcraftString
-    .replace(/\|C([A-Fa-f0-9]{8})/gi, '<span color="$1">')
+    .replace(/\|C([A-Fa-f0-9]{8})/gi, ' <span color="$1"> ')
     .replace(/\|r/g, "</span>")
-    .replace(/\|n/g, "\n");
+    .replace(/\|n/g, "\n")
+    /** This symbol used to divide text to parts and not show all info simultaneously */
+    .replace(/,/g, "<br>")
+    /** With uppercase "X" translator might delete numbers */
+    .replace(/X(\d+(?:\.\d+)?)/g, " x$1 ");
 
 /** Convert some html and other keywords to warcraft formation elements (color, new line) */
 const htmlToWarcraft = (htmlString: string): string =>
   htmlString
-    .replace(/<span color="([0-9a-fA-F]{8})">/g, "|c$1")
+    .replace(/(?: *?)<span color="([0-9a-fA-F]{8})">(?: *)?/g, "|c$1")
     .replace(/<\/span>/g, "|r")
     .replace(/\n/g, "|n")
-    /** Using chinese because cannot use default "," */
-    .replace(/, ?/g, "，");
+    /** Using chinese because default "," used to special cases */
+    .replace(/,/g, "，")
+    .replace(/<br>/g, ",")
+    .replace(/ {2,}/g, " ");
 
 const languageDetectionRegex: Record<TranslateLanguage, RegExp> = {
   [TranslateLanguage.enum.ko]: /\p{Script=Hangul}/u,
