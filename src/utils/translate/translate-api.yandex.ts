@@ -1,7 +1,7 @@
-import type { Glossary, TranslateApi, TranslateLanguage } from "./types.ts";
+import { YANDEX } from "#env";
 
-import { YANDEX } from "../shared/env.ts";
 import { ApiError } from "../shared/error/api-error.ts";
+import type { Glossary, TranslateApi, TranslateLanguage } from "./types.ts";
 
 type YandexTranslateResult = {
   translations: [

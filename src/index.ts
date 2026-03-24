@@ -1,8 +1,9 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
 
+import { replyWithError } from "#discord/reply-with-error.ts";
+import { OWNER_ID, TOKEN } from "#env";
+
 import { commandList } from "./commands/shared/command-list.ts";
-import { replyWithError } from "./utils/discord/reply-with-error.ts";
-import { OWNER_ID, TOKEN } from "./utils/shared/env.ts";
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -16,7 +17,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   const command = commandList.get(interaction.commandName);
-  if (!commandList) {
+  if (!command) {
     console.error("Command not found");
     return;
   }

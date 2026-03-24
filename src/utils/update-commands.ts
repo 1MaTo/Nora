@@ -1,7 +1,8 @@
 import { REST, Routes } from "discord.js";
 
+import { APP_ID, DEV_GUILD_ID, TOKEN } from "#env";
+
 import { rawCommandList } from "../commands/shared/command-list.ts";
-import { APP_ID, DEV_GUILD_ID, TOKEN } from "./shared/env.ts";
 
 export const updateCommands = async (isProd?: boolean) => (isProd ? null : loadDev());
 

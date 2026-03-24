@@ -1,11 +1,17 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "noEmit": true,
-    "target": "esnext",
     "module": "nodenext",
-    "rewriteRelativeImportExtensions": true,
-    "erasableSyntaxOnly": true,
+    "moduleResolution": "nodenext",
+
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
+
+    "strict": true,
+    "skipLibCheck": true,
+    "erasableSyntaxOnly": true,
+
     "types": ["node"]
   }
 }

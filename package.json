@@ -2,7 +2,11 @@
   "name": "nora",
   "version": "2.0.0",
   "type": "module",
-  "main": "./dist/index.mjs",
+  "imports": {
+    "#discord/*": "./src/utils/discord/*",
+    "#env": "./src/utils/shared/env.ts",
+    "#shared/*": "./src/utils/shared/*"
+  },
   "scripts": {
     "dev": "tsx watch --env-file=.env.secret src/index.ts",
     "upload-commands-dev": "node --env-file=.env.secret src/upload-commands-dev.ts",

@@ -4,7 +4,7 @@ import type {
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
 
-export type CommandCall = (interaction: ChatInputCommandInteraction) => Promise<void>;
+export type CommandCall = (interaction: ChatInputCommandInteraction) => Promise<unknown>;
 
 export type Command = {
   info: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;

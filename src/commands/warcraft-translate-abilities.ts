@@ -1,17 +1,19 @@
+import { writeFile } from "node:fs/promises";
+
 import {
   AttachmentBuilder,
   inlineCode,
   SlashCommandBuilder,
   type APIApplicationCommandOptionChoice,
 } from "discord.js";
-import { writeFile } from "node:fs/promises";
 
-import type { Command } from "./shared/type.ts";
+import { InvalidPayloadError } from "#shared/error/invalid-payload-error.ts";
+import { UnexpectedCommandError } from "#shared/error/unexpected-command-error.ts";
 
-import { InvalidPayloadError } from "../utils/shared/error/invalid-payload-error.ts";
-import { UnexpectedCommandError } from "../utils/shared/error/unexpected-command-error.ts";
+import { replyWithError } from "../utils/discord/reply-with-error.ts";
 import { translateApi } from "../utils/translate/translate-api.ts";
 import { TranslateLanguage, TranslateProvider } from "../utils/translate/types.ts";
+import type { Command } from "./shared/type.ts";
 
 const filename = "file";
 const source = "source";
@@ -71,7 +73,9 @@ export default {
   call: async (interaction) => {
     await interaction.deferReply();
 
-    const { contentType, url } = interaction.options.getAttachment(filename);
+    const attachment = interaction.options.getAttachment(filename);
+    if (!attachment) return replyWithError(interaction, new InvalidPayloadError("No attachment"));
+
     const sourceLanguage = TranslateLanguage.parse(interaction.options.getString(source));
     const targetLanguage = TranslateLanguage.parse(interaction.options.getString(target));
     const translator =
@@ -81,11 +85,11 @@ export default {
         )
       ];
 
-    if (!contentType.includes("text/plain")) {
+    if (!!attachment.contentType || attachment.contentType?.includes("text/plain")) {
       throw new InvalidPayloadError("File must be .txt");
     }
 
-    const response = await fetch(url);
+    const response = await fetch(attachment.url);
 
     if (!response.body) throw new UnexpectedCommandError("Empty file");
 
@@ -150,7 +154,7 @@ export default {
     }
 
     await interaction.editReply({
-      content: `${inlineCode(`Translation cost: ${translator.getTranslationCostInRUB(totalTranslationCharCount)}`)}
+      content: `${inlineCode(`Translation cost: ${translator.getTranslationCostInRUB?.(totalTranslationCharCount) || "unknown"} `)}
 ${inlineCode(`Total char count: ${totalTranslationCharCount}`)}`,
       files: [
         new AttachmentBuilder(Buffer.from(file.join("\n"), "utf-8"), {
