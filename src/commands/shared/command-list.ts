@@ -1,9 +1,8 @@
 import { Collection } from "discord.js";
 
-import type { Command } from "./type.ts";
-
 import debug from "../debug.ts";
 import warcraftTranslateAbilities from "../warcraft-translate-abilities.ts";
+import type { Command } from "./type.ts";
 
 export const rawCommandList: Command[] = [debug, warcraftTranslateAbilities];
 

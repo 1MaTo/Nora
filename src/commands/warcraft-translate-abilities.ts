@@ -85,7 +85,8 @@ export default {
         )
       ];
 
-    if (!!attachment.contentType || attachment.contentType?.includes("text/plain")) {
+    console.log(attachment.contentType);
+    if (!attachment.contentType || !attachment.contentType?.includes("text/plain")) {
       throw new InvalidPayloadError("File must be .txt");
     }
 
@@ -102,9 +103,7 @@ export default {
     let translateIndex = 0;
     let totalTranslationCharCount = 0;
     for await (const line of readLinesFromStream(response.body)) {
-      const lineToTranslatePattern =
-        /* /^(?:Name|Tip|Ubertip|Researchtip|Researchubertip|Untip|Unubertip)=(.+)/; */
-        /^(?:Name|Tip|Ubertip|Researchtip|Researchubertip|Untip|Unubertip)=(.+)/;
+      const lineToTranslatePattern = /^(?:Name|Tip|Ubertip)=(.+)/;
       const matchResult = line.trim().match(lineToTranslatePattern);
       log.push(`${!!matchResult}, ${isLanguageExists(line, sourceLanguage)}, ${line}`);
       if (!matchResult || !isLanguageExists(line, sourceLanguage)) {
@@ -158,7 +157,7 @@ export default {
 ${inlineCode(`Total char count: ${totalTranslationCharCount}`)}`,
       files: [
         new AttachmentBuilder(Buffer.from(file.join("\n"), "utf-8"), {
-          name: "CampaignAbilityStrings.txt",
+          name: attachment.name,
         }),
       ],
     });
