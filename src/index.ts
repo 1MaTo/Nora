@@ -1,7 +1,7 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
 
 import { replyWithError } from "#discord/reply-with-error.ts";
-import { OWNER_ID, TOKEN } from "#env";
+import { OWNER_ID, TOKEN } from "#env.ts";
 
 import { commandList } from "./commands/shared/command-list.ts";
 

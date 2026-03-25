@@ -2,18 +2,20 @@
   "name": "nora",
   "version": "2.0.0",
   "type": "module",
+  "main": "./dist/index.js",
   "imports": {
-    "#discord/*": "./src/utils/discord/*",
-    "#env": "./src/utils/shared/env.ts",
-    "#shared/*": "./src/utils/shared/*"
+    "#discord/*.ts": "./src/utils/discord/*.ts",
+    "#env.ts": "./src/utils/shared/env.ts",
+    "#shared/*.ts": "./src/utils/shared/*.ts"
   },
   "scripts": {
     "dev": "tsx watch --env-file=.env.secret src/index.ts",
+    "prod": "node --env-file=dist/.env.secret dist/index.mjs",
     "upload-commands-dev": "node --env-file=.env.secret src/upload-commands-dev.ts",
     "prepare": "husky",
     "format": "oxfmt",
     "lint": "oxlint",
-    "build": "pkgroll"
+    "build": "tsdown --minify --copy .env.secret"
   },
   "dependencies": {
     "discord.js": "^14.25.1",
@@ -27,6 +29,7 @@
     "oxfmt": "^0.41.0",
     "oxlint": "^1.56.0",
     "pkgroll": "^2.27.0",
+    "tsdown": "^0.21.5",
     "tsx": "^4.21.0"
   },
   "lint-staged": {

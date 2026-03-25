@@ -1,4 +1,4 @@
-import { YANDEX } from "#env";
+import { YANDEX } from "#env.ts";
 
 import { ApiError } from "../shared/error/api-error.ts";
 import type { Glossary, TranslateApi, TranslateLanguage } from "./types.ts";
